@@ -1,0 +1,12 @@
+@font-face {
+  font-family: "Climacons";
+  src: url('chrome-extension://__MSG_@@extension_id__/Climacons.ttf');
+}
+@font-face {
+  font-family: "OpenSans-Light";
+  src: url('chrome-extension://__MSG_@@extension_id__/OpenSans-Light.ttf');
+}
+* {
+  font-family: "OpenSans-Light";
+  color: rgba(0, 0, 0, 0.8);
+}

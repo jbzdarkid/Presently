@@ -127,9 +127,6 @@ function getTempAndForecast() {
     for (var i=0; i<4; i++) {
       updateDayFromPeriod(i+1, response.properties.periods[i])
     }
-    for (var icon of document.getElementsByTagName('span')) {
-      console.log(window.getComputedStyle(icon).width)
-    }
   })
 }
 
@@ -147,11 +144,6 @@ function updateWeather() {
       forecastUrl = parts[1]
       console.log('Loaded URLs from chrome storage:', hourlyForecastUrl, forecastUrl)
       getTempAndForecast()
-      setTimeout(function() {
-        for (var icon of document.getElementsByTagName('span')) {
-          console.log(window.getComputedStyle(icon).width)
-        }
-      }, 1000)
       return
     }
 

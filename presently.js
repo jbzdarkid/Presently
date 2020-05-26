@@ -19,6 +19,12 @@ function _httpSend(verb, url, body, callback) {
   request.send(body)
 }
 
+// https://stackoverflow.com/a/32108184
+Object.prototype.isEmpty = function() {
+  return Object.keys(this).length === 0 && this.constructor === Object
+}
+
+// E.g. https://api.weather.gov/icons/land/day/rain
 icons = {
   // 'Name in the weather.gov API' : [IconDuringDay, IconDuringNight]
   'skc':             ['I', 'N'], // Fair/clear
@@ -57,10 +63,24 @@ icons = {
   'fog':             ['@', 'A'], // Fog/mist
 }
 
+icon_widths = {
+  '!': 99, '"': 126, '#': 108, '$': 99, '%': 126, '&': 108, '\'': 108, '(': 126, ')': 108, '*': 99,
+  '+': 126, ',': 108, '-': 99, '.': 126, '/': 108, '0': 99, '1': 126, '2': 108, '3': 108, '4': 126,
+  '5': 108, '6': 99, '7': 126, '8': 108, '9': 99, ':': 126, ';': 108, '<': 99, '=': 126, '>': 108,
+  '?': 108, '@': 126, 'A': 108, 'B': 99, 'C': 126, 'D': 126, 'E': 126, 'F': 99, 'G': 126, 'H': 108,
+  'I': 108, 'J': 108, 'K': 108, 'L': 108, 'M': 81, 'N': 54, 'O': 54, 'P': 54, 'Q': 54, 'R': 54,
+  'S': 54, 'T': 54, 'U': 54, 'V': 54, 'W': 54, 'X': 99, 'Y': 36, 'Z': 36, '[': 36, '\\': 36,
+  ']': 36, '^': 36, '_': 81, '`': 81, 'a': 62.7188, 'b': 62.7188, 'c': 62.7188, 'd': 62.7188,
+  'e': 62.7188, 'f': 99, 'g': 63, 'h': 99, 'i': 99, 'j': 99, 'k': 72, 'l': 40.0156, 'm': 112.016,
+  'n': 72, 'o': 72, 'p': 72, 'q': 72, 'r': 47.9531, 's': 56.0469, 't': 40.0156, 'u': 72, 'v': 72,
+  'w': 104, 'x': 72, 'y': 72, 'z': 63.9219, '{': 69.125, '|': 28.8281, '}': 69.125, '~': 77.9063,
+}
+
 function updateDayFromPeriod(id, period) {
   var day = document.getElementById('forecast-' + id)
   day.textContent = '';
 
+  // Not all icons are the same width. Pad all icons to the same size.
   var icon = document.createElement('span')
   icon.style.fontFamily = 'Climacons'
   icon.style.fontSize = '144px'
@@ -68,6 +88,10 @@ function updateDayFromPeriod(id, period) {
   var prediction = period.icon.split('/')[6].split(',')[0].split('?')[0]
   icon.innerText = (period.isDaytime ? icons[prediction][0] : icon.innerText = icons[prediction][1])
   icon.title = (period.detailedForecast ? period.detailedForecast : period.shortForecast)
+  var offset = icon_widths[icon.innerText] - 99 // Width beyond the base cloud size
+  // Since the 'cloud' part of the icon is always flush left, adjust accordingly
+  icon.style.marginLeft = offset
+
   day.appendChild(icon)
 
   var temp = document.createElement('b')
@@ -85,49 +109,64 @@ function updateDayFromPeriod(id, period) {
 
 var hourlyForecastUrl = null
 var forecastUrl = null
+var units = 'si' // Or 'us'
+function getTempAndForecast() {
+  // Get current temp
+  httpGet(hourlyForecastUrl + '?units=' + units, function(response) {
+    document.getElementById('forecast-loading').style.display = 'none'
+    document.getElementById('forecast').style.display = 'flex'
+
+    updateDayFromPeriod('0', response.properties.periods[0])
+  })
+
+  // Get forecast
+  httpGet(forecastUrl + '?units=' + units, function(response) {
+    document.getElementById('forecast-loading').style.display = 'none'
+    document.getElementById('forecast').style.display = 'flex'
+
+    for (var i=0; i<4; i++) {
+      updateDayFromPeriod(i+1, response.properties.periods[i])
+    }
+    for (var icon of document.getElementsByTagName('span')) {
+      console.log(window.getComputedStyle(icon).width)
+    }
+  })
+}
+
 function updateWeather() {
-  var getTempAndForecast = function() {
-    // Get current temp
-    httpGet(hourlyForecastUrl, function(response) {
-      document.getElementById('forecast-loading').style.display = 'none'
-      document.getElementById('forecast').style.display = 'flex'
-
-      updateDayFromPeriod('0', response.properties.periods[0])
-    })
-
-    // Get forecast
-    httpGet(forecastUrl, function(response) {
-      document.getElementById('forecast-loading').style.display = 'none'
-      document.getElementById('forecast').style.display = 'flex'
-
-      for (var i=0; i<4; i++) {
-        updateDayFromPeriod(i+1, response.properties.periods[i])
-      }
-    })
+  if (hourlyForecastUrl && forecastUrl) {
+    console.log('Loaded URLs from memory:', hourlyForecastUrl, forecastUrl)
+    getTempAndForecast()
+    return
   }
 
-  if (hourlyForecastUrl && forecastUrl) {
-    chrome.storage.local.get(['hourlyForecastUrl'], function(result) {
-      hourlyForecastUrl = result.key
-      chrome.storage.local.get(['forecastUrl'], function(result) {
-        forecastUrl = result.key
+  chrome.storage.local.get(['urls'], function(result) {
+    if (result && !result.isEmpty()) {
+      var parts = result.urls.split('|')
+      hourlyForecastUrl = parts[0]
+      forecastUrl = parts[1]
+      console.log('Loaded URLs from chrome storage:', hourlyForecastUrl, forecastUrl)
+      getTempAndForecast()
+      setTimeout(function() {
+        for (var icon of document.getElementsByTagName('span')) {
+          console.log(window.getComputedStyle(icon).width)
+        }
+      }, 1000)
+      return
+    }
+
+    // Get lat/long based on ip addr
+    httpGet('https://ipapi.co/json', function(response) {
+      // Get points for forecast
+      httpGet(`https://api.weather.gov/points/${response.latitude},${response.longitude}`, function(response) {
+        hourlyForecastUrl = response.properties.forecastHourly
+        forecastUrl = response.properties.forecast
+        console.log('Fetched URLs from weather.gov:', hourlyForecastUrl, forecastUrl)
+        // I'm using local storage here since different computers might be in different locations.
+        chrome.storage.local.set({'urls': hourlyForecastUrl + '|' + forecastUrl}, null)
+        getTempAndForecast(hourlyForecastUrl, forecastUrl)
+        return
       })
-    })
-  }
-
-  if (hourlyForecastUrl && forecastUrl) {
-    getTempAndForecast(hourlyForecast, forecast)
-  }
-
-  // Get lat/long based on ip addr
-  httpGet('https://ipapi.co/json', function(response) {
-    // Get points for forecast
-    httpGet(`https://api.weather.gov/points/${response.latitude},${response.longitude}`, function(response) {
-      hourlyForecastUrl = response.properties.forecastHourly
-      forecastUrl = response.properties.forecast
-      // I'm using local storage here since different computers might be in different locations.
-      chrome.storage.local.set({'hourlyForecastUrl': hourlyForecastUrl, 'forecastUrl': forecastUrl}, null)
-      getTempAndForecast(hourlyForecastUrl, forecastUrl)
     })
   })
 }
@@ -135,7 +174,7 @@ function updateWeather() {
 var lastTimeUpdate = null
 var lastWeatherUpdate = null
 function updateTimeAndWeather() {
-  /*
+  /* If I ever want a clock, this is how you do that.
   var now = moment(),
   second = now.seconds() * 6,
   minute = now.minutes() * 6 + second / 60,

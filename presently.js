@@ -110,7 +110,7 @@ function updateDayFromPeriod(id, period) {
 
 var hourlyForecastUrl = null
 var forecastUrl = null
-var units = 'si' // Or 'us'
+var units = 'us'
 function getTempAndForecast() {
   // Get current temp
   httpGet(hourlyForecastUrl + '?units=' + units, function(response) {
@@ -197,7 +197,20 @@ function updateTimeAndWeather() {
 window.onload = function() {
   document.body.style.background = '#222222';
   document.body.style.color = 'rgba(0, 0, 0, 0.6)'
-  units = 'si' // Or 'us'
+  document.addEventListener('keydown', function(event) {
+    if (event.key == 't' || event.key == 'T') {
+      units = (units == 'us' ? 'si' : 'us')
+      chrome.storage.local.set({'units': units}, null)
+      updateWeather()
+    }
+  })
 
-  updateTimeAndWeather()
+  chrome.storage.local.get(['units'], function(result) {
+    if (result && !result.isEmpty()) {
+      units = result.units
+    } else {
+      units = 'us'
+    }
+    updateTimeAndWeather()
+  })
 }

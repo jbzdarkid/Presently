@@ -118,6 +118,7 @@ function getTempAndForecast() {
     document.getElementById('forecast').style.display = 'flex'
 
     updateDayFromPeriod('0', response.properties.periods[0])
+    document.title = response.properties.periods[0].temperature + '\u00B0 | Presently'
   })
 
   // Get forecast

@@ -4,14 +4,14 @@
     <script type="text/javascript" src="/presently.js"></script>
     <script type="text/javascript" src="/moment.js"></script>
   </head>
-  <body style="display: flex; justify-content: space-around">
+  <body class="noselect" style="display: flex; justify-content: space-around">
     <div style="width: 60%; display: flex; flex-direction: column; justify-content: center; align-items: stretch">
       <div style="display: flex; flex-direction: column; align-items: center">
-        <p id="time" style="font-size: 192px; margin-top: -54px; margin-bottom: -42px"></p>
-        <p id="date" style="font-size: 28px"></p>
+        <span id="time" style="font-size: 192px; font-family: OpenSans-Light; margin-top: -54px"></span>
+        <span id="date" style="font-size: 32px; font-family: OpenSans-Regular; margin-bottom: 80px; color: rgba(0, 0, 0, 0.3)"></span>
       </div>
-      <div id="forecast-loading">
-        Loading forecast...
+      <div id="forecast-loading" style="display: flex; justify-content: center; align-content: flex-start">
+        <span style="font-size: 154px; font-family: Climacons; animation:spin 1s linear infinite;">a</span>
       </div>
       <div id="forecast" style="display: none; justify-content: space-around">
         <div id="forecast-0" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center"></div>

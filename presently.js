@@ -94,12 +94,13 @@ function updateDayFromPeriod(id, period) {
 
   day.appendChild(icon)
 
-  var temp = document.createElement('b')
+  var temp = document.createElement('span')
   temp.innerText = period.temperature
+  temp.style.fontFamily = 'OpenSans-Bold'
   temp.style.fontSize = '48px'
   day.appendChild(temp)
 
-  var name = document.createElement('p')
+  var name = document.createElement('span')
   name.innerText = (period.name ? period.name : 'Now')
   name.style.fontSize = '24px'
   day.appendChild(name)
@@ -181,7 +182,7 @@ function updateTimeAndWeather() {
   if (lastTimeUpdate == null || moment() - lastTimeUpdate > 1000) {
     lastTimeUpdate = moment()
     document.getElementById('time').innerText = lastTimeUpdate.format('hh mm')
-    document.getElementById('date').innerText = lastTimeUpdate.format('dddd, MMM Do')
+    document.getElementById('date').innerText = lastTimeUpdate.format('dddd, MMM DD')
   }
 
   // Every hour, update the weather.
@@ -194,6 +195,8 @@ function updateTimeAndWeather() {
 
 window.onload = function() {
   document.body.style.background = '#222222';
-  // document.body.text.color = rgba(0, 0, 0, 0.6)
+  document.body.style.color = 'rgba(0, 0, 0, 0.6)'
+  units = 'si' // Or 'us'
+
   updateTimeAndWeather()
 }

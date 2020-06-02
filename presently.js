@@ -23,6 +23,7 @@ function drawWeatherData(weatherData) {
     day.textContent = '';
 
     var icon = Climacon(weatherData[0].weather, '15em')
+    icon.style.marginBottom = '-35px'
     day.appendChild(icon)
     
     var temp = document.createElement('div')

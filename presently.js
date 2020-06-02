@@ -123,10 +123,10 @@ function updateTime() {
   $('#second').css('transform', 'rotate(' + second + 'deg)');
   */
   
-  var hours = now.getHours()
-  var hourString = (hours > 12 ? hours - 12 : hours).toString().padStart(2, '0')
-  var minuteString = now.getMinutes().toString().padStart(2, '0')
-  document.getElementById('time').innerText = hourString + ' ' + minuteString
+  // Convert 0-23 to 1-12
+  var hours = (now.getHours() + 11) % 12 + 1
+  var timeString = hours.toString().padStart(2, '0') + ' ' + now.getMinutes().toString().padStart(2, '0')
+  document.getElementById('time').innerText = timeString
 
   var dateString = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate()
   document.getElementById('date').innerText = dateString

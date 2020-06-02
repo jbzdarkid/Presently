@@ -1,25 +1,27 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/style.css" id="stylesheet">
+    <script type="text/javascript" src="/utils.js"></script>
+    <script type="text/javascript" src="/us_api.js"></script>
     <script type="text/javascript" src="/presently.js"></script>
-    <script type="text/javascript" src="/moment.js"></script>
     <title>--&deg; | Presently</title>
   </head>
-  <body class="noselect" style="display: flex; justify-content: space-around">
-    <div style="width: 60%; display: flex; flex-direction: column; justify-content: center; align-items: stretch">
-      <div style="display: flex; flex-direction: column; align-items: center">
-        <span id="time" style="font-size: 192px; font-family: OpenSans-Light; margin-top: -54px"></span>
-        <span id="date" style="font-size: 32px; font-family: OpenSans-Regular; margin-bottom: 80px; color: rgba(0, 0, 0, 0.3)"></span>
+  <!-- This flexbox keeps the overall layout centered on the page -->
+  <body class="noselect" style="display: flex; justify-content: center">
+    <!-- This div keeps the rows in order. Somehow. -->
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: stretch">
+      <span id="time" style="text-align: center; font-size: 192px; font-family: OpenSans-Light; margin-top: -54px; animation: fadeInDown 1s 1 both"></span>
+      <span id="date" style="text-align: center; font-size: 32px; font-family: OpenSans-Regular; margin-bottom: 10px; color: rgba(0, 0, 0, 0.3); animation: fadeIn 400ms ease-in-out 200ms 1 both"></span>
+      <!-- For some reason, this div needs a display: flex in order for the loading icon to spin. -->
+      <div id="forecast-loading" style="text-align: center; display: flex; justify-content: center">
+        <span style="font-size: 160px; font-family: Climacons; animation: spin 1s linear infinite">a</span>
       </div>
-      <div id="forecast-loading" style="display: flex; justify-content: center; align-content: flex-start">
-        <span style="font-size: 154px; font-family: Climacons; animation:spin 1s linear infinite;">a</span>
-      </div>
-      <div id="forecast" style="display: none; justify-content: space-around">
-        <div id="forecast-0" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center"></div>
-        <div id="forecast-1" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center"></div>
-        <div id="forecast-2" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center"></div>
-        <div id="forecast-3" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center"></div>
-        <div id="forecast-4" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center"></div>
+      <div id="forecast" style="display: none">
+        <div id="forecast-0" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center; animation: bounceIn 1s 1 both; position: relative; top: -80px"></div>
+        <div id="forecast-1" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 000ms both; margin: 0 37.5 0 37.5"></div>
+        <div id="forecast-2" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 200ms both; margin: 0 37.5 0 37.5"></div>
+        <div id="forecast-3" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 400ms both; margin: 0 37.5 0 37.5"></div>
+        <div id="forecast-4" style="display: flex; flex: 1 1 0px; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 600ms both; margin: 0 37.5 0 37.5"></div>
       </div>
     </div>
   </body>

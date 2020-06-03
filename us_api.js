@@ -91,7 +91,6 @@ USApi.getWeather = function(callback) {
   }
 
   // Else, fall back to local storage
-  // TODO: Expire this somehow? Detect location change? Probably easiest to have a timeout -- monthly? Grid squares are big.
   window.getLocal('urls', function(urls) {
     if (urls) {
       var parts = urls.split('|')
@@ -103,7 +102,6 @@ USApi.getWeather = function(callback) {
     }
 
     // Else local storage is empty, look up URLs based on user location
-    // TODO: Allow user to specify in some way?
     function getLatitudeAndLongitude(callback) {
       if (false /*navigator.geolocation*/) {
         navigator.geolocation.getCurrentPosition(function(position) {

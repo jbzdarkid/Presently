@@ -80,9 +80,16 @@ window.Climacon = function(weather, fontSize = '144px') {
   return icon
 }
 
+// For perf reasons -- I call this quite often.
+var inMemory = {}
 window.getLocal = function(key, callback) {
+  if (inMemory[key]) {
+    callback(inMemory[key])
+    return
+  }
   chrome.storage.local.get([key], function(result) {
     if (result && Object.keys(result).length) {
+      inMemory[key] = result[key]
       callback(result[key])
     } else {
       callback(null)
@@ -101,6 +108,7 @@ window.getRemote = function(key, callback) {
 }
 
 window.setLocal = function(key, value) {
+  inMemory[key] = value
   chrome.storage.local.set({key: value}, null)
 }
 

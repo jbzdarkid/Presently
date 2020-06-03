@@ -1,4 +1,16 @@
-// TODO: Localization!
+// TODOs:
+// - Localization (for day names)
+// - Other weather APIs (to support non-US locations)
+// - Themes
+// - Seconds
+// - Analog clock + hide forecast (if window gets too small)
+// - Better story when the network is completely down (and there's no data in cache).
+// - Expire user location somehow?
+// - Load user location from chrome?
+// - Allow users to pick a location?
+// - Show city name?
+
+
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -80,20 +92,33 @@ function drawWeatherData(weatherData) {
 
 var displayNeedsUpdate = true // Default true when JS loads; we need to draw the display at least once.
 function updateWeather() {
-  if (!displayNeedsUpdate) return
-  displayNeedsUpdate = false
-  // Even though we could show the loading widget again, don't. It's just going to cause a flicker.
-  
   window.getLocal('cachedWeather', function(weatherData) {
     var now = new Date()
     if (weatherData && now < weatherData[0].expires) {
-      drawWeatherData(weatherData)
+      if (displayNeedsUpdate) {
+        drawWeatherData(weatherData)
+        displayNeedsUpdate = false
+      }
       return
     }
+    
+    if (weatherData) {
+      // We've decided we're going update the weather data -- prevent any other updates for 5 minutes,
+      // to avoid making unnecessary network calls. We'll give it the full expiration once the call succeeds.
+      weatherData[0]['expires'].setMinutes(weatherData[0].getMinutes() + 5)
+      window.setLocal('cachedWeather', weatherData)
+    }
 
-    // TODO: Other APIs for other regions.
+    // Only start showing the loading spinner if the network call is long-running -- otherwise, it's just a flicker.
+    var showLoading = setTimeout(function() {
+      document.getElementById('forecast-loading').style.display = null
+      document.getElementById('forecast').style.display = 'none'
+    }, 100)
+
     console.log('Fetching weather data...')
     window.USApi.getWeather(function(weatherData) {
+      clearTimeout(showLoading) // If it hasn't been too long, don't bother with the spinner
+
       weatherData[0]['expires'] = new Date(now)
       // Clear minutes, seconds, and milliseconds
       // I'm choosing a time which is *slightly* into the next hour, since the US weather API is hourly.

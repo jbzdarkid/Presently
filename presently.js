@@ -4,7 +4,6 @@
 // - Themes
 // - Seconds
 // - Analog clock + hide forecast (if window gets too small)
-// - Better story when the network is completely down (and there's no data in cache).
 // - Expire user location somehow?
 // - Load user location from chrome?
 // - Allow users to pick a location?
@@ -92,38 +91,39 @@ function drawWeatherData(weatherData) {
 
 var displayNeedsUpdate = true // Default true when JS loads; we need to draw the display at least once.
 function updateWeather() {
-  window.getLocal('cachedWeather', function(weatherData) {
-    var now = new Date()
-    if (weatherData && now < weatherData[0].expires) {
-      if (displayNeedsUpdate) {
-        drawWeatherData(weatherData)
-        displayNeedsUpdate = false
-      }
-      return
-    }
+  if (displayNeedsUpdate) { // True when we first load, or when changing units
+    displayNeedsUpdate = false
+    window.getLocal('weatherData', function(weatherData) {
+      if (weatherData) drawWeatherData(weatherData)
+    })
+  }
     
-    if (weatherData) {
-      // We've decided we're going update the weather data -- prevent any other updates for 5 minutes,
-      // to avoid making unnecessary network calls. We'll give it the full expiration once the call succeeds.
-      weatherData[0]['expires'].setMinutes(weatherData[0].getMinutes() + 5)
-      window.setLocal('cachedWeather', weatherData)
+  window.getLocal('weatherExpires', function(weatherExpires) {
+    if (!weatherExpires) {
+      console.log('No known expiration for weather data, assuming expired')
+      weatherExpires = new Date()
+      weatherExpires.setMinutes(weatherExpires.getMinutes() - 1)
     }
 
-    // Only start showing the loading spinner if the network call is long-running -- otherwise, it's just a flicker.
-    var showLoading = setTimeout(function() {
-      document.getElementById('forecast-loading').style.display = null
-      document.getElementById('forecast').style.display = 'none'
-    }, 100)
-
-    console.log('Fetching weather data...')
+    var now = new Date()
+    if (now < weatherExpires) return // Weather not expired, nothing to do.
+    
+    // We've decided we're going update the weather data -- prevent any other updates for 5 minutes,
+    // to avoid making unnecessary network calls. We'll give it the full expiration once the call succeeds.
+    weatherExpires = new Date(now)
+    weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
+    window.setLocal('weatherExpires', weatherExpires)
+    
+    console.log('Weather data is expired, fetching new weather data...')
     window.USApi.getWeather(function(weatherData) {
-      clearTimeout(showLoading) // If it hasn't been too long, don't bother with the spinner
+      if (!weatherData) return // Potentially we can fail to fetch data, in which case we should not do anything.
 
-      weatherData[0]['expires'] = new Date(now)
       // Clear minutes, seconds, and milliseconds
-      // I'm choosing a time which is *slightly* into the next hour, since the US weather API is hourly.
-      weatherData[0]['expires'].setHours(now.getHours() + 1, 1, 0, 0)
-      window.setLocal('cachedWeather', weatherData)
+      // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
+      weatherExpires = new Date()
+      weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
+      window.setLocal('weatherExpires', weatherExpires)
+      window.setLocal('weatherData', weatherData)
 
       drawWeatherData(weatherData)
     })
@@ -177,7 +177,7 @@ function mainLoop() {
 }
 
 window.onload = function() {
-  document.body.style.background = '#222222';
+  document.body.style.background = '#222222'
   document.body.style.color = 'rgba(0, 0, 0, 0.6)'
   
   window.getRemote('units', function(cachedUnits) {

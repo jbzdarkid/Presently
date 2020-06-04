@@ -88,30 +88,25 @@ window.getLocal = function(key, callback) {
     return
   }
   chrome.storage.local.get([key], function(result) {
-    if (result && Object.keys(result).length) {
-      inMemory[key] = result[key]
-      callback(result[key])
-    } else {
-      callback(null)
-    }
+    // result will be {} if nothing is found
+    inMemory[key] = result[key]
+    callback(result[key])
   })
 }
 
 window.getRemote = function(key, callback) {
   chrome.storage.sync.get([key], function(result) {
-    if (result && Object.keys(result).length) {
-      callback(result[key])
-    } else {
-      callback(null)
-    }
+    // result will be {} if nothing is found
+    callback(result[key])
   })
 }
 
 window.setLocal = function(key, value) {
   inMemory[key] = value
-  chrome.storage.local.set({key: value}, null)
+  // This odd syntax is how we construct dictionaries with variable keys.
+  chrome.storage.local.set({[key]: value}, null)
 }
 
 window.setRemote = function(key, value) {
-  chrome.storage.sync.set({key: value}, null)
+  chrome.storage.sync.set({[key]: value}, null)
 }

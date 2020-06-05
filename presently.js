@@ -8,7 +8,7 @@
 // - Load user location from chrome?
 // - Allow users to pick a location?
 // - Show city name?
-
+// - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -34,7 +34,7 @@ function drawWeatherData(weatherData) {
     day.textContent = '';
 
     var icon = Climacon(weatherData[0].weather, '15em')
-    icon.style.marginBottom = '-35px'
+    icon.style.marginBottom = '-10px'
     day.appendChild(icon)
     
     var temp = document.createElement('div')
@@ -99,14 +99,8 @@ function updateWeather() {
   }
     
   window.getLocal('weatherExpires', function(weatherExpires) {
-    if (!weatherExpires) {
-      console.log('No known expiration for weather data, assuming expired')
-      weatherExpires = new Date()
-      weatherExpires.setMinutes(weatherExpires.getMinutes() - 1)
-    }
-
     var now = new Date()
-    if (now < weatherExpires) return // Weather not expired, nothing to do.
+    if (weatherExpires && now < weatherExpires) return // Weather not expired, nothing to do.
     
     // We've decided we're going update the weather data -- prevent any other updates for 5 minutes,
     // to avoid making unnecessary network calls. We'll give it the full expiration once the call succeeds.

@@ -170,7 +170,33 @@ function mainLoop() {
 }
 
 function showSettings() {
-  // ...
+  // Fade out the main container, and prepare the settings container for display
+  document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards reverse'
+  document.getElementById('settings').style.animation = null
+  document.getElementById('settings-button').onclick = null
+
+  setTimeout(function() {
+    // Hide the main container, and fade in the settings container
+    document.getElementById('main').style.display = 'none'
+    document.getElementById('settings').style.display = null
+    document.getElementById('settings').style.animation = 'fadeIn 500ms 1 forwards'
+    document.getElementById('settings-button').onclick = hideSettings
+  }, 500)
+}
+
+function hideSettings() {
+  // Fade out the settings container, and prepare the settings container for display
+  document.getElementById('settings').style.animation = 'fadeIn 500ms 1 forwards reverse'
+  document.getElementById('main').style.animation = null
+  document.getElementById('settings-button').onclick = null
+
+  setTimeout(function() {
+    // Hide the settings container, and fade in the main container
+    document.getElementById('settings').style.display = 'none'
+    document.getElementById('main').style.display = 'flex'
+    document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards'
+    document.getElementById('settings-button').onclick = showSettings
+  }, 500)
 }
 
 window.onload = function() {
@@ -180,7 +206,7 @@ window.onload = function() {
   if (document.location.search == '?settings') {
     showSettings()
   }
-  document.getElementById('settings').onclick = showSettings
+  document.getElementById('settings-button').onclick = showSettings
 
   window.getRemote('units', function(cachedUnits) {
     if (units != null) units = cachedUnits

@@ -3,7 +3,7 @@
 // - Themes
 // - Seconds
 // - Analog clock + hide forecast (if window gets too small)
-// - Expire user location somehow?
+// - Expire user location somehow? Or give users the ability to reset them
 // - Load user location from chrome?
 // - Allow users to pick a location?
 // - Show city name?
@@ -169,9 +169,18 @@ function mainLoop() {
   setTimeout(mainLoop, 100)
 }
 
+function showSettings() {
+  // ...
+}
+
 window.onload = function() {
   document.body.style.background = '#222222'
   document.body.style.color = 'rgba(0, 0, 0, 0.6)'
+
+  if (document.location.search == '?settings') {
+    showSettings()
+  }
+  document.getElementById('settings').onclick = showSettings
 
   window.getRemote('units', function(cachedUnits) {
     if (units != null) units = cachedUnits

@@ -1,5 +1,4 @@
 // TODOs:
-// - Localization (for day names)
 // - Other weather APIs (to support non-US locations)
 // - Themes
 // - Seconds
@@ -10,8 +9,8 @@
 // - Show city name?
 // - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
 
-var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+var days = chrome.i18n.getMessage('days_of_week').split(',')
+var months = chrome.i18n.getMessage('months_of_year').split(',')
 
 var units = 'F'
 var normalizedUnits = function(degreesF) {
@@ -22,13 +21,13 @@ var normalizedUnits = function(degreesF) {
     return Math.floor(deg / 9)
   }
 }
-  
+
 function drawWeatherData(weatherData) {
   document.getElementById('forecast-loading').style.display = 'none'
   // This needs to be a flexbox so that the forecast elements float side-by-side.
   document.getElementById('forecast').style.display = 'flex'
   document.title = normalizedUnits(weatherData[0].temp) + '\u00B0 | Presently'
-  
+
   { // i == 0
     var day = document.getElementById('forecast-0')
     day.textContent = '';
@@ -36,25 +35,25 @@ function drawWeatherData(weatherData) {
     var icon = Climacon(weatherData[0].weather, '15em')
     icon.style.marginBottom = '-10px'
     day.appendChild(icon)
-    
+
     var temp = document.createElement('div')
     temp.style.width = '90px'
     temp.style.fontSize = '4em'
     day.appendChild(temp)
-    
+
     var t = document.createElement('div')
     t.innerText = normalizedUnits(weatherData[0].temp)
     t.style.textAlign = 'center'
     t.style.fontFamily = 'OpenSans-Bold'
     t.style.fontSize = '1.5em'
     temp.appendChild(t)
-    
+
     var name = document.createElement('span')
-    name.innerText = 'Now'
+    name.innerText = chrome.i18n.getMessage('current_day_name')
     name.style.fontSize = '4em'
     day.appendChild(name)
   }
-  
+
   for (var i=1; i<weatherData.length && i < 5; i++) {
     var day = document.getElementById('forecast-' + i)
     day.textContent = '';
@@ -64,7 +63,7 @@ function drawWeatherData(weatherData) {
     var temp = document.createElement('div')
     temp.style.width = '90px'
     day.appendChild(temp)
-    
+
     var h = document.createElement('div')
     h.innerText = normalizedUnits(weatherData[i].high)
     h.style.float = 'left'
@@ -81,7 +80,7 @@ function drawWeatherData(weatherData) {
     l.style.fontSize = '2.5em'
     l.style.opacity = '0.5'
     temp.appendChild(l)
-    
+
     var name = document.createElement('span')
     name.innerText = days[((new Date()).getDay() + i) % 7]
     name.style.fontSize = '2em'
@@ -97,17 +96,17 @@ function updateWeather() {
       if (weatherData) drawWeatherData(weatherData)
     })
   }
-    
+
   window.getLocal('weatherExpires', function(weatherExpires) {
     var now = new Date()
     if (weatherExpires && now < weatherExpires) return // Weather not expired, nothing to do.
-    
+
     // We've decided we're going update the weather data -- prevent any other updates for 5 minutes,
     // to avoid making unnecessary network calls. We'll give it the full expiration once the call succeeds.
     weatherExpires = new Date(now)
     weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
     window.setLocal('weatherExpires', weatherExpires)
-    
+
     console.log('Weather data is expired, fetching new weather data...')
     window.USApi.getWeather(function(weatherData) {
       if (!weatherData) return // Potentially we can fail to fetch data, in which case we should not do anything.
@@ -141,7 +140,7 @@ function updateTime() {
   $('#minute').css('transform', 'rotate(' + minute + 'deg)');
   $('#second').css('transform', 'rotate(' + second + 'deg)');
   */
-  
+
   // Convert 0-23 to 1-12
   var hours = (now.getHours() + 11) % 12 + 1
   var timeString = hours.toString().padStart(2, '0') + ' ' + now.getMinutes().toString().padStart(2, '0')
@@ -156,7 +155,7 @@ document.addEventListener('keydown', function(event) {
   if (event.key == 't' || event.key == 'T') {
     units = (units == 'F' ? 'C' : 'F')
     window.setRemote('units', units)
-    
+
     console.log('Redrawing weather data because the units have changed')
     displayNeedsUpdate = true
     updateWeather()
@@ -173,7 +172,7 @@ function mainLoop() {
 window.onload = function() {
   document.body.style.background = '#222222'
   document.body.style.color = 'rgba(0, 0, 0, 0.6)'
-  
+
   window.getRemote('units', function(cachedUnits) {
     if (units != null) units = cachedUnits
     window.mainLoop()

@@ -1,15 +1,24 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/style.css" id="stylesheet">
-    <script type="text/javascript" src="/utils.js"></script>
-    <script type="text/javascript" src="/us_api.js"></script>
-    <script type="text/javascript" src="/presently.js"></script>
+    <link rel="stylesheet" type="text/css" href="./resources/style.css" id="stylesheet">
+    <script type="text/javascript" src="./utils.js"></script>
+    <script type="text/javascript" src="./us_api.js"></script>
+    <script type="text/javascript" src="./presently.js"></script>
     <title>--&deg; | Presently</title>
   </head>
   <!-- This flexbox keeps the overall layout centered on the page -->
   <body class="noselect" style="display: flex; justify-content: center">
+    <div style="position: absolute; top: 15px; left: 15px">
+      <img id="settings-button" src="./resources/settings.png" style="height: 48px; cursor: pointer; opacity: 30%"></img>
+    </div>
+    <div id="settings" style="display: none">
+      <div style="width: 60%"> options </div>
+      <div style="width: 40%; display: flex; justify-content: center; align-items: center">
+        <span style="font-size: 160px; font-family: Climacons; animation: spin 60s linear infinite">I</span>
+      </div>
+    </div>
     <!-- This div keeps the rows in order. Somehow. -->
-    <div style="display: flex; flex-direction: column; justify-content: center; align-items: stretch">
+    <div id="main" style="display: flex; flex-direction: column; justify-content: center; align-items: stretch">
       <span id="time" style="text-align: center; font-size: 192px; font-family: OpenSans-Light; margin-top: -54px; animation: fadeInDown 1s 1 both"></span>
       <span id="date" style="text-align: center; font-size: 32px; font-family: OpenSans-Regular; margin-bottom: 20px; color: rgba(0, 0, 0, 0.3); animation: fadeIn 400ms ease-in-out 200ms 1 both"></span>
       <!-- For some reason, this div needs a display: flex in order for the loading icon to spin. -->

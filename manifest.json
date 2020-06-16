@@ -1,8 +1,10 @@
 {
   "name": "Presently",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "manifest_version": 2,
   "permissions": ["storage"],
   "chrome_url_overrides": {"newtab": "presently.html"},
-  "description": "Replaces the new tab page with the current time and weather."
+  "options_page": "presently.html?settings",
+  "default_locale": "en",
+  "description": "Replaces the new tab page with the time, weather, and forecast."
 }

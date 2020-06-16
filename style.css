@@ -6,6 +6,7 @@ https://github.com/christiannaths/Climacons-Font
 */
 @font-face {
   font-family: 'Climacons';
+  font-display: block;
   src: url('chrome-extension://__MSG_@@extension_id__/Climacons.ttf');
   /*src: url('https://github.com/christiannaths/Climacons-Font/raw/c24e8093c2d3d982a6c7b1bedb5eebc5ebf7d65f/Climacons.ttf')*/
 }
@@ -24,14 +25,17 @@ https://github.com/google/fonts/blob/master/apache/opensans/LICENSE.txt
 */
 @font-face {
   font-family: 'OpenSans-Light';
+  font-display: block;
   src: url('chrome-extension://__MSG_@@extension_id__/OpenSans-Light.ttf');
 }
 @font-face {
   font-family: 'OpenSans-Regular';
+  font-display: block;
   src: url('chrome-extension://__MSG_@@extension_id__/OpenSans-Regular.ttf');
 }
 @font-face {
   font-family: 'OpenSans-Bold';
+  font-display: block;
   src: url('chrome-extension://__MSG_@@extension_id__/OpenSans-Bold.ttf');
 }
 /* https://stackoverflow.com/a/4407335 */

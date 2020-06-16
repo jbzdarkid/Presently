@@ -87,16 +87,33 @@ window.getLocal = function(key, callback) {
     callback(inMemory[key])
     return
   }
-  chrome.storage.local.get([key], function(result) {
-    // result will be {} if nothing is found
-    inMemory[key] = result[key]
-    callback(result[key])
-  })
+  if (chrome) internalGet(chrome.storage.local, key, callback)
+  else if (browser) internalGet(browser.storage.local, key, callback)
+  else { // We're not being loaded from a browser add-on, so use localStorage.
+    var value = window.localStorage.getItem(key)
+    inMemory[key] = value
+    callback(value)
+  }
 }
 
 window.getRemote = function(key, callback) {
-  chrome.storage.sync.get([key], function(result) {
+  if (inMemory[key]) {
+    callback(inMemory[key])
+    return
+  }
+  if (chrome) internalGet(chrome.storage.sync, key, callback)
+  else if (browser) internalGet(browser.storage.sync, key, callback)
+  else { // We're not being loaded from a browser add-on, so we can't sync. Use localStorage.
+    var value = window.localStorage.getItem(key)
+    inMemory[key] = value
+    callback(value)
+  }
+}
+
+function internalGet(storage, key, callback) {
+  storage.get([key], function(result) {
     // result will be {} if nothing is found
+    inMemory[key] = result[key]
     callback(result[key])
   })
 }
@@ -104,9 +121,21 @@ window.getRemote = function(key, callback) {
 window.setLocal = function(key, value) {
   inMemory[key] = value
   // This odd syntax is how we construct dictionaries with variable keys.
-  chrome.storage.local.set({[key]: value}, null)
+  if (chrome) chrome.storage.local.set({[key]: value}, null)
+  else if (browser) browser.storage.local.set({[key]: value}, null)
+  else chrome.storage.local.set({[key]: value}, null)
 }
 
 window.setRemote = function(key, value) {
-  chrome.storage.sync.set({[key]: value}, null)
+  inMemory[key] = value
+  // This odd syntax is how we construct dictionaries with variable keys.
+  if (chrome) chrome.storage.sync.set({[key]: value}, null)
+  else if (browser) browser.storage.sync.set({[key]: value}, null)
+  else window.localStorage.setItem(key, value)
+}
+
+window.clearStorage = function() {
+  if (chrome) chrome.storage.local.clear()
+  else if (browser) browser.storage.local.clear()
+  else window.localStorage.clear()
 }

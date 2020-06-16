@@ -22,7 +22,7 @@ var normalizedUnits = function(degreesF) {
     return Math.floor(deg / 9)
   }
 }
-  
+
 function drawWeatherData(weatherData) {
   document.getElementById('forecast-loading').style.display = 'none'
   // This needs to be a flexbox so that the forecast elements float side-by-side.

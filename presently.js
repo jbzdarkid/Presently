@@ -9,8 +9,15 @@
 // - Show city name?
 // - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
 
-var days = chrome.i18n.getMessage('days_of_week').split(',')
-var months = chrome.i18n.getMessage('months_of_year').split(',')
+if (chrome) {
+  var DAYS = chrome.i18n.getMessage('days_of_week').split(', ')
+  var MONTHS = chrome.i18n.getMessage('months_of_year').split(', ')
+  var CURRENT_DAY_NAME = chrome.i18n.getMessage('current_day_name')
+} else {
+  var DAYS = 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday'.split(', ')
+  var MONTHS = 'January, February, March, April, May, June, July, August, September, October, November, December'.split(', ')
+  var CURRENT_DAY_NAME = 'Now'
+}
 
 var units = 'F'
 var normalizedUnits = function(degreesF) {
@@ -49,7 +56,7 @@ function drawWeatherData(weatherData) {
     temp.appendChild(t)
 
     var name = document.createElement('span')
-    name.innerText = chrome.i18n.getMessage('current_day_name')
+    name.innerText = CURRENT_DAY_NAME
     name.style.fontSize = '4em'
     day.appendChild(name)
   }
@@ -82,7 +89,7 @@ function drawWeatherData(weatherData) {
     temp.appendChild(l)
 
     var name = document.createElement('span')
-    name.innerText = days[((new Date()).getDay() + i) % 7]
+    name.innerText = DAYS[((new Date()).getDay() + i) % 7]
     name.style.fontSize = '2em'
     day.appendChild(name)
   }
@@ -146,7 +153,7 @@ function updateTime() {
   var timeString = hours.toString().padStart(2, '0') + ' ' + now.getMinutes().toString().padStart(2, '0')
   document.getElementById('time').innerText = timeString
 
-  var dateString = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate()
+  var dateString = DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate()
   document.getElementById('date').innerText = dateString
 }
 

@@ -1,11 +1,11 @@
 {
   "days_of_week": {
     "description": "List of weekday names, separated by commas.",
-    "message": "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"
+    "message": "Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday"
   },
   "months_of_year": {
     "description": "List of month names, separated by commans.",
-    "message": "January,February,March,April,May,June,July,August,September,October,November,December"
+    "message": "January, February, March, April, May, June, July, August, September, October, November, December"
   },
   "current_day_name": {
     "description": "Name to use for the current temperature.",

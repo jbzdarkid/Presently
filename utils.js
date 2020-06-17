@@ -80,62 +80,47 @@ window.Climacon = function(weather, fontSize = '144px') {
   return icon
 }
 
+storage = null
+if (typeof(chrome) !== 'undefined' && chrome.storage) {
+  storage = chrome.storage
+} else if (typeof(browser) !== 'undefined' && browser.storage) {
+  storage = browser.storage
+} else {
+  storage = {
+    'local': {
+      'get': function(key, callback) {callback({[key]: window.localStorage.getItem(key)})},
+      'set': function(key, value) {window.localStorage.setItem(key, value)},
+      'clear': function() {window.localStorage.clear()},
+    }
+  }
+  storage.sync = storage.local // No such thing as 'remote storage' if we aren't loaded as an extension.
+}
+
+window.getLocal  = function(key, callback) {internalGet(storage.local,  key, callback)}
+window.getRemote = function(key, callback) {internalGet(storage.sync, key, callback)}
+window.setLocal  = function(key, value)    {internalSet(storage.local,  key, value)}
+window.setRemote = function(key, value)    {internalSet(storage.sync, key, value)}
+
 // For perf reasons -- I call this quite often.
 var inMemory = {}
-window.getLocal = function(key, callback) {
+function internalGet(store, key, callback) {
   if (inMemory[key]) {
     callback(inMemory[key])
     return
   }
-  if (chrome) internalGet(chrome.storage.local, key, callback)
-  else if (browser) internalGet(browser.storage.local, key, callback)
-  else { // We're not being loaded from a browser add-on, so use localStorage.
-    var value = window.localStorage.getItem(key)
-    inMemory[key] = value
-    callback(value)
-  }
-}
-
-window.getRemote = function(key, callback) {
-  if (inMemory[key]) {
-    callback(inMemory[key])
-    return
-  }
-  if (chrome) internalGet(chrome.storage.sync, key, callback)
-  else if (browser) internalGet(browser.storage.sync, key, callback)
-  else { // We're not being loaded from a browser add-on, so we can't sync. Use localStorage.
-    var value = window.localStorage.getItem(key)
-    inMemory[key] = value
-    callback(value)
-  }
-}
-
-function internalGet(storage, key, callback) {
-  storage.get([key], function(result) {
-    // result will be {} if nothing is found
+  store.get([key], function(result) {
+    // result will be {} if nothing is found, or result[key] will be null (for localstorage)
     inMemory[key] = result[key]
     callback(result[key])
   })
 }
 
-window.setLocal = function(key, value) {
+function internalSet(store, key, value) {
   inMemory[key] = value
   // This odd syntax is how we construct dictionaries with variable keys.
-  if (chrome) chrome.storage.local.set({[key]: value}, null)
-  else if (browser) browser.storage.local.set({[key]: value}, null)
-  else chrome.storage.local.set({[key]: value}, null)
-}
-
-window.setRemote = function(key, value) {
-  inMemory[key] = value
-  // This odd syntax is how we construct dictionaries with variable keys.
-  if (chrome) chrome.storage.sync.set({[key]: value}, null)
-  else if (browser) browser.storage.sync.set({[key]: value}, null)
-  else window.localStorage.setItem(key, value)
+  store.set({[key]: value})
 }
 
 window.clearStorage = function() {
-  if (chrome) chrome.storage.local.clear()
-  else if (browser) browser.storage.local.clear()
-  else window.localStorage.clear()
+  storage.local.clear()
 }

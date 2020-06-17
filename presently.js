@@ -9,7 +9,7 @@
 // - Show city name?
 // - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
 
-if (chrome) {
+if (chrome && chrome.i18n) {
   var DAYS = chrome.i18n.getMessage('days_of_week').split(', ')
   var MONTHS = chrome.i18n.getMessage('months_of_year').split(', ')
   var CURRENT_DAY_NAME = chrome.i18n.getMessage('current_day_name')

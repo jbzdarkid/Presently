@@ -80,33 +80,47 @@ window.Climacon = function(weather, fontSize = '144px') {
   return icon
 }
 
+storage = null
+if (typeof(chrome) !== 'undefined' && chrome.storage) {
+  storage = chrome.storage
+} else if (typeof(browser) !== 'undefined' && browser.storage) {
+  storage = browser.storage
+} else {
+  storage = {
+    'local': {
+      'get': function(key, callback) {callback({[key]: window.localStorage.getItem(key)})},
+      'set': function(key, value) {window.localStorage.setItem(key, value)},
+      'clear': function() {window.localStorage.clear()},
+    }
+  }
+  storage.sync = storage.local // No such thing as 'remote storage' if we aren't loaded as an extension.
+}
+
+window.getLocal  = function(key, callback) {internalGet(storage.local,  key, callback)}
+window.getRemote = function(key, callback) {internalGet(storage.sync, key, callback)}
+window.setLocal  = function(key, value)    {internalSet(storage.local,  key, value)}
+window.setRemote = function(key, value)    {internalSet(storage.sync, key, value)}
+
 // For perf reasons -- I call this quite often.
 var inMemory = {}
-window.getLocal = function(key, callback) {
+function internalGet(store, key, callback) {
   if (inMemory[key]) {
     callback(inMemory[key])
     return
   }
-  chrome.storage.local.get([key], function(result) {
-    // result will be {} if nothing is found
+  store.get([key], function(result) {
+    // result will be {} if nothing is found, or result[key] will be null (for localstorage)
     inMemory[key] = result[key]
     callback(result[key])
   })
 }
 
-window.getRemote = function(key, callback) {
-  chrome.storage.sync.get([key], function(result) {
-    // result will be {} if nothing is found
-    callback(result[key])
-  })
-}
-
-window.setLocal = function(key, value) {
+function internalSet(store, key, value) {
   inMemory[key] = value
   // This odd syntax is how we construct dictionaries with variable keys.
-  chrome.storage.local.set({[key]: value}, null)
+  store.set({[key]: value})
 }
 
-window.setRemote = function(key, value) {
-  chrome.storage.sync.set({[key]: value}, null)
+window.clearStorage = function() {
+  storage.local.clear()
 }

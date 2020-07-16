@@ -24,7 +24,7 @@ var iconWidths = { // Computed at 144px
   '+': 126, ',': 108, '-': 99, '.': 126, '/': 108, '0': 99, '1': 126, '2': 108, '3': 108, '4': 126,
   '5': 108, '6': 99, '7': 126, '8': 108, '9': 99, ':': 126, ';': 108, '<': 99, '=': 126, '>': 108,
   '?': 108, '@': 126, 'A': 108, 'B': 99, 'C': 126, 'D': 126, 'E': 126, 'F': 99, 'G': 126, 'H': 108,
-  'I': 108, 'J': 108, 'K': 108, 'L': 108, 'M': 81, 'N': 54, 'O': 54, 'P': 54, 'Q': 54, 'R': 54,
+  'I': 108, 'J': 108, 'K': 108, 'L': 108, 'M': 81, 'N': 95, 'O': 54, 'P': 54, 'Q': 54, 'R': 54,
   'S': 54, 'T': 54, 'U': 54, 'V': 54, 'W': 54, 'X': 99, 'Y': 36, 'Z': 36, '[': 36, '\\': 36,
   ']': 36, '^': 36, '_': 81, '`': 81, 'a': 62.7188, 'b': 62.7188, 'c': 62.7188, 'd': 62.7188,
   'e': 62.7188, 'f': 99, 'g': 63, 'h': 99, 'i': 99, 'j': 99, 'k': 72, 'l': 40.0156, 'm': 112.016,
@@ -67,12 +67,11 @@ window.WEATHER_THUNDERSTORM = ['G', 'H']
 window.WEATHER_TORNADO      = ['X', 'X']
 window.WEATHER_FOGGY        = ['?', '?'] // Intentionally not using the 'sun peeking out' variant
 
-window.Climacon = function(weather, fontSize = '144px') {
+window.Climacon = function(weather, fontSize = '144px', daytime = true) {
   var icon = document.createElement('span')
   icon.style.fontFamily = 'Climacons'
   icon.style.fontSize = fontSize
-  var currentHour = (new Date()).getHours()
-  icon.innerText = weather[(currentHour > 6 && currentHour < 18) ? 0 : 1]
+  icon.innerText = weather[daytime ? 0 : 1]
 
   var offset = iconWidths[icon.innerText] - 99 // Width beyond the base cloud size
   // Since the 'cloud' part of the icon is always flush left, adjust accordingly

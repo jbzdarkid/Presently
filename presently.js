@@ -115,6 +115,7 @@ function updateWeather() {
     weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
     window.setLocal('weatherExpires', weatherExpires)
 
+    // TODO: This is triggering on refresh...!
     console.log('Weather data is expired, fetching new weather data...')
     window.USApi.getWeather(function(weatherData) {
       if (!weatherData) return // Potentially we can fail to fetch data, in which case we should not do anything.
@@ -177,36 +178,6 @@ function mainLoop() {
   setTimeout(mainLoop, 100)
 }
 
-function showSettings() {
-  // Fade out the main container, and prepare the settings container for display
-  document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards reverse'
-  document.getElementById('settings').style.animation = null
-  document.getElementById('settings-button').onclick = null
-
-  setTimeout(function() {
-    // Hide the main container, and fade in the settings container
-    document.getElementById('main').style.display = 'none'
-    document.getElementById('settings').style.display = null
-    document.getElementById('settings').style.animation = 'fadeIn 500ms 1 forwards'
-    document.getElementById('settings-button').onclick = hideSettings
-  }, 500)
-}
-
-function hideSettings() {
-  // Fade out the settings container, and prepare the settings container for display
-  document.getElementById('settings').style.animation = 'fadeIn 500ms 1 forwards reverse'
-  document.getElementById('main').style.animation = null
-  document.getElementById('settings-button').onclick = null
-
-  setTimeout(function() {
-    // Hide the settings container, and fade in the main container
-    document.getElementById('settings').style.display = 'none'
-    document.getElementById('main').style.display = 'flex'
-    document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards'
-    document.getElementById('settings-button').onclick = showSettings
-  }, 500)
-}
-
 window.onload = function() {
   document.body.style.background = '#222222'
   document.body.style.color = 'rgba(0, 0, 0, 0.6)'
@@ -216,8 +187,5 @@ window.onload = function() {
   }
   document.getElementById('settings-button').onclick = showSettings
 
-  window.getRemote('units', function(cachedUnits) {
-    if (units != null) units = cachedUnits
-    window.mainLoop()
-  })
+  window.mainLoop()
 }

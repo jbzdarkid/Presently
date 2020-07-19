@@ -1,10 +1,23 @@
-window.Climacon = function(weather, fontSize = '144px', daytime = true) {
+window.Climacon = function(weather, fontSize = '144px', isDaytimeAware = false) {
   var icon = document.createElement('span')
   icon.style.fontFamily = 'Climacons'
   icon.style.fontSize = fontSize
-  icon.innerText = weather[daytime ? 0 : 1]
-  // Special handling for 'clear skies' + 'nighttime' to show the moon phase
-  if (icon.innerText == 'N') icon.innerText = getMoonIcon()
+  icon.innerText = weather[0]
+  if (isDaytimeAware) {
+    window.getLocal('latitude', function(latitude) {
+      window.getLocal('longitude', function(longitude) {
+        var now = new Date()
+        var sunCalc = SunCalc.getTimes(now, latitiude, longitude)
+        if (now < sunCalc.sunrise || now > sunCalc.sunsetEnd) { // Sun has not risen yet / has set
+          if (icon.innerText == 'I') { // Special handling for 'clear skies' to show moon phase
+            icon.innerText = getMoonIcon()
+          } else {
+            icon.innerText = weather[1]
+          }
+        }
+      })
+    })
+  }
 
   var offset = iconWidths[icon.innerText] - 99 // Width beyond the base cloud size
   // Since the 'cloud' part of the icon is always flush left, adjust accordingly
@@ -58,16 +71,6 @@ var iconWidths = { // Computed at 144px
   'e': 62.7188, 'f': 99, 'g': 63, 'h': 99, 'i': 99, 'j': 99, 'k': 72, 'l': 40.0156, 'm': 112.016,
   'n': 72, 'o': 72, 'p': 72, 'q': 72, 'r': 47.9531, 's': 56.0469, 't': 40.0156, 'u': 72, 'v': 72,
   'w': 104, 'x': 72, 'y': 72, 'z': 63.9219, '{': 69.125, '|': 28.8281, '}': 69.125, '~': 77.9063,
-}
-
-function isDaytime(callback) {
-  window.getLocal('latitude', function(latitude) {
-    window.getLocal('longitude', function(longitude) {
-      var now = new Date()
-      var sunCalc = SunCalc.getTimes(now, latitiude, longitude)
-      callback(now > sunCalc.sunrise && now < sunCalc.sunset)
-    })
-  })
 }
 
 function getMoonIcon() {

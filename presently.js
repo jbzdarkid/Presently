@@ -40,7 +40,7 @@ function drawWeatherData(weatherData) {
     day.textContent = '';
 
     var currentHour = (new Date()).getHours()
-    var icon = Climacon(weatherData[0].weather, '15em', (currentHour > 6 && currentHour < 18))
+    var icon = Climacon(weatherData[0].weather, '15em', true /* isDaytimeAware */)
     icon.style.marginBottom = '-10px'
     day.appendChild(icon)
 

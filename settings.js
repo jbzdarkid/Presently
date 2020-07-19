@@ -43,17 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
   addSetting("Temperature", "Farenheit", "Celsius")
   addSetting("Hours", "12", "24")
   addSetting("Seconds", "On", "Off")
-
-  window.getRemote('units', function(cachedUnits) {
-    if (units != null) units = cachedUnits
-    displayNeedsUpdate = true
-    updateWeather()
-  })
 })
 
-var units = 'F'
 var normalizedUnits = function(degreesF) {
-  if (units == 'F') {
+  // @Hack
+  if (document.getElementById('Temperature-Farenheit').checked) {
     return degreesF
   } else {
     var deg = (parseInt(degreesF) - 32) * 5
@@ -112,5 +106,8 @@ function addSetting(titleText, option1Text, option2Text) {
     } else {
       option2button.checked = true
     }
+
+    displayNeedsUpdate = true
+    updateWeather()
   })
 }

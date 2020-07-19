@@ -142,18 +142,6 @@ function updateTime() {
   document.getElementById('date').innerText = dateString
 }
 
-// Toggle units with t
-document.addEventListener('keydown', function(event) {
-  if (event.key == 't' || event.key == 'T') {
-    units = (units == 'F' ? 'C' : 'F')
-    window.setRemote('units', units)
-
-    console.log('Redrawing weather data because the units have changed')
-    displayNeedsUpdate = true
-    updateWeather()
-  }
-})
-
 function mainLoop() {
   updateTime()
   updateWeather()

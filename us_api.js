@@ -122,6 +122,8 @@ USApi.getWeather = function(callback) {
     }
     
     getLatitudeAndLongitude(function(latitude, longitude) {
+      window.setLocal('latitude', latitude)
+      window.setLocal('longitude', longitude)
       httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(response) {
         this.hourlyForecastUrl = response.properties.forecastHourly
         this.forecastUrl = response.properties.forecast

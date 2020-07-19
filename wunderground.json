@@ -1,0 +1,57 @@
+﻿HTTP/1.1 200 OK
+Cache-Control: no-cache, no-store
+Pragma: no-cache
+Content-Type: application/json; charset=utf-8
+Expires: -1
+Server: Microsoft-IIS/8.5
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+client-request-id: 7d5ece1f-0f5f-47b2-b1ae-f89164cdf97b
+x-ms-request-id: 58b9b9bf-c2e5-460f-a057-f7ea352973b9
+P3P: CP="DSP CUR OTPi IND OTRi ONL FIN"
+Set-Cookie: stsservicecookie=estsppe; path=/
+X-Powered-By: ASP.NET
+Date: Sat, 07 Jan 2017 20:26:45 GMT
+Content-Length: 1574
+
+{
+    "current_observation":{
+        "forecast_url": "http://weatherUrl",
+        "weather": "chancerain",
+        "temp_f": "1",
+        "icon_url": "http://iconUzzrl/chancerain.gif"
+    }, "sun_phase": {
+        "sunrise": {"hour": 9, "minute": 20},
+        "sunset": {"hour": 19, "minute": 20}
+    }, "forecast": {
+        "simpleforecast": {
+            "forecastday": [
+                {
+                    "date": {"weekday": "monday"},
+                    "conditions": "chancetstorms",
+                    "high": {"fahrenheit": "2"},
+                    "low": {"fahrenheit": "3"},
+                    "icon_url": "http://iconUrl2/chancetstorms.gif"
+                }, {
+                    "date": {"weekday": "tuesday"},
+                    "conditions": "flurries",
+                    "high": {"fahrenheit": "4"},
+                    "low": {"fahrenheit": "5"},
+                    "icon_url": "http://iconUrl3/flurries.gif"
+                }, {
+                    "date": {"weekday": "wednesday"},
+                    "conditions": "sunny",
+                    "high": {"fahrenheit": "6"},
+                    "low": {"fahrenheit": "7"},
+                    "icon_url": "http://iconUrl4/sunny.gif"
+                }, {
+                    "date": {"weekday": "thursday"},
+                    "conditions": "fog",
+                    "high": {"fahrenheit": "8"},
+                    "low": {"fahrenheit": "9"},
+                    "icon_url": "http://iconUrl5/fog.gif"
+                }
+            ]
+        }
+    }
+}

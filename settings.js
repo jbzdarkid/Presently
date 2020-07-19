@@ -43,22 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
   for (var input of document.getElementsByTagName('input')) {
     input.onchange = settingsChanged
   }
-
-  document.getElementById('locationFromBrowser').onclick = function() {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      document.getElementById('Latitude').value = position.coords.latitude
-      document.getElementById('Longitude').value = position.coords.longitude
-      settingsChanged()
-    })
-  }
-
-  document.getElementById('locationFromIP').onclick = function() {
-    httpGet('https://ipapi.co/json', function(response) {
-      document.getElementById('Latitude').value = response.latitude
-      document.getElementById('Longitude').value = response.longitude
-      settingsChanged()
-    })
-  }
+  
+  document.getElementById('refreshLocation').onclick = refreshLocation
 
   window.getRemote('settings-Temperature', function(value) {
     if (value == undefined) value = 'Temperature-Farenheit'
@@ -90,12 +76,30 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 })
 
+function refreshLocation() {
+  navigator.geolocation.getCurrentPosition(function(position) {
+    console.log('Determined lat/long from browser')
+    document.getElementById('Latitude').value = position.coords.latitude
+    document.getElementById('Longitude').value = position.coords.longitude
+    settingsChanged()
+  }, function() {
+    httpGet('https://ipapi.co/json', function(response) {
+      console.log('Determined lat/long from ip address')
+      document.getElementById('Latitude').value = response.latitude
+      document.getElementById('Longitude').value = response.longitude
+      settingsChanged()
+    })
+  })
+}
+
 function settingsChanged() {
   if (document.getElementById('Temperature-Farenheit').checked) {
     window.setRemote('settings-Temperature', 'Temperature-Farenheit')
   } else {
     window.setRemote('settings-Temperature', 'Temperature-Celsius')
   }
+  displayNeedsUpdate = true
+  updateWeather()
 
   if (document.getElementById('Hours-12').checked) {
     window.setRemote('settings-Hours', 'Hours-12')
@@ -111,14 +115,4 @@ function settingsChanged() {
 
   window.setLocal('latitude', document.getElementById('Latitude').value)
   window.setLocal('longitude', document.getElementById('Longitude').value)
-}
-
-var normalizedUnits = function(degreesF) {
-  // @Hack? Hack.
-  if (document.getElementById('Temperature-Farenheit').checked) {
-    return degreesF
-  } else {
-    var deg = (parseInt(degreesF) - 32) * 5
-    return Math.floor(deg / 9)
-  }
 }

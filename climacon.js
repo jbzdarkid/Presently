@@ -6,9 +6,10 @@ window.Climacon = function(weather, fontSize = '144px', isDaytimeAware = false) 
   if (isDaytimeAware) {
     window.getLocal('latitude', function(latitude) {
       window.getLocal('longitude', function(longitude) {
+        if (latitude == undefined || longitude == undefined) return
         var now = new Date()
-        var sunCalc = SunCalc.getTimes(now, latitiude, longitude)
-        if (now < sunCalc.sunrise || now > sunCalc.sunsetEnd) { // Sun has not risen yet / has set
+        var sunCalc = SunCalc.getTimes(now, latitude, longitude)
+        if (now < sunCalc.sunrise || now > sunCalc.sunset) { // Sun has not risen yet / has set
           if (icon.innerText == 'I') { // Special handling for 'clear skies' to show moon phase
             icon.innerText = getMoonIcon()
           } else {

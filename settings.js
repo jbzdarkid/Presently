@@ -12,6 +12,7 @@ function showSettings() {
   }, 500)
 
   setTimeout(function() {
+    // Reset the animation so that it can play again next time
     document.getElementById('settings').style.animation = null
     document.getElementById('settings-button').onclick = hideSettings
   }, 1000)
@@ -31,6 +32,7 @@ function hideSettings() {
   }, 500)
 
   setTimeout(function() {
+    // Reset the animation so that it can play again next time
     document.getElementById('main').style.animation = null
     document.getElementById('settings-button').onclick = showSettings
   }, 1000)

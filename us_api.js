@@ -4,25 +4,25 @@ var predictionToWeather = {
   'few': WEATHER_CLOUDY,
   'sct': WEATHER_CLOUDY,
   'bkn': WEATHER_CLOUDY,
-  
+
   'wind_bkn': WEATHER_OVERCAST,
   'wind_ovc': WEATHER_OVERCAST,
   'ovc':      WEATHER_OVERCAST,
-  
+
   'wind_skc': WEATHER_WINDY,
   'wind_few': WEATHER_WINDY,
   'wind_sct': WEATHER_WINDY,
-  
+
   'fzra':            WEATHER_RAINY,
   'rain':            WEATHER_RAINY,
   'rain_fzra':       WEATHER_RAINY,
   'rain_showers':    WEATHER_RAINY,
   'rain_showers_hi': WEATHER_RAINY,
-  
+
   'snow':      WEATHER_SNOWY,
   'rain_snow': WEATHER_SNOWY,
   'snow_fzra': WEATHER_SNOWY,
-  
+
   'sleet':      WEATHER_SLEET,
   'rain_sleet': WEATHER_SLEET,
   'snow_sleet': WEATHER_SLEET,
@@ -46,7 +46,7 @@ function getWeatherFromIcon(icon) {
   // https://api.weather.gov/icons/land/night/bkn?size=medium
   // They can also have two forecasts, and look like this:
   // https://api.weather.gov/icons/land/night/bkn,skc?size=medium
-  
+
   var prediction = icon.split('/')[6].split(',')[0].split('?')[0]
   return predictionToWeather[prediction]
 }
@@ -82,6 +82,7 @@ window.USApi = {}
   }
 ]
 */
+
 USApi.getWeather = function(callback) {
   // Try to load URLs from memory
   if (this.hourlyForecastUrl && this.forecastUrl) {
@@ -90,40 +91,9 @@ USApi.getWeather = function(callback) {
     return
   }
 
-  // Else, fall back to local storage
-  window.getLocal('urls', function(urls) {
-    if (urls) {
-      var parts = urls.split('|')
-      this.hourlyForecastUrl = parts[0]
-      this.forecastUrl = parts[1]
-      console.log('Loaded URLs from chrome storage')
-      getWeatherInternal(callback)
-      return
-    }
-
-    // Else local storage is empty, look up URLs based on user location
-    function getLatitudeAndLongitude(callback) {
-      if (false /*navigator.geolocation*/) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          // User accepted, use provided coordinates
-          callback(position.coords.latitude, position.coords.longitude)
-        }, function(error) {
-          // User declined, or some other error -- use IP address
-          httpGet('https://ipapi.co/json', function(response) {
-            callback(response.latitude, response.longitude)
-          })
-        })
-      } else {
-        // API not supported, use IP address
-        httpGet('https://ipapi.co/json', function(response) {
-          callback(response.latitude, response.longitude)
-        })
-      }
-    }
-    
-    getLatitudeAndLongitude(function(latitude, longitude) {
-      window.setLocal('latitude', latitude)
-      window.setLocal('longitude', longitude)
+  window.getLocal('latitude', function(latitude) {
+    window.getLocal('longitude', function(longitude) {
+      if (latitude == undefined || longitude == undefined) return
       httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(response) {
         this.hourlyForecastUrl = response.properties.forecastHourly
         this.forecastUrl = response.properties.forecast
@@ -155,7 +125,7 @@ function getWeatherInternal(callback) {
       // This ensures that we will always have a high and a low for the given period,
       // and it avoids duplicating info for the current day.
       var startDate = new Date(response.properties.periods[i].startTime)
-      if (startDate.getHours() != 6) continue 
+      if (startDate.getHours() != 6) continue
 
       weatherData[day]['high'] = response.properties.periods[i].temperature
       weatherData[day]['low'] = response.properties.periods[i+1].temperature

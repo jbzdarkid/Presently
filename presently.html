@@ -15,9 +15,45 @@
       <img id="settings-button" src="./resources/settings.png" style="height: 48px; cursor: pointer; opacity: 30%"></img>
     </div>
     <div id="settings" style="display: none; width: 100%">
-      <div id="settings-list" style="width: 60%; display: flex; justify-content: space-evenly; align-items: center; flex-direction: column">
+      <div id="settings-list" style="width: 50%; display: flex; justify-content: space-evenly; align-items: center; flex-direction: column; border-right: 5px solid black">
+        <div>
+          <label style="font-family: OpenSans-Bold; font-size: 32px">Temperature</label>
+          <br><br>
+          <input name="Temperature" type="radio" id="Temperature-Farenheit">
+          <label style="font-family: OpenSans-Light; font-size: 20px">Farenheit</label>
+          <input name="Temperature" type="radio" id="Temperature-Celsius">
+          <label style="font-family: OpenSans-Light; font-size: 20px">Celsius</label>
+        </div><div>
+          <label style="font-family: OpenSans-Bold; font-size: 32px">Hours</label>
+          <br><br>
+          <input name="Hours" type="radio" id="Hours-12">
+          <label style="font-family: OpenSans-Light; font-size: 20px">12</label>
+          <input name="Hours" type="radio" id="Hours-24">
+          <label style="font-family: OpenSans-Light; font-size: 20px">24</label>
+        </div><div>
+          <label style="font-family: OpenSans-Bold; font-size: 32px">Seconds</label>
+          <br><br>
+          <input name="Seconds" type="radio" id="Seconds-On">
+          <label style="font-family: OpenSans-Light; font-size: 20px">On</label>
+          <input name="Seconds" type="radio" id="Seconds-Off">
+          <label style="font-family: OpenSans-Light; font-size: 20px">Off</label>
+        </div><div>
+          <label style="font-family: OpenSans-Bold; font-size: 32px">Location</label>
+          <br><br>
+          <label style="font-family: OpenSans-Light; font-size: 20px">Latitude</label>
+          <input type="text" id="Latitude">
+          <br>
+          <label style="font-family: OpenSans-Light; font-size: 20px">Longitude</label>
+          <input type="text" id="Longitude">
+          <br><br>
+          City name?
+          Sunrise/sunset?
+          <br><br>
+          <button id="locationFromBrowser">Get latitude and longitude from browser</button>
+          <button id="locationFromIP">Get latitude and longitude from IP address</button>
+        </div>
       </div>
-      <div style="width: 40%; display: flex; justify-content: center; align-items: center">
+      <div style="width: 50%; display: flex; justify-content: center; align-items: center">
         <span style="font-size: 160px; font-family: Climacons; animation: spin 60s linear infinite">I</span>
       </div>
     </div>

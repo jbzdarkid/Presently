@@ -30,7 +30,7 @@ function drawWeatherData(weatherData) {
 
   { // i == 0
     var day = document.getElementById('forecast-0')
-    day.textContent = '';
+    day.textContent = ''
 
     var currentHour = (new Date()).getHours()
     var icon = Climacon(weatherData[0].weather, '15em', true /* isDaytimeAware */)
@@ -57,7 +57,7 @@ function drawWeatherData(weatherData) {
 
   for (var i=1; i<weatherData.length && i < 5; i++) {
     var day = document.getElementById('forecast-' + i)
-    day.textContent = '';
+    day.textContent = ''
 
     day.appendChild(Climacon(weatherData[i].weather, '8em'))
 
@@ -109,10 +109,10 @@ window.updateWeather = function() {
     weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
     window.setLocal('weatherExpires', weatherExpires.getTime())
 
-    // TODO: This is triggering on refresh...!
     console.log('Weather data is expired, fetching new weather data...')
     window.USApi.getWeather(function(weatherData) {
-      if (!weatherData) return // Potentially we can fail to fetch data, in which case we should not do anything.
+      // Potentially we can fail to fetch data, in which case we should not do anything.
+      if (!weatherData) return
 
       // Clear minutes, seconds, and milliseconds
       // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
@@ -144,12 +144,7 @@ function updateTime() {
   $('#second').css('transform', 'rotate(' + second + 'deg)');
   */
 
-  var hours = now.getHours()
-  if (document.getElementById('Hours-12').checked) {
-    // Convert 0-23 to 1-12
-    hours = (hours + 11) % 12 + 1
-  }
-  var timeString = hours.toString().padStart(2, '0') + ' ' + now.getMinutes().toString().padStart(2, '0')
+  var timeString = window.timeToString(now)
   if (document.getElementById('Seconds-On').checked) {
     timeString += ' ' + now.getSeconds().toString().padStart(2, '0')
   }
@@ -157,6 +152,15 @@ function updateTime() {
 
   var dateString = DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate()
   document.getElementById('date').innerText = dateString
+
+  window.getLocal('latitude', function(latitude) {
+    window.getLocal('longitude', function(longitude) {
+      if (latitude == undefined || longitude == undefined) return
+      var sunCalc = SunCalc.getTimes(new Date(), latitude, longitude)
+      document.getElementById('Sunrise').innerText = window.timeToString(sunCalc.sunrise, ':')
+      document.getElementById('Sunset').innerText = window.timeToString(sunCalc.sunset, ':')
+    })
+  })
 }
 
 function mainLoop() {
@@ -167,8 +171,8 @@ function mainLoop() {
 }
 
 window.onload = function() {
-  document.body.style.background = '#222222'
   document.body.style.color = 'rgba(0, 0, 0, 0.6)'
+  // document.body.style.color = rgba(255, 255, 255, 0.7)
 
   mainLoop()
 }

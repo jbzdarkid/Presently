@@ -21,7 +21,7 @@ function _httpSend(verb, url, body, callback) {
   }
   request.timeout = 120000 // 120,000 milliseconds = 2 minutes
   request.open(verb, url, true)
-  request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
   request.send(body)
 }
 
@@ -104,6 +104,20 @@ window.localize = function(key, defaultValue) {
   }
   if (value == undefined || value == "") return defaultValue
   return value
+}
+
+window.timeToString = function(time, separator = ' ') {
+  var hours = time.getHours()
+  if (document.getElementById('Hours-12').checked) {
+    hours = (hours + 11) % 12 + 1 // Convert 0-23 to 1-12
+  }
+  return hours.toString().padStart(2, '0') + separator + time.getMinutes().toString().padStart(2, '0')
+}
+
+// https://stackoverflow.com/a/11832950
+window.round = function(num, places) {
+  var factor = 10 ** places
+  return Math.round((parseFloat(num) + Number.EPSILON) * factor) / factor
 }
 
 })

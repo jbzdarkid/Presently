@@ -10,7 +10,7 @@
     <title>--&deg; | Presently</title>
   </head>
   <!-- This flexbox keeps the overall layout centered on the page -->
-  <body class="noselect" style="display: flex; justify-content: center">
+  <body class="noselect" style="display: flex; justify-content: center; overflow-y: hidden">
     <div style="position: absolute; top: 15px; left: 15px">
       <img id="settings-button" src="./resources/settings.png" style="height: 48px; cursor: pointer; opacity: 30%"></img>
     </div>
@@ -49,8 +49,7 @@
           City name?
           Sunrise/sunset?
           <br><br>
-          <button id="locationFromBrowser">Get latitude and longitude from browser</button>
-          <button id="locationFromIP">Get latitude and longitude from IP address</button>
+          <button id="refreshLocation">Refresh location</button>
         </div>
       </div>
       <div style="width: 50%; display: flex; justify-content: center; align-items: center">

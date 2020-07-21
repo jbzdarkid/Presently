@@ -3,18 +3,17 @@ namespace(function() {
 // TODOs:
 // - Other weather APIs (to support non-US locations)
 // - Themes
-// - Seconds
 // - Analog clock + hide forecast (if window gets too small)
-// - Expire user location somehow? Or give users the ability to reset them
-// - Load user location from chrome?
-// - Allow users to pick a location?
-// - Show city name?
+// - Default to request user location (if none exists)
+//   This should fall back to ip-based if user declines
+//   Give the user text boxes to customize (and a refresh button which will repeat the above)
+//   Should (ideally) show city name + sunrise/sunset (just as a nice confirmation of what these numbers mean)
 // - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
 
-var normalizedUnits = function(degreesF) {
+function normalizedUnits(degreesF) {
   if (document.getElementById('Temperature-Farenheit').checked) {
     return degreesF
   } else {
@@ -102,13 +101,13 @@ window.updateWeather = function() {
 
   window.getLocal('weatherExpires', function(weatherExpires) {
     var now = new Date()
-    if (weatherExpires && now < weatherExpires) return // Weather not expired, nothing to do.
+    if (weatherExpires && now.getTime() < weatherExpires) return // Weather not expired, nothing to do.
 
     // We've decided we're going update the weather data -- prevent any other updates for 5 minutes,
     // to avoid making unnecessary network calls. We'll give it the full expiration once the call succeeds.
-    weatherExpires = new Date(now)
+    weatherExpires = now
     weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
-    window.setLocal('weatherExpires', weatherExpires)
+    window.setLocal('weatherExpires', weatherExpires.getTime())
 
     // TODO: This is triggering on refresh...!
     console.log('Weather data is expired, fetching new weather data...')
@@ -119,7 +118,7 @@ window.updateWeather = function() {
       // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
       weatherExpires = new Date()
       weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
-      window.setLocal('weatherExpires', weatherExpires)
+      window.setLocal('weatherExpires', weatherExpires.getTime())
       window.setLocal('weatherData', weatherData)
 
       drawWeatherData(weatherData)
@@ -132,8 +131,8 @@ function updateTime() {
   var now = new Date()
   if (now < timeExpires) return
   timeExpires = new Date(now)
-  // Clear seconds & milliseconds. TODO: Clock with seconds as an option?
-  timeExpires.setMinutes(now.getMinutes() + 1, 0, 0)
+  // Expire the time next second (but clear the milliseconds)
+  timeExpires.setSeconds(now.getSeconds() + 1, 0)
 
   /* If I ever want an analog clock, this is how to do that:
   var second = now.getSeconds() * 6,
@@ -145,9 +144,15 @@ function updateTime() {
   $('#second').css('transform', 'rotate(' + second + 'deg)');
   */
 
-  // Convert 0-23 to 1-12
-  var hours = (now.getHours() + 11) % 12 + 1
+  var hours = now.getHours()
+  if (document.getElementById('Hours-12').checked) {
+    // Convert 0-23 to 1-12
+    hours = (hours + 11) % 12 + 1
+  }
   var timeString = hours.toString().padStart(2, '0') + ' ' + now.getMinutes().toString().padStart(2, '0')
+  if (document.getElementById('Seconds-On').checked) {
+    timeString += ' ' + now.getSeconds().toString().padStart(2, '0')
+  }
   document.getElementById('time').innerText = timeString
 
   var dateString = DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate()

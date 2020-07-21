@@ -1,3 +1,5 @@
+namespace(function() {
+
 // TODOs:
 // - Other weather APIs (to support non-US locations)
 // - Themes
@@ -11,6 +13,15 @@
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
+
+var normalizedUnits = function(degreesF) {
+  if (document.getElementById('Temperature-Farenheit').checked) {
+    return degreesF
+  } else {
+    var deg = (parseInt(degreesF) - 32) * 5
+    return Math.floor(deg / 9)
+  }
+}
 
 function drawWeatherData(weatherData) {
   document.getElementById('forecast-loading').style.display = 'none'
@@ -79,9 +90,10 @@ function drawWeatherData(weatherData) {
   }
 }
 
-var displayNeedsUpdate = true // Default true when JS loads; we need to draw the display at least once.
-function updateWeather() {
-  if (displayNeedsUpdate) { // True when we first load, or when changing units
+// Default true when JS loads; we need to draw the display at least once.
+window.displayNeedsUpdate = true
+window.updateWeather = function() {
+  if (displayNeedsUpdate) {
     displayNeedsUpdate = false
     window.getLocal('weatherData', function(weatherData) {
       if (weatherData) drawWeatherData(weatherData)
@@ -153,10 +165,7 @@ window.onload = function() {
   document.body.style.background = '#222222'
   document.body.style.color = 'rgba(0, 0, 0, 0.6)'
 
-  if (document.location.search == '?settings') {
-    showSettings()
-  }
-  document.getElementById('settings-button').onclick = showSettings
-
-  window.mainLoop()
+  mainLoop()
 }
+
+})

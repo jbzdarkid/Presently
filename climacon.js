@@ -1,3 +1,5 @@
+namespace(function() {
+
 window.Climacon = function(weather, fontSize = '144px', isDaytimeAware = false) {
   var icon = document.createElement('span')
   icon.style.fontFamily = 'Climacons'
@@ -86,3 +88,5 @@ function getMoonIcon() {
   if (illum.phase < 1.000) return 'V'
   return 'N'
 }
+
+})

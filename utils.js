@@ -1,3 +1,9 @@
+function namespace(code) {
+  code()
+}
+
+namespace(function() {
+
 window.httpGet = function(url, callback) {
   _httpSend('GET', url, null, callback)
 }
@@ -39,10 +45,33 @@ window.getLocal  = function(key, callback) {internalGet(storage.local,  key, cal
 window.getRemote = function(key, callback) {internalGet(storage.sync, key, callback)}
 window.setLocal  = function(key, value)    {internalSet(storage.local,  key, value)}
 window.setRemote = function(key, value)    {internalSet(storage.sync, key, value)}
+window.getLocal2 = function(key, fallback, callback) {
+  window.getLocal(key, function(result) {
+    if (result == undefined && fallback != undefined) {
+      fallback(callback)
+    } else {
+      callback(result)
+    }
+  })
+}
 
 // For perf reasons -- I call this quite often.
 var inMemory = {}
 function internalGet(store, key, callback) {
+  if (inMemory[key]) {
+    setTimeout(function() {
+      callback(inMemory[key])
+    }, 0)
+    return
+  }
+  store.get([key], function(result) {
+    // result will be {} if nothing is found, or result[key] will be null (for localstorage)
+    inMemory[key] = result[key]
+    callback(result[key])
+  })
+}
+
+function internalGet2(store, key, fallback, callback) {
   if (inMemory[key]) {
     setTimeout(function() {
       callback(inMemory[key])
@@ -76,3 +105,5 @@ window.localize = function(key, defaultValue) {
   if (value == undefined || value == "") return defaultValue
   return value
 }
+
+})

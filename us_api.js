@@ -1,3 +1,7 @@
+window.USApi = {}
+
+namespace(function() {
+
 var predictionToWeather = {
   'skc': WEATHER_CLEAR,
 
@@ -51,8 +55,6 @@ function getWeatherFromIcon(icon) {
   return predictionToWeather[prediction]
 }
 
-window.USApi = {}
-
 /* Returned data format
 [
   { // today (monday,
@@ -84,54 +86,50 @@ window.USApi = {}
 */
 
 USApi.getWeather = function(callback) {
-  // Try to load URLs from memory
-  if (this.hourlyForecastUrl && this.forecastUrl) {
-    console.log('Loaded URLs from memory')
-    getWeatherInternal(callback)
-    return
-  }
-
-  window.getLocal('latitude', function(latitude) {
-    window.getLocal('longitude', function(longitude) {
-      if (latitude == undefined || longitude == undefined) return
-      httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(response) {
-        this.hourlyForecastUrl = response.properties.forecastHourly
-        this.forecastUrl = response.properties.forecast
-        console.log('Fetched URLs via latitude, longitude')
-        window.setLocal('urls', hourlyForecastUrl + '|' + forecastUrl)
-        getWeatherInternal(callback)
+  window.getLocal2('urls', fallback=function(callback) {
+    window.getLocal('latitude', function(latitude) {
+      window.getLocal('longitude', function(longitude) {
+        if (latitude == undefined || longitude == undefined) return
+        httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(response) {
+          console.log('Fetched URLs via latitude, longitude')
+          var urls = response.properties.forecastHourly + '|' + response.properties.forecast
+          window.setLocal('urls', urls)
+          callback(urls)
+        })
       })
+    })
+  }, function(urls) {
+    var weatherData = [{}, {}, {}, {}, {}]
+    var callbacksPending = 2
+    var hourlyForecastUrl = urls.split('|')[0]
+    var forecastUrl = urls.split('|')[1]
+
+    httpGet(hourlyForecastUrl, function(response) {
+      callbacksPending--
+      var period = response.properties.periods[0]
+      weatherData[0]['temp'] = period.temperature
+      weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
+      if (callbacksPending == 0) callback(weatherData)
+    })
+
+    httpGet(forecastUrl, function(response) {
+      callbacksPending--
+      var day = 1
+      for (var i=0; i<response.properties.periods.length && day<5; i++) {
+        // Skip periods until we find the start of a day (6 AM).
+        // This ensures that we will always have a high and a low for the given period,
+        // and it avoids duplicating info for the current day.
+        var startDate = new Date(response.properties.periods[i].startTime)
+        if (startDate.getHours() != 6) continue
+
+        weatherData[day]['high'] = response.properties.periods[i].temperature
+        weatherData[day]['low'] = response.properties.periods[i+1].temperature
+        weatherData[day]['weather'] = getWeatherFromIcon(response.properties.periods[i].icon)
+        day++
+      }
+      if (callbacksPending == 0) callback(weatherData)
     })
   })
 }
 
-function getWeatherInternal(callback) {
-  var weatherData = [{}, {}, {}, {}, {}]
-  var callbacksPending = 2
-
-  httpGet(this.hourlyForecastUrl, function(response) {
-    callbacksPending--
-    var period = response.properties.periods[0]
-    weatherData[0]['temp'] = period.temperature
-    weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
-    if (callbacksPending == 0) callback(weatherData)
-  })
-
-  httpGet(this.forecastUrl, function(response) {
-    callbacksPending--
-    var day = 1
-    for (var i=0; i<response.properties.periods.length && day<5; i++) {
-      // Skip periods until we find the start of a day (6 AM).
-      // This ensures that we will always have a high and a low for the given period,
-      // and it avoids duplicating info for the current day.
-      var startDate = new Date(response.properties.periods[i].startTime)
-      if (startDate.getHours() != 6) continue
-
-      weatherData[day]['high'] = response.properties.periods[i].temperature
-      weatherData[day]['low'] = response.properties.periods[i+1].temperature
-      weatherData[day]['weather'] = getWeatherFromIcon(response.properties.periods[i].icon)
-      day++
-    }
-    if (callbacksPending == 0) callback(weatherData)
-  })
-}
+})

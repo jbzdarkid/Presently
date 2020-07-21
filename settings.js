@@ -1,3 +1,5 @@
+namespace(function() {
+
 function showSettings() {
   // Fade out the main container, and prepare the settings container for display
   document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards reverse'
@@ -40,6 +42,11 @@ function hideSettings() {
 
 // Load settings on page load
 document.addEventListener('DOMContentLoaded', function() {
+  if (document.location.search == '?settings') {
+    showSettings()
+  }
+  document.getElementById('settings-button').onclick = showSettings
+
   for (var input of document.getElementsByTagName('input')) {
     input.onchange = settingsChanged
   }
@@ -70,13 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
   window.getRemote('settings-Hours', function(value) {
     if (value == undefined) value = 'Hours-12'
     document.getElementById(value).checked = true
-    updateTime()
   })
 
   window.getRemote('settings-Seconds', function(value) {
     if (value == undefined) value = 'Seconds-On'
     document.getElementById(value).checked = true
-    updateTime()
   })
 
   window.getRemote('latitude', function(value) {
@@ -90,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 })
 
-function settingsChanged() {
+window.settingsChanged = function() {
   if (document.getElementById('Temperature-Farenheit').checked) {
     window.setRemote('settings-Temperature', 'Temperature-Farenheit')
   } else {
@@ -113,12 +118,4 @@ function settingsChanged() {
   window.setLocal('longitude', document.getElementById('Longitude').value)
 }
 
-var normalizedUnits = function(degreesF) {
-  // @Hack? Hack.
-  if (document.getElementById('Temperature-Farenheit').checked) {
-    return degreesF
-  } else {
-    var deg = (parseInt(degreesF) - 32) * 5
-    return Math.floor(deg / 9)
-  }
-}
+})

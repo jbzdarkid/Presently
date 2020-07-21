@@ -4,7 +4,7 @@ function showSettings() {
   // Fade out the main container, and prepare the settings container for display
   document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards reverse'
   document.getElementById('settings').style.animation = null
-  document.getElementById('settingsButton').onclick = null
+  document.getElementById('closeSettings').onclick = null
 
   setTimeout(function() {
     // Hide the main container, and fade in the settings container
@@ -16,7 +16,8 @@ function showSettings() {
   setTimeout(function() {
     // Reset the animation so that it can play again next time
     document.getElementById('settings').style.animation = null
-    document.getElementById('settingsButton').onclick = hideSettings
+    document.getElementById('closeSettings').onclick = hideSettings
+    document.onkeydown = function(event) {if (event.key === 'Escape') hideSettings()}
   }, 1000)
 }
 
@@ -25,6 +26,7 @@ function hideSettings() {
   document.getElementById('settings').style.animation = 'fadeIn 500ms 1 forwards reverse'
   document.getElementById('main').style.animation = null
   document.getElementById('settingsButton').onclick = null
+  document.onkeydown = undefined
 
   setTimeout(function() {
     // Hide the settings container, and fade in the main container
@@ -49,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     input.onchange = settingsChanged
   }
   document.getElementById('settingsButton').onclick = showSettings
+  document.getElementById('closeSettings').onclick = hideSettings
   document.getElementById('refreshLocation').onclick = refreshLocation
 
   window.getRemote('settings-Temperature', function(value) {
@@ -80,23 +83,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.getRemote('settings-Color', function(color) {
     if (color == undefined) color = 'E5E5E5'
-    var themeBox = document.getElementById('Theme')
     var themes = ['222222', 'E5E5E5', '5CBF94', '84C0D7', '903D3D', 'D2AB59', '6FB269', '6C5287', '3193A5', 'C34D40', '4242BA', '2E3C56', 'E59C2F', '412F3F', 'EA724C', '5C2533', '2D442F', '8DD397']
     for (var theme of themes) {
       var div = document.createElement('div')
-      themeBox.appendChild(div)
+      document.getElementById('Theme').appendChild(div)
       div.style = 'width: 100px; height: 100px; float: left'
       div.style.backgroundColor = '#' + theme
       div.style.cursor = 'pointer'
       div.id = theme
       div.onclick = function() {
-        window.setRemote('settings-Color', this.id)
         document.body.style.backgroundColor = '#' + this.id
-        // Set checkbox somehow
+        window.reparent(document.getElementById('ThemeCheck'), this)
         settingsChanged()
       }
       if (theme == color) {
         document.body.style.backgroundColor = '#' + theme
+        window.reparent(document.getElementById('ThemeCheck'), div)
       }
     }
   })
@@ -141,6 +143,9 @@ window.settingsChanged = function() {
 
   window.setLocal('latitude', document.getElementById('Latitude').value)
   window.setLocal('longitude', document.getElementById('Longitude').value)
+
+  var color = document.getElementById('ThemeCheck').parentElement.id
+  window.setRemote('settings-Color', color)
 }
 
 })

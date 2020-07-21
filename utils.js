@@ -120,4 +120,10 @@ window.round = function(num, places) {
   return Math.round((parseFloat(num) + Number.EPSILON) * factor) / factor
 }
 
+window.reparent = function(child, newParent) {
+  var oldParent = child.parentElement
+  oldParent.removeChild(child)
+  newParent.appendChild(child)
+}
+
 })

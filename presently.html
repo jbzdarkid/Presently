@@ -10,55 +10,64 @@
     <title>--&deg; | Presently</title>
   </head>
   <!-- This flexbox keeps the overall layout centered on the page -->
-  <body class="noselect" style="display: flex; justify-content: center">
-    <div style="position: absolute; top: 6px; left: 15px">
-      <img id="settingsButton" src="./resources/f0c9.png" style="height: 48px; cursor: pointer; opacity: 30%"></img>
-    </div>
-    <div id="settings" style="display: none; width: 100%">
-      <div id="settings-list" style="width: 50%; display: flex; justify-content: space-evenly; align-items: center; flex-direction: column; border-right: 5px solid black; background-color: white; color: black; overflow-y: scroll; position: fixed; height: 100%">
-        <div>
-          <label style="font-family: OpenSans-Bold; font-size: 32px">Temperature</label>
-          <br>
-          <input name="Temperature" type="radio" id="Temperature-Farenheit">
-          <label style="font-family: OpenSans-Regular; font-size: 20px">Farenheit</label>
-          <input name="Temperature" type="radio" id="Temperature-Celsius">
-          <label style="font-family: OpenSans-Regular; font-size: 20px">Celsius</label>
-        </div><div>
-          <label style="font-family: OpenSans-Bold; font-size: 32px">Hours</label>
-          <br>
-          <input name="Hours" type="radio" id="Hours-12">
-          <label style="font-family: OpenSans-Regular; font-size: 20px">12</label>
-          <input name="Hours" type="radio" id="Hours-24">
-          <label style="font-family: OpenSans-Regular; font-size: 20px">24</label>
-        </div><div>
-          <label style="font-family: OpenSans-Bold; font-size: 32px">Seconds</label>
-          <br>
-          <input name="Seconds" type="radio" id="Seconds-On">
-          <label style="font-family: OpenSans-Regular; font-size: 20px">On</label>
-          <input name="Seconds" type="radio" id="Seconds-Off">
-          <label style="font-family: OpenSans-Regular; font-size: 20px">Off</label>
+  <body class="noselect" style="display: flex; justify-content: center; margin: 0px">
+    <img id="settingsButton" src="./resources/f0c9.png" style="position: absolute; top: 6px; left: 15px; height: 48px; cursor: pointer; opacity: 30%"></img>
+    <div id="settings" style="display: none; width: 100%; margin: 8px">
+      <!-- This outer div keeps the two panels separate, while allowing for position: fixed on the inner div,
+           which is required to add a scrollbar. -->
+      <div id="settings-list" style="width: 50%">
+        <!-- These two divs are required to float the close button in the top right while scrolling -->
+        <div style="width: 100%">
+          <div style="position: fixed; width: 50%; z-index: 30">
+            <img id="closeSettings" src="./resources/times.png" style="float: right; height: 40px; cursor: pointer; opacity: 30%; margin-right: 15px"></img>
+          </div>
         </div>
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <label style="font-family: OpenSans-Bold; font-size: 32px; align: center">Location</label>
+        <div style="overflow-y: scroll; position: fixed; height: 100%; width: 50%; display: flex; justify-content: flex-start; align-items: center; flex-direction: column; background-color: white; color: black;">
           <div>
-            <label style="font-family: OpenSans-Regular; font-size: 20px; padding: 5px">Latitude</label>
-            <input type="text" id="Latitude" style="width: 75px">
-            <label style="font-family: OpenSans-Regular;font-size: 20px; padding: 5px;">Longitude</label>
-            <input type="text" id="Longitude" style="width: 75px">
+            <label style="font-family: OpenSans-Bold; font-size: 32px">Temperature</label>
+            <br>
+            <input name="Temperature" type="radio" id="Temperature-Farenheit">
+            <label style="font-family: OpenSans-Regular; font-size: 20px">Farenheit</label>
+            <input name="Temperature" type="radio" id="Temperature-Celsius">
+            <label style="font-family: OpenSans-Regular; font-size: 20px">Celsius</label>
+          </div><div>
+            <label style="font-family: OpenSans-Bold; font-size: 32px">Hours</label>
+            <br>
+            <input name="Hours" type="radio" id="Hours-12">
+            <label style="font-family: OpenSans-Regular; font-size: 20px">12</label>
+            <input name="Hours" type="radio" id="Hours-24">
+            <label style="font-family: OpenSans-Regular; font-size: 20px">24</label>
+          </div><div>
+            <label style="font-family: OpenSans-Bold; font-size: 32px">Seconds</label>
+            <br>
+            <input name="Seconds" type="radio" id="Seconds-On">
+            <label style="font-family: OpenSans-Regular; font-size: 20px">On</label>
+            <input name="Seconds" type="radio" id="Seconds-Off">
+            <label style="font-family: OpenSans-Regular; font-size: 20px">Off</label>
           </div>
-          <div style="position: relative; top: -15px; margin-bottom: -15px;">
-            <label style="font-family: Climacons; font-size: 42px; position: relative; top: 10px">K</label>
-            <label id="Sunrise" style="font-family: OpenSans-Regular; font-size: 20px; margin-right: 10px"></label>
-            <label style="font-family: Climacons; font-size: 42px; position: relative; top: 10px">J</label>
-            <label id="Sunset" style="font-family: OpenSans-Regular; font-size: 20px"></label>
+          <div style="display: flex; flex-direction: column; align-items: center">
+            <label style="font-family: OpenSans-Bold; font-size: 32px; align: center">Location</label>
+            <div>
+              <label style="font-family: OpenSans-Regular; font-size: 20px; padding: 5px">Latitude</label>
+              <input type="text" id="Latitude" style="width: 75px">
+              <label style="font-family: OpenSans-Regular;font-size: 20px; padding: 5px;">Longitude</label>
+              <input type="text" id="Longitude" style="width: 75px">
+            </div>
+            <div style="position: relative; top: -15px; margin-bottom: -15px;">
+              <label style="font-family: Climacons; font-size: 42px; position: relative; top: 10px">K</label>
+              <label id="Sunrise" style="font-family: OpenSans-Regular; font-size: 20px; margin-right: 10px"></label>
+              <label style="font-family: Climacons; font-size: 42px; position: relative; top: 10px">J</label>
+              <label id="Sunset" style="font-family: OpenSans-Regular; font-size: 20px"></label>
+            </div>
+            <label id="cityName" style="font-family: OpenSans-Regular; font-size: 20px"></label>
+            <button id="refreshLocation">Refresh location</button>
+          </div><div style="display: flex; flex-direction: column; align-items: center">
+            <label style="font-family: OpenSans-Bold; font-size: 32px; align: center">Theme</label>
+            <div id="Theme" style="width: 300px; height: 600px; border-radius: 5px; overflow: hidden"></div>
+            <img id="ThemeCheck" src="./resources/check.png" style="height: 40px; margin-left: 30px; margin-top: 30px"></img>
           </div>
-          <label id="cityName" style="font-family: OpenSans-Regular; font-size: 20px"></label>
-          <button id="refreshLocation">Refresh location</button>
-        </div><div style="display: flex; flex-direction: column; align-items: center">
-          <label style="font-family: OpenSans-Bold; font-size: 32px; align: center">Theme</label>
-          <div id="Theme" style="width: 300px; height: 600px; border-radius: 5px; overflow: hidden"></div>
+          <br>
         </div>
-        <br>
       </div>
       <div style="width: 50%; display: flex; justify-content: center; align-items: center">
         <span style="font-size: 350px; font-family: Climacons; animation: spin 60s linear infinite">I</span>

@@ -1,14 +1,13 @@
 namespace(function() {
 
 // TODOs:
-// - Other weather APIs (to support non-US locations)
-// - Themes
 // - Analog clock + hide forecast (if window gets too small)
-// - Default to request user location (if none exists)
-//   This should fall back to ip-based if user declines
-//   Give the user text boxes to customize (and a refresh button which will repeat the above)
-//   Should (ideally) show city name + sunrise/sunset (just as a nice confirmation of what these numbers mean)
 // - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
+// - Fix various bugs in settings to do with lat/long:
+//   - Sunrise/sunset are using browser-local (so don't update them until you ping the weather API)
+//   - Weather needs to poll once settings is closed (or on next viewing with settings closed)
+//   - I'd like to get the city name as well (should come alongside timezone w/ weather API)
+// - Radio buttons are off-center. Add a nested div for each set.
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')

@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   window.getRemote('settings-Color', function(color) {
-    if (color == undefined) color = 'E5E5E5'
+    if (color == undefined) color = '4242BA'
     var themes = ['222222', 'E5E5E5', '5CBF94', '84C0D7', '903D3D', 'D2AB59', '6FB269', '6C5287', '3193A5', 'C34D40', '4242BA', '2E3C56', 'E59C2F', '412F3F', 'EA724C', '5C2533', '2D442F', '8DD397']
     for (var theme of themes) {
       var div = document.createElement('div')

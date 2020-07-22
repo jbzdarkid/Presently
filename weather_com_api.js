@@ -74,15 +74,14 @@ WeatherCom.getWeather = function(callback) {
       })
 
       httpGet(prefix + "/daily/5day.json" + suffix, function(response) {
+        var now = new Date()
         var day = 1
-        debugger;
-        var now = (new Date()).getTime() / 1000 // Milliseconds -> seconds
         for (var i=0; i<response.forecasts.length && day<5; i++) {
           var period = response.forecasts[i]
-          // Skip periods until we find one which is not valid.
+          // Skip periods until we find one which has not yet started.
           // This ensures that we will always have a high and a low for the given period,
           // and it avoids duplicating info for the current day.
-          if (period.fcst_valid < now) continue
+          if (new Date(period.fcst_valid) < now) continue
 
           weatherData[day]['high'] = period.max_temp
           weatherData[day]['low'] = period.min_temp

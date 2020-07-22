@@ -23,30 +23,29 @@
             <img id="closeSettings" src="./resources/times.png" style="float: right; height: 40px; cursor: pointer; opacity: 30%; margin-right: 15px"></img>
           </div>
         </div>
-        <div style="overflow-y: scroll; position: fixed; height: 100%; width: 50%; display: flex; justify-content: flex-start; align-items: center; flex-direction: column; background-color: white; color: black;">
+        <div style="overflow-y: scroll; position: fixed; height: 100%; width: 50%; display: flex; justify-content: flex-start; align-items: center; flex-direction: column; background-color: white; color: black">
           <div>
             <label style="font-family: OpenSans-Bold; font-size: 32px">Temperature</label>
             <br>
-            <input name="Temperature" type="radio" id="Temperature-Farenheit">
-            <label style="font-family: OpenSans-Regular; font-size: 20px">Farenheit</label>
+            <input name="Temperature" type="radio" id="Temperature-Fahrenheit">
+            <label for="Temperature-Fahrenheit" style="font-family: OpenSans-Regular; font-size: 20px">Fahrenheit</label>
             <input name="Temperature" type="radio" id="Temperature-Celsius">
-            <label style="font-family: OpenSans-Regular; font-size: 20px">Celsius</label>
+            <label for="Temperature-Celsius" style="font-family: OpenSans-Regular; font-size: 20px">Celsius</label>
           </div><div>
             <label style="font-family: OpenSans-Bold; font-size: 32px">Hours</label>
             <br>
             <input name="Hours" type="radio" id="Hours-12">
-            <label style="font-family: OpenSans-Regular; font-size: 20px">12</label>
+            <label for="Hours-12" style="font-family: OpenSans-Regular; font-size: 20px">12</label>
             <input name="Hours" type="radio" id="Hours-24">
-            <label style="font-family: OpenSans-Regular; font-size: 20px">24</label>
+            <label for="Hours-24" style="font-family: OpenSans-Regular; font-size: 20px">24</label>
           </div><div>
             <label style="font-family: OpenSans-Bold; font-size: 32px">Seconds</label>
             <br>
             <input name="Seconds" type="radio" id="Seconds-On">
-            <label style="font-family: OpenSans-Regular; font-size: 20px">On</label>
+            <label for="Seconds-On" style="font-family: OpenSans-Regular; font-size: 20px">On</label>
             <input name="Seconds" type="radio" id="Seconds-Off">
-            <label style="font-family: OpenSans-Regular; font-size: 20px">Off</label>
-          </div>
-          <div style="display: flex; flex-direction: column; align-items: center">
+            <label for="Seconds-Off" style="font-family: OpenSans-Regular; font-size: 20px">Off</label>
+          </div><div style="display: flex; flex-direction: column; align-items: center">
             <label style="font-family: OpenSans-Bold; font-size: 32px; align: center">Location</label>
             <div>
               <label style="font-family: OpenSans-Regular; font-size: 20px; padding: 5px">Latitude</label>
@@ -62,12 +61,19 @@
             </div>
             <label id="cityName" style="font-family: OpenSans-Regular; font-size: 20px"></label>
             <button id="refreshLocation">Refresh location</button>
+          </div><div>
+            <label style="font-family: OpenSans-Bold; font-size: 32px">Text Color</label>
+            <br>
+            <input name="Text" type="radio" id="Text-Light">
+            <label for="Text-Light" style="font-family: OpenSans-Regular; font-size: 20px">Light</label>
+            <input name="Text" type="radio" id="Text-Dark">
+            <label for="Text-Dark" style="font-family: OpenSans-Regular; font-size: 20px">Dark</label>
           </div><div style="display: flex; flex-direction: column; align-items: center">
             <label style="font-family: OpenSans-Bold; font-size: 32px; align: center">Theme</label>
             <div id="Theme" style="width: 300px; height: 600px; border-radius: 5px; overflow: hidden"></div>
             <img id="ThemeCheck" src="./resources/check.png" style="height: 40px; margin-left: 30px; margin-top: 30px"></img>
+            <div style="height: 12px"></div>
           </div>
-          <br> <!-- Leave some space at the bottom... padding instead? -->
         </div>
       </div>
       <div style="width: 50%; display: flex; justify-content: center; align-items: center">

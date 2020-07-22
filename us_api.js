@@ -79,14 +79,14 @@ USApi.getWeather = function(callback) {
     })
 
     httpGet(forecastUrl, function(response) {
+      var now = new Date()
       var day = 1
       for (var i=0; i<response.properties.periods.length && day<5; i++) {
         var period = response.properties.periods[i]
-        // Skip periods until we find the start of a day (6 AM).
+        // Skip periods until we find one which has not yet started.
         // This ensures that we will always have a high and a low for the given period,
         // and it avoids duplicating info for the current day.
-        var startDate = new Date(period.startTime)
-        if (startDate.getHours() != 6) continue
+        if (new Date(period.startTime) < now) continue
 
         weatherData[day]['high'] = period.temperature
         weatherData[day]['low'] = response.properties.periods[i+1].temperature // Nighttime temp

@@ -114,6 +114,14 @@ window.updateWeather = function() {
     window.WeatherCom.getWeather(function(weatherData) {
       // Potentially we can fail to fetch data, in which case we should not do anything.
       if (!weatherData) return
+      /* Expected data format:
+      [
+        {temp: 0, weather: WEATHER_CLEAR},
+        {high: 10, low: 0, weather: WEATHER_CLEAR},
+        {high: 10, low: 0, weather: WEATHER_CLEAR},
+        {high: 10, low: 0, weather: WEATHER_CLEAR},
+        {high: 10, low: 0, weather: WEATHER_CLEAR},
+      ]*/
 
       // Clear minutes, seconds, and milliseconds
       // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.

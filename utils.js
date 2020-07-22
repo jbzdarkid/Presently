@@ -55,7 +55,7 @@ window.getLocal2 = function(key, fallback, callback) {
   })
 }
 
-window.getLatitudeLongitude(callback) {
+window.getLatitudeLongitude = function(callback) {
   window.getLocal('latitude', function(latitude) {
     window.getLocal('longitude', function(longitude) {
       if (latitude != undefined && longitude != undefined) {

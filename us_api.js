@@ -55,36 +55,6 @@ function getWeatherFromIcon(icon) {
   return predictionToWeather[prediction]
 }
 
-/* Returned data format
-[
-  { // today (monday,
-  e.g.)
-    temp: 0,
-    weather: WEATHER_CLEAR
-  },{
-    // tomorrow (tuesday)
-    high: 10,
-    low: 0,
-    weather: WEATHER_CLEAR
-  },{
-    // wednesday
-    high: 10,
-    low: 0,
-    weather: WEATHER_CLEAR
-  },{
-    // thursday
-    high: 10,
-    low: 0,
-    weather: WEATHER_CLEAR
-  },{
-    // friday
-    high: 10,
-    low: 0,
-    weather: WEATHER_CLEAR
-  }
-]
-*/
-
 USApi.getWeather = function(callback) {
   window.getLocal2('urls', fallback=function(callback) {
     window.getLatitudeLongitude(function(latitude, longitude) {
@@ -105,7 +75,7 @@ USApi.getWeather = function(callback) {
       var period = response.properties.periods[0]
       weatherData[0]['temp'] = period.temperature
       weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
-      if (callbacksPending-- == 0) callback(weatherData)
+      if (--callbacksPending == 0) callback(weatherData)
     })
 
     httpGet(forecastUrl, function(response) {
@@ -123,7 +93,7 @@ USApi.getWeather = function(callback) {
         weatherData[day]['weather'] = getWeatherFromIcon(period.icon)
         day++
       }
-      if (callbacksPending-- == 0) callback(weatherData)
+      if (--callbacksPending == 0) callback(weatherData)
     })
   })
 }

@@ -73,12 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Will auto-update next time step
   })
 
-  window.getLocal('latitude', function(latitude) {
-    window.getLocal('longitude', function(longitude) {
-      if (latitude == undefined || longitude == undefined) return
-      document.getElementById('Latitude').value = window.round(latitude, 3)
-      document.getElementById('Longitude').value = window.round(longitude, 3)
-    })
+  window.getLatitudeLongitude(function(latitude, longitude) {
+    document.getElementById('Latitude').value = window.round(latitude, 3)
+    document.getElementById('Longitude').value = window.round(longitude, 3)
   })
 
   window.getRemote('settings-Color', function(color) {

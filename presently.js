@@ -154,13 +154,10 @@ function updateTime() {
   var dateString = DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate()
   document.getElementById('date').innerText = dateString
 
-  window.getLocal('latitude', function(latitude) {
-    window.getLocal('longitude', function(longitude) {
-      if (latitude == undefined || longitude == undefined) return
-      var sunCalc = SunCalc.getTimes(new Date(), latitude, longitude)
-      document.getElementById('Sunrise').innerText = window.timeToString(sunCalc.sunrise, ':')
-      document.getElementById('Sunset').innerText = window.timeToString(sunCalc.sunset, ':')
-    })
+  window.getLatitudeLongitude(function(latitude, longitude) {
+    var sunCalc = SunCalc.getTimes(new Date(), latitude, longitude)
+    document.getElementById('Sunrise').innerText = window.timeToString(sunCalc.sunrise, ':')
+    document.getElementById('Sunset').innerText = window.timeToString(sunCalc.sunset, ':')
   })
 }
 

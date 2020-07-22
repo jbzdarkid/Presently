@@ -55,6 +55,29 @@ window.getLocal2 = function(key, fallback, callback) {
   })
 }
 
+window.getLatitudeLongitude(callback) {
+  window.getLocal('latitude', function(latitude) {
+    window.getLocal('longitude', function(longitude) {
+      if (latitude != undefined && longitude != undefined) {
+        callback(latitude, longitude)
+        return
+      }
+      // @Cutnpaste from reloadPosition in settings.js
+      navigator.geolocation.getCurrentPosition(function(position) {
+        window.setLocal('latitude', position.coords.latitude)
+        window.setLocal('longitude', position.coords.longitude)
+        callback(latitude, longitude)
+      }, function() {
+        httpGet('https://ipapi.co/json', function(response) {
+          window.setLocal('latitude', response.latitude)
+          window.setLocal('longitude', response.longitude)
+          callback(latitude, longitude)
+        })
+      })
+    })
+  })
+}
+
 // For perf reasons -- I call this quite often.
 var inMemory = {}
 function internalGet(store, key, callback) {

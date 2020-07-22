@@ -87,15 +87,12 @@ function getWeatherFromIcon(icon) {
 
 USApi.getWeather = function(callback) {
   window.getLocal2('urls', fallback=function(callback) {
-    window.getLocal('latitude', function(latitude) {
-      window.getLocal('longitude', function(longitude) {
-        if (latitude == undefined || longitude == undefined) return
-        httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(response) {
-          console.log('Fetched URLs via latitude, longitude')
-          var urls = response.properties.forecastHourly + '|' + response.properties.forecast
-          window.setLocal('urls', urls)
-          callback(urls)
-        })
+    window.getLatitudeLongitude(function(latitude, longitude) {
+      httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(response) {
+        console.log('Fetched URLs via latitude, longitude')
+        var urls = response.properties.forecastHourly + '|' + response.properties.forecast
+        window.setLocal('urls', urls)
+        callback(urls)
       })
     })
   }, function(urls) {

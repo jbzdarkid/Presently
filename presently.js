@@ -89,6 +89,8 @@ function drawWeatherData(weatherData) {
   }
 }
 
+var weatherAPI = window.USApi
+
 // Default true when JS loads; we need to draw the display at least once.
 window.displayNeedsUpdate = true
 window.updateWeather = function() {
@@ -110,8 +112,7 @@ window.updateWeather = function() {
     window.setLocal('weatherExpires', weatherExpires.getTime())
 
     console.log('Weather data is expired, fetching new weather data...')
-    // window.USApi.getWeather(function(weatherData) {
-    window.WeatherCom.getWeather(function(weatherData) {
+    weatherAPI.getWeather(function(weatherData) {
       // Potentially we can fail to fetch data, in which case we should not do anything.
       if (!weatherData) return
       /* Expected data format:

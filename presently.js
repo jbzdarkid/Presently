@@ -14,7 +14,7 @@ var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, 
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
 
 function normalizedUnits(degreesF) {
-  if (document.getElementById('Temperature-Farenheit').checked) {
+  if (document.getElementById('Temperature-Fahrenheit').checked) {
     return degreesF
   } else {
     var deg = (parseInt(degreesF) - 32) * 5
@@ -177,11 +177,6 @@ function mainLoop() {
   setTimeout(mainLoop, 100)
 }
 
-window.onload = function() {
-  document.body.style.color = 'rgba(0, 0, 0, 0.6)'
-  // document.body.style.color = rgba(255, 255, 255, 0.7)
-
-  mainLoop()
-}
+window.onload = mainLoop
 
 })

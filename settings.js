@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('refreshLocation').onclick = refreshLocation
 
   window.getRemote('settings-Temperature', function(value) {
-    if (value == undefined) value = 'Temperature-Farenheit'
+    if (value == undefined) value = 'Temperature-Fahrenheit'
     document.getElementById(value).checked = true
     displayNeedsUpdate = true
     updateWeather()
@@ -71,6 +71,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (value == undefined) value = 'Seconds-On'
     document.getElementById(value).checked = true
     // Will auto-update next time step
+  })
+
+  window.getRemote('settings-Text', function(value) {
+    if (value == undefined) value = 'Text-Light'
+    document.getElementById(value).checked = true
+    if (value == 'Text-Light') {
+      document.body.style.color = 'rgba(255, 255, 255, 0.7)'
+    } else {
+      document.body.style.color = 'rgba(0, 0, 0, 0.6)'
+    }
   })
 
   window.getLatitudeLongitude(function(latitude, longitude) {
@@ -118,8 +128,8 @@ function refreshLocation() {
 }
 
 window.settingsChanged = function() {
-  if (document.getElementById('Temperature-Farenheit').checked) {
-    window.setRemote('settings-Temperature', 'Temperature-Farenheit')
+  if (document.getElementById('Temperature-Fahrenheit').checked) {
+    window.setRemote('settings-Temperature', 'Temperature-Fahrenheit')
   } else {
     window.setRemote('settings-Temperature', 'Temperature-Celsius')
   }
@@ -136,6 +146,14 @@ window.settingsChanged = function() {
     window.setRemote('settings-Seconds', 'Seconds-On')
   } else {
     window.setRemote('settings-Seconds', 'Seconds-Off')
+  }
+
+  if (document.getElementById('Text-Light').checked) {
+    window.setRemote('settings-Text', 'Text-Light')
+    document.body.style.color = 'rgba(255, 255, 255, 0.7)'
+  } else {
+    window.setRemote('settings-Text', 'Text-Dark')
+    document.body.style.color = 'rgba(0, 0, 0, 0.6)'
   }
 
   window.setLocal('latitude', document.getElementById('Latitude').value)

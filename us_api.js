@@ -105,29 +105,28 @@ USApi.getWeather = function(callback) {
     var forecastUrl = urls.split('|')[1]
 
     httpGet(hourlyForecastUrl, function(response) {
-      callbacksPending--
       var period = response.properties.periods[0]
       weatherData[0]['temp'] = period.temperature
       weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
-      if (callbacksPending == 0) callback(weatherData)
+      if (callbacksPending-- == 0) callback(weatherData)
     })
 
     httpGet(forecastUrl, function(response) {
-      callbacksPending--
       var day = 1
       for (var i=0; i<response.properties.periods.length && day<5; i++) {
+        var period = response.properties.periods[i]
         // Skip periods until we find the start of a day (6 AM).
         // This ensures that we will always have a high and a low for the given period,
         // and it avoids duplicating info for the current day.
-        var startDate = new Date(response.properties.periods[i].startTime)
+        var startDate = new Date(period.startTime)
         if (startDate.getHours() != 6) continue
 
-        weatherData[day]['high'] = response.properties.periods[i].temperature
-        weatherData[day]['low'] = response.properties.periods[i+1].temperature
-        weatherData[day]['weather'] = getWeatherFromIcon(response.properties.periods[i].icon)
+        weatherData[day]['high'] = period.temperature
+        weatherData[day]['low'] = response.properties.periods[i+1].temperature // Nighttime temp
+        weatherData[day]['weather'] = getWeatherFromIcon(period.icon)
         day++
       }
-      if (callbacksPending == 0) callback(weatherData)
+      if (callbacksPending-- == 0) callback(weatherData)
     })
   })
 }

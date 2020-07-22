@@ -110,7 +110,8 @@ window.updateWeather = function() {
     window.setLocal('weatherExpires', weatherExpires.getTime())
 
     console.log('Weather data is expired, fetching new weather data...')
-    window.USApi.getWeather(function(weatherData) {
+    // window.USApi.getWeather(function(weatherData) {
+    window.WeatherCom.getWeather(function(weatherData) {
       // Potentially we can fail to fetch data, in which case we should not do anything.
       if (!weatherData) return
 

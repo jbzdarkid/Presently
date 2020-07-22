@@ -102,7 +102,10 @@ window.localize = function(key, defaultValue) {
   } else if (browser && browser.i18n) {
     value = browser.i18n.getMessage(key)
   }
-  if (value == undefined || value == "") return defaultValue
+  if (value == undefined || value == "") {
+    console.warn('No localized string available for', key, 'falling back to english.')
+    return defaultValue
+  }
   return value
 }
 

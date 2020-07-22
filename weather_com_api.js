@@ -87,7 +87,11 @@ WeatherCom.getWeather = function(callback) {
   window.getLocal('latitude', function(latitude) {
     window.getLocal('longitude', function(longitude) {
       window.getLocal('weather-com-apikey', function(apikey) {
-        if (latitude == undefined || longitude == undefined || apikey == undefined) return
+        if (latitude == undefined || longitude == undefined) return
+        if (apikey == undefined) {
+          console.error('You do not have an API key for weather.com, so we cannot use its API.')
+          return
+        }
         var weatherData = [{}, {}, {}, {}, {}]
         var callbacksPending = 2
 

@@ -4,21 +4,27 @@ function namespace(code) {
 
 namespace(function() {
 
-window.httpGet = function(url, onError, onSuccess) {
-  _httpSend('GET', url, null, onError, onSuccess)
+window.httpGet = function(url, action, onError, onSuccess) {
+  _httpSend('GET', url, null, action, onError, onSuccess)
 }
 
-window.httpPost = function(url, body, onError, onSuccess) {
-  _httpSend('POST', url, body, onError, onSuccess)
+window.httpPost = function(url, body, action, onError, onSuccess) {
+  _httpSend('POST', url, body, action, onError, onSuccess)
 }
 
-function _httpSend(verb, url, body, onError, onSuccess) {
+function _httpSend(verb, url, body, action, onError, onSuccess) {
+  if (onSuccess == undefined) debugger;
+
   var request = new XMLHttpRequest()
   request.onreadystatechange = function() {
     if (this.readyState != XMLHttpRequest.DONE) return
     this.onreadystatechange = undefined
+
+    // TODO: Remove me!
+    onError('Received a ' + this.status + ' error while attempting to ' + action)
+    return
     if (this.status != 200) {
-      onError(this.status)
+      onError('Received a ' + this.status + ' error while attempting to ' + action)
     } else {
       onSuccess(JSON.parse(this.responseText))
     }
@@ -80,20 +86,19 @@ window.getLatitudeLongitude = function(onError, onSuccess) {
   window.getLocal('latitude', function(latitude) {
     window.getLocal('longitude', function(longitude) {
       if (latitude != undefined && longitude != undefined) {
-        onSuccess(latitude, longitude)
+        onUpdateLatitudeLongitude(latitude, longitude, onSuccess)
         return
       }
-      window.requestLatitudeLongitude(onError, onSuccess)
+      requestLatitudeLongitude(onError, onSuccess)
     })
   })
 }
 
 window.requestLatitudeLongitude = function(onError, onSuccess) {
-  // TODO: If this is multi-requesting for this permission, I should add a throttle to it.
   navigator.geolocation.getCurrentPosition(function(position) {
     onUpdateLatitudeLongitude(position.coords.latitude, position.coords.longitude, onSuccess)
   }, function() {
-    httpGet('https://ipapi.co/json', function(error) {
+    httpGet('https://ipapi.co/json', 'discover your location', function(error) {
       onError(error)
     }, function(response) {
       onUpdateLatitudeLongitude(response.latitude, response.longitude, onSuccess)
@@ -101,7 +106,7 @@ window.requestLatitudeLongitude = function(onError, onSuccess) {
   })
 }
 
-window.onUpdateLatitudeLongitude = function(latitude, longitude, callback) {
+window.onUpdateLatitudeLongitude = function(latitude, longitude, onSuccess) {
   // Round to 3 decimal places. From https://stackoverflow.com/a/11832950
   // After the initial parse, nobody else should be acting on these as floats.
   var latitude = (Math.round((parseFloat(latitude) + Number.EPSILON) * 1000) / 1000).toString()
@@ -109,11 +114,13 @@ window.onUpdateLatitudeLongitude = function(latitude, longitude, callback) {
   window.setLocal('latitude', latitude)
   window.setLocal('longitude', longitude)
 
+  debugger;
   window.weatherApi.getLocationData(latitude, longitude, function(error) {
     // TODO: error. Spinner + message? Idk.
+    debugger;
   }, function(timezone, placeName) {
     var options = {
-      timeZone: response.properties.timeZone,
+      timeZone: timezone,
       timeStyle: 'short',
       hour12: document.getElementById('Hours-12').checked
     }
@@ -122,12 +129,13 @@ window.onUpdateLatitudeLongitude = function(latitude, longitude, callback) {
     var sunset = sunCalc.sunset.toLocaleString('en-US', options)
 
     // TODO: Sunrise & Sunset need to be updated daily. Can I call this whenever we open the settings pane?
+    document.getElementById('sunriseSunset').style.display = null
     document.getElementById('Sunrise').innerText = sunrise
     document.getElementById('Sunset').innerText = sunset
     document.getElementById('placeName').innerText = placeName
   })
 
-  if (callback) callback(latitude, longitude)
+  if (onSuccess) onSuccess(latitude, longitude)
 }
 
 window.localize = function(key, defaultValue) {

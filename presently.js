@@ -110,10 +110,11 @@ window.updateWeather = function() {
 
     console.log('Weather data is expired, fetching new weather data...')
     window.getLatitudeLongitude(function(error) {
-      // TODO: Network error... keep spinning? Maybe show spinner + error?
+      document.getElementById('forecast-error').innerText = error
     }, function(latitude, longitude) {
-      weatherAPI.getWeather(latitude, longitude, function(error) {
+      weatherApi.getWeather(latitude, longitude, function(error) {
         // TODO: Network error... keep spinning? Maybe show spinner + error?
+        debugger;
       }, function(weatherData) {
         /* Expected data format:
         [

@@ -84,7 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   window.getLatitudeLongitude(function(error) {
-    // TODO: Error.
+    document.getElementById('sunriseSunset').style.display = 'none'
+    document.getElementById('placeName').innerText = error
   }, function(latitude, longitude) {
     document.getElementById('Latitude').value = latitude
     document.getElementById('Longitude').value = longitude
@@ -116,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function refreshLocation() {
   window.requestLatitudeLongitude(function(error) {
     // TODO: error
+    debugger;
   }, function(success) {
     settingsChanged()
   })
@@ -150,7 +152,10 @@ window.settingsChanged = function() {
     document.body.style.color = 'rgba(0, 0, 0, 0.6)'
   }
 
-  onUpdateLatitudeLongitude(document.getElementById('Latitude').value, document.getElementById('Longitude').value, null)
+  onUpdateLatitudeLongitude(document.getElementById('Latitude').value, document.getElementById('Longitude').value, function(latitude, longitude) {
+    // Forcibly expire the weather data, so that we have to request new weather for the new location.
+    window.setLocal('weatherExpires', 0)
+  })
 
   var color = document.getElementById('ThemeCheck').parentElement.id
   window.setRemote('settings-Color', color)

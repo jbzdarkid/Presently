@@ -56,16 +56,22 @@ function getWeatherFromIcon(icon) {
 }
 
 USApi.getLocationData = function(latitude, longitude, onError, onSuccess) {
-  window.getLocal('usapi,weatherdata,' + latitude + ',' + longitude)
+  window.getLocal('usapi,weatherdata,' + latitude + ',' + longitude, function(response) {
+    if (response) {
+      onSuccess(response[0], response[1])
+      return
+    }
 
-
-  // TODO: Can I manually compute points to save this network call? At worst, I should cache them.
-  httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(error) {
-    onError(error)
-  }, function(response) {
-    var city = response.properties.relativeLocation.properties.city
-    var state = response.properties.relativeLocation.properties.state
-    onSuccess(timezone, city + ', ' + state)
+    // TODO: Can I manually compute points to save this network call? At worst, I should cache them.
+    httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(error) {
+      onError(error)
+    }, function(response) {
+      var timezone = response.properties.timeZone
+      var city = response.properties.relativeLocation.properties.city
+      var state = response.properties.relativeLocation.properties.state
+      window.setLocal('usapi,weatherdata,' + latitude + ',' + longitude, [timezone, city + ', ' + state])
+      onSuccess(timezone, city + ', ' + state)
+    })
   })
 }
 

@@ -88,8 +88,6 @@ function drawWeatherData(weatherData) {
   }
 }
 
-var weatherAPI = window.USApi
-
 // Default true when JS loads; we need to draw the display at least once.
 window.displayNeedsUpdate = true
 window.updateWeather = function() {
@@ -105,32 +103,36 @@ window.updateWeather = function() {
     if (weatherExpires && now.getTime() < weatherExpires) return // Weather not expired, nothing to do.
 
     // We've decided we're going update the weather data -- prevent any other updates for 5 minutes,
-    // to avoid making unnecessary network calls. We'll give it the full expiration once the call succeeds.
+    // to avoid making unnecessary network calls. We'll give it a longer expiration if the call succeeds.
     weatherExpires = now
     weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
     window.setLocal('weatherExpires', weatherExpires.getTime())
 
     console.log('Weather data is expired, fetching new weather data...')
-    weatherAPI.getWeather(function(weatherData) {
-      // Potentially we can fail to fetch data, in which case we should not do anything.
-      if (!weatherData) return
-      /* Expected data format:
-      [
-        {temp: 0, weather: WEATHER_CLEAR},
-        {high: 10, low: 0, weather: WEATHER_CLEAR},
-        {high: 10, low: 0, weather: WEATHER_CLEAR},
-        {high: 10, low: 0, weather: WEATHER_CLEAR},
-        {high: 10, low: 0, weather: WEATHER_CLEAR},
-      ]*/
+    window.getLatitudeLongitude(function(error) {
+      // TODO: Network error... keep spinning? Maybe show spinner + error?
+    }, function(latitude, longitude) {
+      weatherAPI.getWeather(latitude, longitude, function(error) {
+        // TODO: Network error... keep spinning? Maybe show spinner + error?
+      }, function(weatherData) {
+        /* Expected data format:
+        [
+          {temp: 0, weather: WEATHER_CLEAR},
+          {high: 10, low: 0, weather: WEATHER_CLEAR},
+          {high: 10, low: 0, weather: WEATHER_CLEAR},
+          {high: 10, low: 0, weather: WEATHER_CLEAR},
+          {high: 10, low: 0, weather: WEATHER_CLEAR},
+        ]*/
 
-      // Clear minutes, seconds, and milliseconds
-      // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
-      weatherExpires = new Date()
-      weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
-      window.setLocal('weatherExpires', weatherExpires.getTime())
-      window.setLocal('weatherData', weatherData)
+        // Clear minutes, seconds, and milliseconds
+        // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
+        weatherExpires = new Date()
+        weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
+        window.setLocal('weatherExpires', weatherExpires.getTime())
+        window.setLocal('weatherData', weatherData)
 
-      drawWeatherData(weatherData)
+        drawWeatherData(weatherData)
+      })
     })
   })
 }
@@ -161,21 +163,18 @@ function updateTime() {
 
   var dateString = DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate()
   document.getElementById('date').innerText = dateString
-
-  window.getLatitudeLongitude(function(latitude, longitude) {
-    var sunCalc = SunCalc.getTimes(new Date(), latitude, longitude)
-    document.getElementById('Sunrise').innerText = window.timeToString(sunCalc.sunrise, ':')
-    document.getElementById('Sunset').innerText = window.timeToString(sunCalc.sunset, ':')
-  })
 }
 
-function mainLoop() {
-  updateTime()
-  updateWeather()
+document.addEventListener('DOMContentLoaded', function() {
+  window.weatherApi = window.USApi
 
-  setTimeout(mainLoop, 100)
-}
+  function mainLoop() {
+    updateTime()
+    updateWeather()
 
-window.onload = mainLoop
+    setTimeout(mainLoop, 100)
+  }
+  mainLoop()
+})
 
 })

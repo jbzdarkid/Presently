@@ -55,30 +55,40 @@ function getWeatherFromIcon(icon) {
   return predictionToWeather[prediction]
 }
 
-USApi.getWeather = function(callback) {
-  window.getLocal2('urls', fallback=function(callback) {
-    window.getLatitudeLongitude(function(latitude, longitude) {
-      httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(response) {
-        console.log('Fetched URLs via latitude, longitude')
-        var urls = response.properties.forecastHourly + '|' + response.properties.forecast
-        window.setLocal('urls', urls)
-        callback(urls)
-      })
-    })
-  }, function(urls) {
+USApi.getLocationData = function(latitude, longitude, onError, onSuccess) {
+  window.getLocal('usapi,weatherdata,' + latitude + ',' + longitude)
+
+
+  // TODO: Can I manually compute points to save this network call? At worst, I should cache them.
+  httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(error) {
+    onError(error)
+  }, function(response) {
+    var city = response.properties.relativeLocation.properties.city
+    var state = response.properties.relativeLocation.properties.state
+    onSuccess(timezone, city + ', ' + state)
+  })
+}
+
+USApi.getWeather = function(latitude, longitude, onError, onSuccess) {
+  // TODO: Can I manually compute points to save this network call? At worst, I should cache them.
+  httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(error) {
+    onError(error)
+  }, function(response) {
     var weatherData = [{}, {}, {}, {}, {}]
     var callbacksPending = 2
-    var hourlyForecastUrl = urls.split('|')[0]
-    var forecastUrl = urls.split('|')[1]
 
-    httpGet(hourlyForecastUrl, function(response) {
+    httpGet(response.properties.forecastHourly, function(error) {
+      onError(error)
+    }, function(response) {
       var period = response.properties.periods[0]
       weatherData[0]['temp'] = period.temperature
       weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
-      if (--callbacksPending == 0) callback(weatherData)
+      if (--callbacksPending == 0) onSuccess(weatherData)
     })
 
-    httpGet(forecastUrl, function(response) {
+    httpGet(response.properties.forecast, function(error) {
+      onError(error)
+    }, function(response) {
       var now = new Date()
       var day = 1
       for (var i=0; i<response.properties.periods.length && day<5; i++) {
@@ -93,7 +103,7 @@ USApi.getWeather = function(callback) {
         weatherData[day]['weather'] = getWeatherFromIcon(period.icon)
         day++
       }
-      if (--callbacksPending == 0) callback(weatherData)
+      if (--callbacksPending == 0) onSuccess(weatherData)
     })
   })
 }

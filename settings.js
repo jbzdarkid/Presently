@@ -83,9 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   })
 
-  window.getLatitudeLongitude(function(latitude, longitude) {
-    document.getElementById('Latitude').value = window.round(latitude, 3)
-    document.getElementById('Longitude').value = window.round(longitude, 3)
+  window.getLatitudeLongitude(function(error) {
+    // TODO: Error.
+  }, function(latitude, longitude) {
+    document.getElementById('Latitude').value = latitude
+    document.getElementById('Longitude').value = longitude
   })
 
   window.getRemote('settings-Color', function(color) {
@@ -112,18 +114,10 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 
 function refreshLocation() {
-  navigator.geolocation.getCurrentPosition(function(position) {
-    console.log('Determined lat/long from browser')
-    document.getElementById('Latitude').value = window.round(position.coords.latitude, 3)
-    document.getElementById('Longitude').value = window.round(position.coords.longitude, 3)
+  window.requestLatitudeLongitude(function(error) {
+    // TODO: error
+  }, function(success) {
     settingsChanged()
-  }, function() {
-    httpGet('https://ipapi.co/json', function(response) {
-      console.log('Determined lat/long from ip address')
-      document.getElementById('Latitude').value = window.round(response.latitude, 3)
-      document.getElementById('Longitude').value = window.round(response.longitude, 3)
-      settingsChanged()
-    })
   })
 }
 
@@ -156,8 +150,7 @@ window.settingsChanged = function() {
     document.body.style.color = 'rgba(0, 0, 0, 0.6)'
   }
 
-  window.setLocal('latitude', document.getElementById('Latitude').value)
-  window.setLocal('longitude', document.getElementById('Longitude').value)
+  onUpdateLatitudeLongitude(document.getElementById('Latitude').value, document.getElementById('Longitude').value, null)
 
   var color = document.getElementById('ThemeCheck').parentElement.id
   window.setRemote('settings-Color', color)

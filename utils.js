@@ -4,20 +4,24 @@ function namespace(code) {
 
 namespace(function() {
 
-window.httpGet = function(url, callback) {
-  _httpSend('GET', url, null, callback)
+window.httpGet = function(url, onError, onSuccess) {
+  _httpSend('GET', url, null, onError, onSuccess)
 }
 
-window.httpPost = function(url, body, callback) {
-  _httpSend('POST', url, body, callback)
+window.httpPost = function(url, body, onError, onSuccess) {
+  _httpSend('POST', url, body, onError, onSuccess)
 }
 
-function _httpSend(verb, url, body, callback) {
+function _httpSend(verb, url, body, onError, onSuccess) {
   var request = new XMLHttpRequest()
   request.onreadystatechange = function() {
     if (this.readyState != XMLHttpRequest.DONE) return
-    if (this.status != 200) throw 'HTTP request returned non-200 status: ' + this.status
-    callback(JSON.parse(this.responseText))
+    this.onreadystatechange = undefined
+    if (this.status != 200) {
+      onError(this.status)
+    } else {
+      onSuccess(JSON.parse(this.responseText))
+    }
   }
   request.timeout = 120000 // 120,000 milliseconds = 2 minutes
   request.open(verb, url, true)
@@ -45,56 +49,10 @@ window.getLocal  = function(key, callback) {internalGet(storage.local,  key, cal
 window.getRemote = function(key, callback) {internalGet(storage.sync, key, callback)}
 window.setLocal  = function(key, value)    {internalSet(storage.local,  key, value)}
 window.setRemote = function(key, value)    {internalSet(storage.sync, key, value)}
-window.getLocal2 = function(key, fallback, callback) {
-  window.getLocal(key, function(result) {
-    if (result == undefined && fallback != undefined) {
-      fallback(callback)
-    } else {
-      callback(result)
-    }
-  })
-}
-
-window.getLatitudeLongitude = function(callback) {
-  window.getLocal('latitude', function(latitude) {
-    window.getLocal('longitude', function(longitude) {
-      if (latitude != undefined && longitude != undefined) {
-        callback(latitude, longitude)
-        return
-      }
-      // @Cutnpaste from reloadPosition in settings.js
-      navigator.geolocation.getCurrentPosition(function(position) {
-        window.setLocal('latitude', position.coords.latitude)
-        window.setLocal('longitude', position.coords.longitude)
-        callback(latitude, longitude)
-      }, function() {
-        httpGet('https://ipapi.co/json', function(response) {
-          window.setLocal('latitude', response.latitude)
-          window.setLocal('longitude', response.longitude)
-          callback(latitude, longitude)
-        })
-      })
-    })
-  })
-}
 
 // For perf reasons -- I call this quite often.
 var inMemory = {}
 function internalGet(store, key, callback) {
-  if (inMemory[key]) {
-    setTimeout(function() {
-      callback(inMemory[key])
-    }, 0)
-    return
-  }
-  store.get([key], function(result) {
-    // result will be {} if nothing is found, or result[key] will be null (for localstorage)
-    inMemory[key] = result[key]
-    callback(result[key])
-  })
-}
-
-function internalGet2(store, key, fallback, callback) {
   if (inMemory[key]) {
     setTimeout(function() {
       callback(inMemory[key])
@@ -118,6 +76,60 @@ window.clearStorage = function() {
   storage.local.clear()
 }
 
+window.getLatitudeLongitude = function(onError, onSuccess) {
+  window.getLocal('latitude', function(latitude) {
+    window.getLocal('longitude', function(longitude) {
+      if (latitude != undefined && longitude != undefined) {
+        onSuccess(latitude, longitude)
+        return
+      }
+      window.requestLatitudeLongitude(onError, onSuccess)
+    })
+  })
+}
+
+window.requestLatitudeLongitude = function(onError, onSuccess) {
+  // TODO: If this is multi-requesting for this permission, I should add a throttle to it.
+  navigator.geolocation.getCurrentPosition(function(position) {
+    onUpdateLatitudeLongitude(position.coords.latitude, position.coords.longitude, onSuccess)
+  }, function() {
+    httpGet('https://ipapi.co/json', function(error) {
+      onError(error)
+    }, function(response) {
+      onUpdateLatitudeLongitude(response.latitude, response.longitude, onSuccess)
+    })
+  })
+}
+
+window.onUpdateLatitudeLongitude = function(latitude, longitude, callback) {
+  // Round to 3 decimal places. From https://stackoverflow.com/a/11832950
+  // After the initial parse, nobody else should be acting on these as floats.
+  var latitude = (Math.round((parseFloat(latitude) + Number.EPSILON) * 1000) / 1000).toString()
+  var longitude = (Math.round((parseFloat(longitude) + Number.EPSILON) * 1000) / 1000).toString()
+  window.setLocal('latitude', latitude)
+  window.setLocal('longitude', longitude)
+
+  window.weatherApi.getLocationData(latitude, longitude, function(error) {
+    // TODO: error. Spinner + message? Idk.
+  }, function(timezone, placeName) {
+    var options = {
+      timeZone: response.properties.timeZone,
+      timeStyle: 'short',
+      hour12: document.getElementById('Hours-12').checked
+    }
+    var sunCalc = SunCalc.getTimes(new Date(), latitude, longitude)
+    var sunrise = sunCalc.sunrise.toLocaleString('en-US', options)
+    var sunset = sunCalc.sunset.toLocaleString('en-US', options)
+
+    // TODO: Sunrise & Sunset need to be updated daily. Can I call this whenever we open the settings pane?
+    document.getElementById('Sunrise').innerText = sunrise
+    document.getElementById('Sunset').innerText = sunset
+    document.getElementById('placeName').innerText = placeName
+  })
+
+  if (callback) callback(latitude, longitude)
+}
+
 window.localize = function(key, defaultValue) {
   var value = undefined
   if (chrome && chrome.i18n) {
@@ -138,12 +150,6 @@ window.timeToString = function(time, separator = ' ') {
     hours = (hours + 11) % 12 + 1 // Convert 0-23 to 1-12
   }
   return hours.toString().padStart(2, '0') + separator + time.getMinutes().toString().padStart(2, '0')
-}
-
-// https://stackoverflow.com/a/11832950
-window.round = function(num, places) {
-  var factor = 10 ** places
-  return Math.round((parseFloat(num) + Number.EPSILON) * factor) / factor
 }
 
 window.reparent = function(child, newParent) {

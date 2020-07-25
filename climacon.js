@@ -6,11 +6,14 @@ window.Climacon = function(weather, fontSize = '144px', isDaytimeAware = false) 
   icon.style.fontSize = fontSize
   icon.innerText = weather[0]
   if (isDaytimeAware) {
-    window.getLatitudeLongitude(function(latitude, longitude) {
+    window.getLatitudeLongitude(function(error) {
+      // If we don't have latitude & longitude, just show the daytime icon.
+    }, function(latitude, longitude) {
       var now = new Date()
       var sunCalc = SunCalc.getTimes(now, latitude, longitude)
+      // This check will work fine modulo timezones, since the times themselves don't need to be displayed.
       if (now < sunCalc.sunrise || now > sunCalc.sunset) { // Sun has not risen yet / has set
-        if (icon.innerText == 'I') { // Special handling for 'clear skies' to show moon phase
+        if (icon.innerText == window.WEATHER_CLEAR[0]) {
           icon.innerText = getMoonIcon()
         } else {
           icon.innerText = weather[1]
@@ -19,9 +22,9 @@ window.Climacon = function(weather, fontSize = '144px', isDaytimeAware = false) 
     })
   }
 
-  var offset = iconWidths[icon.innerText] - 99 // Width beyond the base cloud size
+  // 99px = Width beyond the base cloud size
   // Since the 'cloud' part of the icon is always flush left, adjust accordingly
-  icon.style.marginLeft = offset
+  icon.style.marginLeft = iconWidths[icon.innerText] - 99
   return icon
 }
 
@@ -39,7 +42,7 @@ window.Climacon = function(weather, fontSize = '144px', isDaytimeAware = false) 
 // Rain: 6 (drops)
 // Snow: o (circles)
 
-// Night Specific
+// Nighttime-specific
 // Flurries: a (snowflake)
 // Rain: 8
 // Sleet: 5

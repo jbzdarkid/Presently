@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
       div.onclick = function() {
         document.body.style.backgroundColor = '#' + this.id
         window.reparent(document.getElementById('ThemeCheck'), this)
+        document.getElementById('ThemeCheck').alt = 'Selected Theme: #' + this.id
         settingsChanged()
       }
       if (theme == color) {

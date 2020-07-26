@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="./resources/style.css" id="stylesheet">
@@ -12,7 +13,7 @@
   </head>
   <!-- This flexbox keeps the overall layout centered on the page -->
   <body class="noselect" style="display: flex; justify-content: center; margin: 0px; overflow-y: hidden">
-    <img id="settingsButton" src="./resources/f0c9.png" style="position: absolute; top: 6px; left: 15px; height: 48px; cursor: pointer; opacity: 50%"></img>
+    <img id="settingsButton" alt="Open Settings" src="./resources/f0c9.png" style="position: absolute; top: 6px; left: 15px; height: 48px; cursor: pointer; opacity: 50%">
     <div id="settings" style="display: none; width: 100%">
       <!-- This outer div keeps the two panels separate, while allowing for position: fixed on the inner div,
            which is required to add a scrollbar. -->
@@ -20,7 +21,7 @@
         <!-- These two divs are required to float the close button in the top right while scrolling -->
         <div style="width: 100%">
           <div style="position: fixed; width: 50%; z-index: 30">
-            <img id="closeSettings" src="./resources/times.png" style="float: right; height: 40px; cursor: pointer; opacity: 30%; margin-right: 15px"></img>
+            <img id="closeSettings" alt="Close Settings" src="./resources/times.png" style="float: right; height: 40px; cursor: pointer; opacity: 30%; margin-right: 15px">
           </div>
         </div>
         <div style="overflow-y: scroll; position: fixed; height: 100%; width: 50%; display: flex; justify-content: flex-start; align-items: center; flex-direction: column; background-color: white; color: black">
@@ -72,7 +73,7 @@
             <label style="font-family: OpenSans-Bold; font-size: 32px">Theme</label>
           </div><div>
             <div id="Theme" style="width: 300px; height: 600px; border-radius: 5px; overflow: hidden"></div>
-            <img id="ThemeCheck" src="./resources/check.png" style="height: 40px; margin-left: 30px; margin-top: 30px"></img>
+            <img id="ThemeCheck" alt="Selected Theme: None" src="./resources/check.png" style="height: 40px; margin-left: 30px; margin-top: 30px">
             <!-- Manual padding so themes don't get too close to the bottom -->
             <div style="height: 12px"></div>
           </div>

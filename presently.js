@@ -32,25 +32,24 @@ function drawWeatherData(weatherData) {
     day.textContent = ''
 
     var currentHour = (new Date()).getHours()
-    var icon = Climacon(weatherData[0].weather, '15em', true /* isDaytimeAware */)
+    var icon = Climacon(weatherData[0].weather, '180px', true /* isDaytimeAware */)
     icon.style.marginBottom = '-10px'
     day.appendChild(icon)
 
     var temp = document.createElement('div')
     temp.style.width = '90px'
-    temp.style.fontSize = '4em'
     day.appendChild(temp)
 
     var t = document.createElement('div')
     t.innerText = normalizedUnits(weatherData[0].temp)
     t.style.textAlign = 'center'
     t.style.fontFamily = 'OpenSans-Bold'
-    t.style.fontSize = '1.5em'
+    t.style.fontSize = '72px'
     temp.appendChild(t)
 
     var name = document.createElement('span')
     name.innerText = window.localize('current_day_name', 'Now')
-    name.style.fontSize = '4em'
+    name.style.fontSize = '48px'
     day.appendChild(name)
   }
 

@@ -24,7 +24,7 @@ window.Climacon = function(weather, fontSize = '144px', isDaytimeAware = false) 
 
   // 99px = Width beyond the base cloud size
   // Since the 'cloud' part of the icon is always flush left, adjust accordingly
-  icon.style.marginLeft = iconWidths[icon.innerText] - 99
+  icon.style.marginLeft = (iconWidths[icon.innerText] - 99) + 'px'
   return icon
 }
 

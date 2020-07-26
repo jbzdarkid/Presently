@@ -57,7 +57,7 @@ function drawWeatherData(weatherData) {
     var day = document.getElementById('forecast-' + i)
     day.textContent = ''
 
-    day.appendChild(Climacon(weatherData[i].weather, '8em'))
+    day.appendChild(Climacon(weatherData[i].weather, '96px'))
 
     var temp = document.createElement('div')
     temp.style.width = '90px'
@@ -68,7 +68,7 @@ function drawWeatherData(weatherData) {
     h.style.float = 'left'
     h.style.textAlign = 'right'
     h.style.fontFamily = 'OpenSans-Regular'
-    h.style.fontSize = '2.5em'
+    h.style.fontSize = '30px'
     temp.appendChild(h)
 
     var l = document.createElement('div')
@@ -76,13 +76,13 @@ function drawWeatherData(weatherData) {
     l.style.float = 'right'
     l.style.textAlign = 'left'
     l.style.fontFamily = 'OpenSans-Regular'
-    l.style.fontSize = '2.5em'
+    l.style.fontSize = '30px'
     l.style.opacity = '0.5'
     temp.appendChild(l)
 
     var name = document.createElement('span')
     name.innerText = DAYS[((new Date()).getDay() + i) % 7]
-    name.style.fontSize = '2em'
+    name.style.fontSize = '24px'
     day.appendChild(name)
   }
 }

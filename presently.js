@@ -1,13 +1,12 @@
 namespace(function() {
 
 // TODOs:
-// - Analog clock + hide forecast (if window gets too small)
 // - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
-// - Radio buttons are off-center. Add a nested div for each set.
 // - Sunrise & sunset are not recomputed unless the location changes. Maybe I should recompute them when I fetch the weather?
 //     Maybe I should always fetch location data as a part of the weather?
 // - Don't go fetch new weather every time the theme changes. That's just sloppy.
-// - Consider img01.png for mobile theme chooser.
+// - Analog clock + hide forecast (if window gets too small)
+// - Consider img01.png for mobile theme chooser / if window is small
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')

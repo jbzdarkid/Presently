@@ -7,6 +7,7 @@ namespace(function() {
 // - Sunrise & sunset are not recomputed unless the location changes. Maybe I should recompute them when I fetch the weather?
 //     Maybe I should always fetch location data as a part of the weather?
 // - Don't go fetch new weather every time the theme changes. That's just sloppy.
+// - Consider img01.png for mobile theme chooser.
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')

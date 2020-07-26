@@ -133,9 +133,9 @@ window.onUpdateLatitudeLongitude = function(latitude, longitude, onSuccess) {
 
 window.localize = function(key, defaultValue) {
   var value = undefined
-  if (chrome && chrome.i18n) {
+  if (typeof(chrome) !== 'undefined' && chrome.i18n) {
     value = chrome.i18n.getMessage(key)
-  } else if (browser && browser.i18n) {
+  } else if (typeof(browser) !== 'undefined' && browser.i18n) {
     value = browser.i18n.getMessage(key)
   }
   if (value == undefined || value == "") {

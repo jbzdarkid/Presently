@@ -55,58 +55,58 @@ function getWeatherFromIcon(icon) {
   return predictionToWeather[prediction]
 }
 
-USApi.getLocationData = function(latitude, longitude, onError, onSuccess) {
-  window.getLocal('usapi,weatherdata,' + latitude + ',' + longitude, function(response) {
+function getPointInfo(latitude, longitude, onError, onSuccess) {
+  window.getLocal('usapi,points,' + latitude + ',' + longitude, function(response) {
     if (response) {
-      onSuccess(response[0], response[1])
+      onSuccess(response)
       return
     }
 
-    // TODO: Can I manually compute points to save this network call? At worst, I should cache them.
-    httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(error) {
-      onError(error)
-    }, function(response) {
-      var timezone = response.properties.timeZone
-      var city = response.properties.relativeLocation.properties.city
-      var state = response.properties.relativeLocation.properties.state
-      window.setLocal('usapi,weatherdata,' + latitude + ',' + longitude, [timezone, city + ', ' + state])
-      onSuccess(timezone, city + ', ' + state)
+    httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, 'discover information about your location', onError, function(response) {
+      window.setLocal('usapi,points,' + latitude + ',' + longitude, response.properties)
+      onSuccess(response.properties)
     })
   })
 }
 
+USApi.getLocationData = function(latitude, longitude, onError, onSuccess) {
+  getPointInfo(latitude, longitude, onError, function(response) {
+    var timezone = response.timeZone
+    var city = response.relativeLocation.properties.city
+    var state = response.relativeLocation.properties.state
+    onSuccess(timezone, city + ', ' + state)
+  })
+}
+
 USApi.getWeather = function(latitude, longitude, onError, onSuccess) {
-  // TODO: Can I manually compute points to save this network call? At worst, I should cache them.
-  httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, function(error) {
-    onError(error)
-  }, function(response) {
+  getPointInfo(latitude, longitude, onError, function(response) {
     var weatherData = [{}, {}, {}, {}, {}]
     var callbacksPending = 2
 
-    httpGet(response.properties.forecastHourly, function(error) {
-      onError(error)
-    }, function(response) {
+    httpGet(response.forecastHourly, 'fetch the current weather', onError, function(response) {
       var period = response.properties.periods[0]
       weatherData[0]['temp'] = period.temperature
       weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
       if (--callbacksPending == 0) onSuccess(weatherData)
     })
 
-    httpGet(response.properties.forecast, function(error) {
-      onError(error)
-    }, function(response) {
+    httpGet(response.forecast, 'fetch the weather forecast', onError, function(response) {
       var now = new Date()
       var day = 1
-      for (var i=0; i<response.properties.periods.length && day<5; i++) {
+      for (var i=0; i<response.properties.periods.length && day<5;) {
         var period = response.properties.periods[i]
         // Skip periods until we find one which has not yet started.
         // This ensures that we will always have a high and a low for the given period,
         // and it avoids duplicating info for the current day.
-        if (new Date(period.startTime) < now) continue
+        if (new Date(period.startTime) < now) {
+          i++
+          continue
+        }
 
-        weatherData[day]['high'] = period.temperature
-        weatherData[day]['low'] = response.properties.periods[i+1].temperature // Nighttime temp
         weatherData[day]['weather'] = getWeatherFromIcon(period.icon)
+        weatherData[day]['high'] = period.temperature
+        weatherData[day]['low'] = response.properties.periods[i+1].temperature
+        i += 2
         day++
       }
       if (--callbacksPending == 0) onSuccess(weatherData)

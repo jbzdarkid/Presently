@@ -3,11 +3,10 @@ namespace(function() {
 // TODOs:
 // - Analog clock + hide forecast (if window gets too small)
 // - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
-// - Fix various bugs in settings to do with lat/long:
-//   - Sunrise/sunset are using browser-local (so don't update them until you ping the weather API)
-//   - Weather needs to poll once settings is closed (or on next viewing with settings closed)
-//   - I'd like to get the city name as well (should come alongside timezone w/ weather API)
 // - Radio buttons are off-center. Add a nested div for each set.
+// - Sunrise & sunset are not recomputed unless the location changes. Maybe I should recompute them when I fetch the weather?
+//     Maybe I should always fetch location data as a part of the weather?
+// - Don't go fetch new weather every time the theme changes. That's just sloppy.
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
@@ -113,8 +112,7 @@ window.updateWeather = function() {
       document.getElementById('forecast-error').innerText = error
     }, function(latitude, longitude) {
       weatherApi.getWeather(latitude, longitude, function(error) {
-        // TODO: Network error... keep spinning? Maybe show spinner + error?
-        debugger;
+        document.getElementById('forecast-error').innerText = error
       }, function(weatherData) {
         /* Expected data format:
         [

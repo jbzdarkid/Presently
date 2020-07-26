@@ -13,16 +13,11 @@ window.httpPost = function(url, body, action, onError, onSuccess) {
 }
 
 function _httpSend(verb, url, body, action, onError, onSuccess) {
-  if (onSuccess == undefined) debugger;
-
   var request = new XMLHttpRequest()
   request.onreadystatechange = function() {
     if (this.readyState != XMLHttpRequest.DONE) return
     this.onreadystatechange = undefined
 
-    // TODO: Remove me!
-    onError('Received a ' + this.status + ' error while attempting to ' + action)
-    return
     if (this.status != 200) {
       onError('Received a ' + this.status + ' error while attempting to ' + action)
     } else {
@@ -114,10 +109,9 @@ window.onUpdateLatitudeLongitude = function(latitude, longitude, onSuccess) {
   window.setLocal('latitude', latitude)
   window.setLocal('longitude', longitude)
 
-  debugger;
   window.weatherApi.getLocationData(latitude, longitude, function(error) {
-    // TODO: error. Spinner + message? Idk.
-    debugger;
+    document.getElementById('sunriseSunset').style.display = 'none'
+    document.getElementById('placeName').innerText = error
   }, function(timezone, placeName) {
     var options = {
       timeZone: timezone,
@@ -128,7 +122,6 @@ window.onUpdateLatitudeLongitude = function(latitude, longitude, onSuccess) {
     var sunrise = sunCalc.sunrise.toLocaleString('en-US', options)
     var sunset = sunCalc.sunset.toLocaleString('en-US', options)
 
-    // TODO: Sunrise & Sunset need to be updated daily. Can I call this whenever we open the settings pane?
     document.getElementById('sunriseSunset').style.display = null
     document.getElementById('Sunrise').innerText = sunrise
     document.getElementById('Sunset').innerText = sunset

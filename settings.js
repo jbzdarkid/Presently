@@ -116,10 +116,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function refreshLocation() {
   window.requestLatitudeLongitude(function(error) {
-    // TODO: error
-    debugger;
-  }, function(success) {
-    settingsChanged()
+    document.getElementById('sunriseSunset').style.display = 'none'
+    document.getElementById('placeName').innerText = error
+  }, function(latitude, longitude) {
+    onUpdateLatitudeLongitude(latitude, longitude, null)
   })
 }
 

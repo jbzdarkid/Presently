@@ -8,6 +8,7 @@ namespace(function() {
 // - Analog clock + hide forecast (if window gets too small)
 // - Consider img01.png for mobile theme chooser / if window is small
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
+// - Spend some more time worrying about icons being centered. Maybe make a test page for the icons I actually use, then pixel-align them?
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
@@ -49,6 +50,7 @@ function drawWeatherData(weatherData) {
 
     var name = document.createElement('span')
     name.innerText = window.localize('current_day_name', 'Now')
+    name.style.fontFamily = 'OpenSans-Regular'
     name.style.fontSize = '48px'
     day.appendChild(name)
   }
@@ -82,6 +84,7 @@ function drawWeatherData(weatherData) {
 
     var name = document.createElement('span')
     name.innerText = DAYS[((new Date()).getDay() + i) % 7]
+    name.style.fontFamily = 'OpenSans-Regular'
     name.style.fontSize = '24px'
     day.appendChild(name)
   }

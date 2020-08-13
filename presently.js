@@ -1,7 +1,7 @@
 namespace(function() {
 
 // TODOs:
-// - fix jump while weather is loading (make the spinner take up as much vertical space as weather does
+// - fix jump while weather is loading (make the spinner take up as much vertical space as weather does)
 // - Sunrise & sunset are not recomputed unless the location changes. Maybe I should recompute them when I fetch the weather?
 //     Maybe I should always fetch location data as a part of the weather?
 // - Don't go fetch new weather every time the theme changes. That's just sloppy.
@@ -167,16 +167,22 @@ function updateTime() {
   document.getElementById('date').innerText = dateString
 }
 
+function mainLoop() {
+  updateTime()
+  updateWeather()
+
+  setTimeout(mainLoop, 100)
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   window.weatherApi = window.USApi
 
-  function mainLoop() {
-    updateTime()
-    updateWeather()
-
-    setTimeout(mainLoop, 100)
-  }
-  mainLoop()
+  window.loadSettings(function() {
+    if (document.location.search == '?settings') {
+      showSettings()
+    }
+    mainLoop()
+  })
 })
 
 })

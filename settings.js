@@ -1,6 +1,6 @@
 namespace(function() {
 
-function showSettings() {
+window.showSettings = function() {
   // Fade out the main container, and prepare the settings container for display
   document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards reverse'
   document.getElementById('settings').style.animation = null
@@ -42,11 +42,7 @@ function hideSettings() {
   }, 1000)
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  if (document.location.search == '?settings') {
-    showSettings()
-  }
-
+window.loadSettings = function(callback) {
   for (var input of document.getElementsByTagName('input')) {
     input.onchange = settingsChanged
   }
@@ -54,23 +50,25 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('closeSettings').onclick = hideSettings
   document.getElementById('refreshLocation').onclick = refreshLocation
 
+  var pendingSettings = 6
   window.getRemote('settings-Temperature', function(value) {
     if (value == undefined) value = 'Temperature-Fahrenheit'
     document.getElementById(value).checked = true
     displayNeedsUpdate = true
     updateWeather()
+    if (--pendingSettings == 0) callback()
   })
 
   window.getRemote('settings-Hours', function(value) {
     if (value == undefined) value = 'Hours-12'
     document.getElementById(value).checked = true
-    // Will auto-update next time step
+    if (--pendingSettings == 0) callback()
   })
 
   window.getRemote('settings-Seconds', function(value) {
     if (value == undefined) value = 'Seconds-On'
     document.getElementById(value).checked = true
-    // Will auto-update next time step
+    if (--pendingSettings == 0) callback()
   })
 
   window.getRemote('settings-Text', function(value) {
@@ -81,14 +79,17 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       document.body.style.color = 'rgba(0, 0, 0, 0.6)'
     }
+    if (--pendingSettings == 0) callback()
   })
 
   window.getLatitudeLongitude(function(error) {
     document.getElementById('sunriseSunset').style.display = 'none'
     document.getElementById('placeName').innerText = error
+    if (--pendingSettings == 0) callback()
   }, function(latitude, longitude) {
     document.getElementById('Latitude').value = latitude
     document.getElementById('Longitude').value = longitude
+    if (--pendingSettings == 0) callback()
   })
 
   window.getRemote('settings-Color', function(color) {
@@ -112,8 +113,9 @@ document.addEventListener('DOMContentLoaded', function() {
         window.reparent(document.getElementById('ThemeCheck'), div)
       }
     }
+    if (--pendingSettings == 0) callback()
   })
-})
+}
 
 function refreshLocation() {
   window.requestLatitudeLongitude(function(error) {

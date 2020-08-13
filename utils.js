@@ -27,6 +27,9 @@ function _httpSend(verb, url, body, action, onError, onSuccess) {
   request.timeout = 120000 // 120,000 milliseconds = 2 minutes
   request.open(verb, url, true)
   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+  // This is a bit of a hack, as it's USApi specific.
+  // Bypass cache by appending the current time. We will cache HTTP reqeponses if we need to.
+  request.setRequestHeader('Feature-Flags', (new Date()).getTime())
   request.send(body)
 }
 

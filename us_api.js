@@ -109,6 +109,7 @@ USApi.getWeather = function(latitude, longitude, onError, onSuccess) {
         i += 2
         day++
       }
+      if (day < 5) return // Didn't get enough days of data
       if (--callbacksPending == 0) onSuccess(weatherData)
     })
   })

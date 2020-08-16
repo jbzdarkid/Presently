@@ -85,20 +85,23 @@
       </div>
     </div>
     <!-- This div keeps the rows in order. Somehow. -->
-    <div id="main" style="display: flex; flex-direction: column; justify-content: center; align-items: stretch">
-      <span id="time" style="text-align: center; font-size: 192px; font-family: OpenSans-Regular; margin-top: -54px; animation: fadeInDown 1s 1 both"></span>
+    <div id="main" style="display: flex; flex-direction: column; justify-content: center">
+      <span id="time" style="text-align: center; font-size: 192px; font-family: OpenSans-Regular; animation: fadeInDown 1s 1 both"></span>
       <span id="date" style="text-align: center; font-size: 32px; font-family: OpenSans-Regular; margin-bottom: 25px; animation: fadeIn 400ms ease-in-out 200ms 1 both"></span>
       <!-- For some reason, this div needs a display: flex in order for the loading icon to spin. -->
       <div id="forecast-loading" style="display: flex; flex-direction: column; align-items: center; animation: fadeIn 2.5s 1 forwards">
         <span style="font-size: 160px; font-family: Climacons; animation: spin 1s linear infinite">a</span>
         <label id="forecast-error" style="font-family: OpenSans-Regular; font-size: 18px"></label>
       </div>
-      <div id="forecast" style="display: none; justify-content: space-evenly">
-        <div id="forecast-0" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: bounceIn 1s 1 both; position: relative; top: -80px"></div>
-        <div id="forecast-1" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 000ms both"></div>
-        <div id="forecast-2" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 200ms both"></div>
-        <div id="forecast-3" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 400ms both"></div>
-        <div id="forecast-4" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 600ms both"></div>
+      <div id="forecast" style="display: none">
+        <!-- "flex: 1 1 0px" is equivalent to "flex-grow: 1; flex-shrink: 1; flex-basis: 0px"
+             It's required in order to keep the forecast cells the same width, even when the day names
+             are different widths. -->
+        <div id="forecast-0" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: bounceIn 1s 1 000ms both; min-width: 140px; position: relative; top: -80px"></div>
+        <div id="forecast-1" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 000ms both; min-width: 140px"></div>
+        <div id="forecast-2" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 200ms both; min-width: 140px"></div>
+        <div id="forecast-3" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 400ms both; min-width: 140px"></div>
+        <div id="forecast-4" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 600ms both; min-width: 140px"></div>
       </div>
     </div>
   </body>

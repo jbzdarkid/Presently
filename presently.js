@@ -22,6 +22,13 @@ function normalizedUnits(degreesF) {
   }
 }
 
+var previousWidth = window.innerWidth
+window.onresize = function() {
+  if (window.innerWidth < 700 && previousWidth >= 700) displayNeedsUpdate = true
+  if (window.innerWidth >= 700 && previousWidth < 700) displayNeedsUpdate = true
+  previousWidth = window.innerWidth
+}
+
 function drawWeatherData(weatherData) {
   document.getElementById('forecast-loading').style.display = 'none'
   // This needs to be a flexbox so that the forecast elements float side-by-side.
@@ -55,8 +62,17 @@ function drawWeatherData(weatherData) {
     day.appendChild(name)
   }
 
+  // If the window is too small, do not draw the forecast.
+  if (window.innerWidth < 700) {
+    for (var i=1; i<weatherData.length && i < 5; i++) {
+      document.getElementById('forecast-' + i).style.display = 'none'
+    }
+    return
+  }
+
   for (var i=1; i<weatherData.length && i < 5; i++) {
     var day = document.getElementById('forecast-' + i)
+    day.style.display = null
     day.textContent = ''
 
     day.appendChild(Climacon(weatherData[i].weather, 96))

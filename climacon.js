@@ -7,8 +7,10 @@ window.Climacon = function(weather, fontSize, isDaytimeAware = false) {
   icon.innerText = weather[0]
   icon.title = weather[2]
   if (isDaytimeAware) {
+    icon.innerText = ''
     window.getLatitudeLongitude(function(error) {
       // If we don't have latitude & longitude, just show the daytime icon.
+      icon.innerText = weather[0]
     }, function(latitude, longitude) {
       var now = new Date()
       var sunCalc = SunCalc.getTimes(now, latitude, longitude)

@@ -5,10 +5,8 @@ namespace(function() {
 // - Sunrise & sunset are not recomputed unless the location changes. Maybe I should recompute them when I fetch the weather?
 //     Maybe I should always fetch location data as a part of the weather?
 // - Don't go fetch new weather every time the theme changes. That's just sloppy.
-// - Analog clock + hide forecast (if window gets too small)
 // - Consider img01.png for mobile theme chooser / if window is small
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
-// - Spend some more time worrying about icons being centered. Maybe make a test page for the icons I actually use, then pixel-align them?
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')

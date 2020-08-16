@@ -5,6 +5,7 @@ window.Climacon = function(weather, fontSize, isDaytimeAware = false) {
   icon.style.fontFamily = 'Climacons'
   icon.style.fontSize = fontSize + 'px'
   icon.innerText = weather[0]
+  icon.title = weather[2]
   if (isDaytimeAware) {
     window.getLatitudeLongitude(function(error) {
       // If we don't have latitude & longitude, just show the daytime icon.
@@ -16,7 +17,7 @@ window.Climacon = function(weather, fontSize, isDaytimeAware = false) {
         if (icon.innerText == window.WEATHER_CLEAR[0]) {
           var data = getMoonIcon()
           icon.innerText = data[0]
-          icon.alt = data[1]
+          icon.title = data[1]
         } else {
           icon.innerText = weather[1]
         }
@@ -65,17 +66,7 @@ window.WEATHER_TORNADO      = ['X', 'X', 'Tornado']
 window.WEATHER_FOGGY        = ['?', '?', 'Foggy']
 
 // Offsets computed at 100px
-var iconWidths = {'!': 0, '"': 19, '#': 6, '$': 0, '%': 19, '&': 6, "'": 6, '(': 19, ')': 6, '*': 0, '+': 19, ', ': 6, '-': 0, '.': 19, '/': 6, '0': 0, '1': 19, '2': 6, '3': 6, '4': 19, '5': 6, '6': 0, '7': 19, '8': 6, '9': 0, ':': 19, ';': 6, '<': 0, '=': 19, '>': 6, '?': 6, '@': 19, 'A': 6, 'B': 0, 'C': 19, 'D': 19, 'E': 19, 'F': 0, 'G': 19, 'H': 6, 'I': 0,
-  'O': 0,
-  'P': 0,
-  'Q': 0,
-  'R': 0,
-  'S': 0,
-  'T': 0,
-  'U': 0,
-  'V': 0,
-
-'X': 3, 'h': 0, 'i': 0, 'j': 0}
+var iconWidths = {'!': 0, '"': 19, '#': 6, '$': 0, '%': 19, '&': 6, "'": 6, '(': 19, ')': 6, '*': 0, '+': 19, ', ': 6, '-': 0, '.': 19, '/': 6, '0': 0, '1': 19, '2': 6, '3': 6, '4': 19, '5': 6, '6': 0, '7': 19, '8': 6, '9': 0, ':': 19, ';': 6, '<': 0, '=': 19, '>': 6, '?': 6, '@': 19, 'A': 6, 'B': 0, 'C': 19, 'D': 19, 'E': 19, 'F': 0, 'G': 19, 'H': 6, 'I': 0, 'O': 0, 'P': 0, 'Q': 0, 'R': 0, 'S': 0, 'T': 0, 'U': 0, 'V': 0,  'X': 3, 'h': 0, 'i': 0, 'j': 0}
 
 function getMoonIcon() {
   var illum = SunCalc.getMoonIllumination(new Date())

@@ -33,7 +33,7 @@ function drawWeatherData(weatherData) {
     day.textContent = ''
 
     var currentHour = (new Date()).getHours()
-    var icon = Climacon(weatherData[0].weather, '180px', true /* isDaytimeAware */)
+    var icon = Climacon(weatherData[0].weather, 180, true /* isDaytimeAware */)
     icon.style.marginBottom = '-10px'
     day.appendChild(icon)
 
@@ -59,7 +59,7 @@ function drawWeatherData(weatherData) {
     var day = document.getElementById('forecast-' + i)
     day.textContent = ''
 
-    day.appendChild(Climacon(weatherData[i].weather, '96px'))
+    day.appendChild(Climacon(weatherData[i].weather, 96))
 
     var temp = document.createElement('div')
     temp.style.width = '90px'

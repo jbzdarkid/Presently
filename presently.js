@@ -24,8 +24,15 @@ function normalizedUnits(degreesF) {
 
 var previousWidth = window.innerWidth
 window.onresize = function() {
-  if (window.innerWidth < 700 && previousWidth >= 700) displayNeedsUpdate = true
-  if (window.innerWidth >= 700 && previousWidth < 700) displayNeedsUpdate = true
+  if (window.innerWidth < 800 && previousWidth >= 800) {
+    displayNeedsUpdate = true
+    // Manually strip the seconds off (we'll do this more carefully once the time reloads)
+    var time = document.getElementById('time').innerText
+    document.getElementById('time').innerText = time.substr(0, 5)
+  } else if (window.innerWidth >= 800 && previousWidth < 800) {
+    displayNeedsUpdate = true
+    timeExpires = new Date(0) // Forcibly expire the time to fetch seconds
+  }
   previousWidth = window.innerWidth
 }
 
@@ -63,7 +70,7 @@ function drawWeatherData(weatherData) {
   }
 
   // If the window is too small, do not draw the forecast.
-  if (window.innerWidth < 700) {
+  if (window.innerWidth < 800) {
     for (var i=1; i<weatherData.length && i < 5; i++) {
       document.getElementById('forecast-' + i).style.display = 'none'
     }
@@ -174,7 +181,8 @@ function updateTime() {
   */
 
   var timeString = window.timeToString(now)
-  if (document.getElementById('Seconds-On').checked) {
+  // Don't show seconds beyond a minimum width
+  if (window.innerWidth >= 800 && document.getElementById('Seconds-On').checked) {
     timeString += ' ' + now.getSeconds().toString().padStart(2, '0')
   }
   document.getElementById('time').innerText = timeString

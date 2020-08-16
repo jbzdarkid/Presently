@@ -1,5 +1,3 @@
-window.USApi = {}
-
 namespace(function() {
 
 var predictionToWeather = {
@@ -50,9 +48,13 @@ function getWeatherFromIcon(icon) {
   // https://api.weather.gov/icons/land/night/bkn?size=medium
   // They can also have two forecasts, and look like this:
   // https://api.weather.gov/icons/land/night/bkn,skc?size=medium
+  // Or like this, apparently:
+  // https://api.weather.gov/icons/land/day/hot/rain_showers,20?size=medium
 
-  var prediction = icon.split('/')[6].split(',')[0].split('?')[0]
-  return predictionToWeather[prediction]
+  var start = icon.lastIndexOf('/') + 1
+  var end = icon.indexOf(',', start)
+  if (end == -1) end = icon.indexOf('?', start)
+  return predictionToWeather[icon.substr(start, end - start)]
 }
 
 function getPointInfo(latitude, longitude, onError, onSuccess) {
@@ -69,6 +71,8 @@ function getPointInfo(latitude, longitude, onError, onSuccess) {
   })
 }
 
+window.USApi = {}
+
 USApi.getLocationData = function(latitude, longitude, onError, onSuccess) {
   getPointInfo(latitude, longitude, onError, function(response) {
     var timezone = response.timeZone
@@ -83,14 +87,17 @@ USApi.getWeather = function(latitude, longitude, onError, onSuccess) {
     var weatherData = [{}, {}, {}, {}, {}]
     var callbacksPending = 2
 
-    httpGet(response.forecastHourly, 'fetch the current weather', onError, function(response) {
+    // Force a new weather fetch by setting a custom header
+    var headers = {'Feature-Flags': (new Date()).getTime()}
+
+    httpGet(response.forecastHourly, headers, 'fetch the current weather', onError, function(response) {
       var period = response.properties.periods[0]
       weatherData[0]['temp'] = period.temperature
       weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
       if (--callbacksPending == 0) onSuccess(weatherData)
     })
 
-    httpGet(response.forecast, 'fetch the weather forecast', onError, function(response) {
+    httpGet(response.forecast, headers, 'fetch the weather forecast', onError, function(response) {
       var now = new Date()
       var day = 1
       for (var i=0; i<response.properties.periods.length && day<5;) {
@@ -106,6 +113,9 @@ USApi.getWeather = function(latitude, longitude, onError, onSuccess) {
         weatherData[day]['weather'] = getWeatherFromIcon(period.icon)
         weatherData[day]['high'] = period.temperature
         weatherData[day]['low'] = response.properties.periods[i+1].temperature
+        if (weatherData[day]['high'] < weatherData[day]['low']) {
+          debugger;
+        }
         i += 2
         day++
       }

@@ -98,14 +98,13 @@ USApi.getWeather = function(latitude, longitude, onError, onSuccess) {
     })
 
     httpGet(response.forecast, headers, 'fetch the weather forecast', onError, function(response) {
-      var now = new Date()
+      var tomorrow = new Date().setHours(24, 0, 0, 0)
       var day = 1
       for (var i=0; i<response.properties.periods.length && day<5;) {
         var period = response.properties.periods[i]
-        // Skip periods until we find one which has not yet started.
-        // This ensures that we will always have a high and a low for the given period,
-        // and it avoids duplicating info for the current day.
-        if (new Date(period.startTime) < now) {
+        // Skip periods until we find one which starts after midnight.
+        // This ensures that we show a proper forecast beginning on the next day.
+        if (new Date(period.startTime) < tomorrow) {
           i++
           continue
         }
@@ -113,9 +112,7 @@ USApi.getWeather = function(latitude, longitude, onError, onSuccess) {
         weatherData[day]['weather'] = getWeatherFromIcon(period.icon)
         weatherData[day]['high'] = period.temperature
         weatherData[day]['low'] = response.properties.periods[i+1].temperature
-        if (weatherData[day]['high'] < weatherData[day]['low']) {
-          debugger;
-        }
+        if (weatherData[day]['weather'] == undefined) debugger;
         i += 2
         day++
       }

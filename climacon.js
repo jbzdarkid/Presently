@@ -23,6 +23,8 @@ window.Climacon = function(weather, fontSize, isDaytimeAware = false) {
         } else {
           icon.innerText = weather[1]
         }
+      } else {
+        icon.innerText = weather[0]
       }
     })
   }

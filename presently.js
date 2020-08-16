@@ -77,7 +77,7 @@ function drawWeatherData(weatherData) {
 
   for (var i=1; i<weatherData.length && i < 5; i++) {
     var day = document.getElementById('forecast-' + i)
-    day.style.display = null
+    day.style.display = 'flex'
     day.textContent = ''
 
     day.appendChild(Climacon(weatherData[i].weather, 96))

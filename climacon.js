@@ -4,6 +4,7 @@ window.Climacon = function(weather, fontSize, isDaytimeAware = false) {
   var icon = document.createElement('span')
   icon.style.fontFamily = 'Climacons'
   icon.style.fontSize = fontSize + 'px'
+  icon.style.marginLeft = iconWidths[weather[0]] * (fontSize / 100) + 'px'
   icon.innerText = weather[0]
   icon.title = weather[2]
   if (isDaytimeAware) {
@@ -29,7 +30,6 @@ window.Climacon = function(weather, fontSize, isDaytimeAware = false) {
     })
   }
 
-  icon.style.marginLeft = iconWidths[icon.innerText] * (fontSize / 100) + 'px'
   return icon
 }
 

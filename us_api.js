@@ -54,7 +54,9 @@ function getWeatherFromIcon(icon) {
   var start = icon.lastIndexOf('/') + 1
   var end = icon.indexOf(',', start)
   if (end == -1) end = icon.indexOf('?', start)
-  return predictionToWeather[icon.substr(start, end - start)]
+  var weather = predictionToWeather[icon.substr(start, end - start)]
+  if (weather == undefined) console.error('Failed to convert icon', icon, 'to weather')
+  return weather
 }
 
 function getPointInfo(latitude, longitude, onError, onSuccess) {

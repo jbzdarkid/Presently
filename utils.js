@@ -61,9 +61,9 @@ if (typeof(chrome) !== 'undefined' && chrome.storage) {
 }
 
 window.getLocal  = function(key, callback) {internalGet(storage.local,  key, callback)}
-window.getRemote = function(key, callback) {internalGet(storage.sync, key, callback)}
+window.getRemote = function(key, callback) {internalGet(storage.sync,   key, callback)}
 window.setLocal  = function(key, value)    {internalSet(storage.local,  key, value)}
-window.setRemote = function(key, value)    {internalSet(storage.sync, key, value)}
+window.setRemote = function(key, value)    {internalSet(storage.sync,   key, value)}
 
 // For perf reasons -- I call this quite often.
 var inMemory = {}
@@ -153,7 +153,7 @@ window.localize = function(key, defaultValue) {
     value = browser.i18n.getMessage(key)
   }
   if (value == undefined || value == "") {
-    console.warn('No localized string available for', key, 'falling back to english.')
+    console.warn('No localized string available for "' + key + '", falling back to english.')
     return defaultValue
   }
   return value

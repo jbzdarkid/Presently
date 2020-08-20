@@ -91,60 +91,6 @@ window.clearStorage = function() {
   storage.local.clear()
 }
 
-window.getLatitudeLongitude = function(onError, onSuccess) {
-  window.getLocal('latitude', function(latitude) {
-    window.getLocal('longitude', function(longitude) {
-      if (latitude != undefined && longitude != undefined) {
-        onUpdateLatitudeLongitude(latitude, longitude, onSuccess)
-        return
-      }
-      requestLatitudeLongitude(onError, onSuccess)
-    })
-  })
-}
-
-window.requestLatitudeLongitude = function(onError, onSuccess) {
-  navigator.geolocation.getCurrentPosition(function(position) {
-    onUpdateLatitudeLongitude(position.coords.latitude, position.coords.longitude, onSuccess)
-  }, function() {
-    httpGet('https://ipapi.co/json', 'discover your location', function(error) {
-      onError(error)
-    }, function(response) {
-      onUpdateLatitudeLongitude(response.latitude, response.longitude, onSuccess)
-    })
-  })
-}
-
-window.onUpdateLatitudeLongitude = function(latitude, longitude, onSuccess) {
-  // Round to 3 decimal places. From https://stackoverflow.com/a/11832950
-  // After the initial parse, nobody else should be acting on these as floats.
-  var latitude = (Math.round((parseFloat(latitude) + Number.EPSILON) * 1000) / 1000).toString()
-  var longitude = (Math.round((parseFloat(longitude) + Number.EPSILON) * 1000) / 1000).toString()
-  window.setLocal('latitude', latitude)
-  window.setLocal('longitude', longitude)
-
-  window.weatherApi.getLocationData(latitude, longitude, function(error) {
-    document.getElementById('sunriseSunset').style.display = 'none'
-    document.getElementById('placeName').innerText = error
-  }, function(timezone, placeName) {
-    var options = {
-      timeZone: timezone,
-      timeStyle: 'short',
-      hour12: document.getElementById('Hours-12').checked
-    }
-    var sunCalc = SunCalc.getTimes(new Date(), latitude, longitude)
-    var sunrise = sunCalc.sunrise.toLocaleString('en-US', options)
-    var sunset = sunCalc.sunset.toLocaleString('en-US', options)
-
-    document.getElementById('sunriseSunset').style.display = null
-    document.getElementById('Sunrise').innerText = sunrise
-    document.getElementById('Sunset').innerText = sunset
-    document.getElementById('placeName').innerText = placeName
-  })
-
-  if (onSuccess) onSuccess(latitude, longitude)
-}
-
 window.localize = function(key, defaultValue) {
   var value = undefined
   if (typeof(chrome) !== 'undefined' && chrome.i18n) {
@@ -152,7 +98,7 @@ window.localize = function(key, defaultValue) {
   } else if (typeof(browser) !== 'undefined' && browser.i18n) {
     value = browser.i18n.getMessage(key)
   }
-  if (value == undefined || value == "") {
+  if (value == undefined || value == '') {
     console.warn('No localized string available for "' + key + '", falling back to english.')
     return defaultValue
   }

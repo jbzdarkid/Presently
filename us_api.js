@@ -2,6 +2,7 @@ namespace(function() {
 
 var predictionToWeather = {
   'skc': WEATHER_CLEAR,
+  'hot': WEATHER_CLEAR,
 
   'few': WEATHER_CLOUDY,
   'sct': WEATHER_CLOUDY,
@@ -59,15 +60,23 @@ function getWeatherFromIcon(icon) {
   return weather
 }
 
-function getPointInfo(latitude, longitude, onError, onSuccess) {
-  window.getLocal('usapi,points,' + latitude + ',' + longitude, function(response) {
+function getPointInfo(coords, onError, onSuccess) {
+  // This data never changes, but it isn't computable. Cache it in remote storage so it can be shared.
+  var key = 'usapi,points,' + coords.latitude + ',' + coords.longitude
+  window.getRemote(key, function(response) {
     if (response) {
       onSuccess(response)
       return
     }
 
-    httpGet('https://api.weather.gov/points/' + latitude + ',' + longitude, 'discover information about your location', onError, function(response) {
-      window.setLocal('usapi,points,' + latitude + ',' + longitude, response.properties)
+    httpGet('https://api.weather.gov/points/' + coords.latitude + ',' + coords.longitude, 'discover information about your location', function(error) {
+      if (error.includes('404')) {
+        onError('Your location is not inside the US, so we cannot look it up using the US API.')
+      } else {
+        onError(error)
+      }
+    }, function(response) {
+      window.setRemote(key, response.properties)
       onSuccess(response.properties)
     })
   })
@@ -75,8 +84,8 @@ function getPointInfo(latitude, longitude, onError, onSuccess) {
 
 window.USApi = {}
 
-USApi.getLocationData = function(latitude, longitude, onError, onSuccess) {
-  getPointInfo(latitude, longitude, onError, function(response) {
+USApi.getLocationData = function(coords, onError, onSuccess) {
+  getPointInfo(coords, onError, function(response) {
     var timezone = response.timeZone
     var city = response.relativeLocation.properties.city
     var state = response.relativeLocation.properties.state
@@ -84,8 +93,8 @@ USApi.getLocationData = function(latitude, longitude, onError, onSuccess) {
   })
 }
 
-USApi.getWeather = function(latitude, longitude, onError, onSuccess) {
-  getPointInfo(latitude, longitude, onError, function(response) {
+USApi.getWeather = function(coords, onError, onSuccess) {
+  getPointInfo(coords, onError, function(response) {
     var weatherData = [{}, {}, {}, {}, {}]
     var callbacksPending = 2
 

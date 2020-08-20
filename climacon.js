@@ -7,27 +7,21 @@ window.Climacon = function(weather, fontSize, isDaytimeAware = false) {
   icon.style.marginLeft = iconWidths[weather[0]] * (fontSize / 100) + 'px'
   icon.innerText = weather[0]
   icon.title = weather[2]
-  if (isDaytimeAware) {
-    icon.innerText = ''
-    window.getLatitudeLongitude(function(error) {
-      // If we don't have latitude & longitude, just show the daytime icon.
-      icon.innerText = weather[0]
-    }, function(latitude, longitude) {
-      var now = new Date()
-      var sunCalc = SunCalc.getTimes(now, latitude, longitude)
-      // This check will work fine modulo timezones, since the times themselves don't need to be displayed.
-      if (now < sunCalc.sunrise || now > sunCalc.sunset) { // Sun has not risen yet / has set
-        if (icon.innerText == window.WEATHER_CLEAR[0]) {
-          var data = getMoonIcon()
-          icon.innerText = data[0]
-          icon.title = data[1]
-        } else {
-          icon.innerText = weather[1]
-        }
+
+  // Don't actually request location data here. If we don't have it, the daytime icon is fine.
+  if (isDaytimeAware && window.coords != null) {
+    var now = new Date()
+    var sunCalc = SunCalc.getTimes(now, window.coords.latitude, window.coords.longitude)
+    // This check will work fine modulo timezones, since the times themselves don't need to be displayed.
+    if (now < sunCalc.sunrise || now > sunCalc.sunset) { // Sun has not risen yet / has set
+      if (icon.innerText == window.WEATHER_CLEAR[0]) {
+        var data = getMoonIcon()
+        icon.innerText = data[0]
+        icon.title = data[1]
       } else {
-        icon.innerText = weather[0]
+        icon.innerText = weather[1]
       }
-    })
+    }
   }
 
   return icon

@@ -1,12 +1,12 @@
 namespace(function() {
 
 // TODOs:
-// - fix jump while weather is loading (make the spinner take up as much vertical space as weather does)
 // - Sunrise & sunset are not recomputed unless the location changes. Maybe I should recompute them when I fetch the weather?
 //     Maybe I should always fetch location data as a part of the weather?
-// - Don't go fetch new weather every time the theme changes. That's just sloppy.
 // - Consider img01.png for mobile theme chooser / if window is small
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
+// - https://twcservice.mybluemix.net/rest-api/#/
+// - https://openweathermap.org/price
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
@@ -36,6 +36,8 @@ window.onresize = function() {
 
 function drawWeatherData(weatherData) {
   document.getElementById('forecast-loading').style.display = 'none'
+  document.getElementById('forecast-error').innerText = ''
+
   // This needs to be a flexbox so that the forecast elements float side-by-side.
   document.getElementById('forecast').style.display = 'flex'
   document.title = normalizedUnits(weatherData[0].temp) + '\u00B0 | Presently'
@@ -131,10 +133,10 @@ window.updateWeather = function() {
     window.setLocal('weatherExpires', weatherExpires.getTime())
 
     console.log('Weather data is expired, fetching new weather data...')
-    window.getLatitudeLongitude(function(error) {
+    window.requestLocation(function(error) {
       document.getElementById('forecast-error').innerText = error
-    }, function(latitude, longitude) {
-      weatherApi.getWeather(latitude, longitude, function(error) {
+    }, function(coords) {
+      weatherApi.getWeather(coords, function(error) {
         document.getElementById('forecast-error').innerText = error
       }, function(weatherData) {
         /* Expected data format:
@@ -146,7 +148,6 @@ window.updateWeather = function() {
           {high: 10, low: 0, weather: WEATHER_CLEAR},
         ]*/
 
-        // Clear minutes, seconds, and milliseconds
         // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
         weatherExpires = new Date()
         weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
@@ -178,7 +179,7 @@ function updateTime() {
   */
 
   var timeString = window.timeToString(now)
-  // Don't show seconds beyond a minimum width
+  // Don't show seconds if the window isn't wide enough
   if (window.innerWidth >= 800 && document.getElementById('Seconds-On').checked) {
     timeString += ' ' + now.getSeconds().toString().padStart(2, '0')
   }
@@ -198,9 +199,18 @@ function mainLoop() {
 document.addEventListener('DOMContentLoaded', function() {
   window.weatherApi = window.USApi
 
+  // Request the user's location once on page load to populate sunrise/sundown times.
+  // On success, we also request a repaint, since this will fix any nighttime climacons.
+  window.requestLocation(function(error) {
+    document.getElementById('forecast-error').innerText = error
+  }, function(success) {
+    displayNeedsUpdate = true
+  })
+
   window.loadSettings(function() {
+    // If we navigated to ?settings (i.e. from the extension menu), immediately show settings.
     if (document.location.search == '?settings') {
-      showSettings()
+      window.showSettings()
     }
     mainLoop()
   })

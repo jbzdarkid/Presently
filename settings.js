@@ -44,33 +44,47 @@ function hideSettings() {
 
 window.loadSettings = function(callback) {
   for (var input of document.getElementsByTagName('input')) {
-    input.onchange = settingsChanged
+    if (input.id == 'Latitude' || input.id == 'Longitude') {
+      input.onchange = userChangedCoords
+    } else {
+      input.onchange = settingsChanged
+    }
   }
   document.getElementById('settingsButton').onclick = showSettings
   document.getElementById('closeSettings').onclick = hideSettings
-  document.getElementById('refreshLocation').onclick = refreshLocation
+  document.getElementById('refreshLocation').onclick = function() {
+    window.setLocal('coords', null) // When the user asks for a refresh, we clear the coordinates.
+    window.requestLocation(function(error) {
+      document.getElementById('sunriseSunset').style.display = 'none'
+      document.getElementById('placeName').innerText = error
+    })
+  }
 
-  var pendingSettings = 6
+  var pendingSettings = 0
+
+  pendingSettings++
   window.getRemote('settings-Temperature', function(value) {
     if (value == undefined) value = 'Temperature-Fahrenheit'
     document.getElementById(value).checked = true
-    displayNeedsUpdate = true
-    updateWeather()
+    window.displayNeedsUpdate = true
     if (--pendingSettings == 0) callback()
   })
 
+  pendingSettings++
   window.getRemote('settings-Hours', function(value) {
     if (value == undefined) value = 'Hours-12'
     document.getElementById(value).checked = true
     if (--pendingSettings == 0) callback()
   })
 
+  pendingSettings++
   window.getRemote('settings-Seconds', function(value) {
     if (value == undefined) value = 'Seconds-On'
     document.getElementById(value).checked = true
     if (--pendingSettings == 0) callback()
   })
 
+  pendingSettings++
   window.getRemote('settings-Text', function(value) {
     if (value == undefined) value = 'Text-Light'
     document.getElementById(value).checked = true
@@ -82,16 +96,7 @@ window.loadSettings = function(callback) {
     if (--pendingSettings == 0) callback()
   })
 
-  window.getLatitudeLongitude(function(error) {
-    document.getElementById('sunriseSunset').style.display = 'none'
-    document.getElementById('placeName').innerText = error
-    if (--pendingSettings == 0) callback()
-  }, function(latitude, longitude) {
-    document.getElementById('Latitude').value = latitude
-    document.getElementById('Longitude').value = longitude
-    if (--pendingSettings == 0) callback()
-  })
-
+  pendingSettings++
   window.getRemote('settings-Color', function(color) {
     if (color == undefined) color = '4242BA'
     var themes = ['222222', 'E5E5E5', '5CBF94', '84C0D7', '903D3D', 'D2AB59', '6FB269', '6C5287', '3193A5', 'C34D40', '4242BA', '2E3C56', 'E59C2F', '412F3F', 'EA724C', '5C2533', '2D442F', '8DD397']
@@ -117,23 +122,13 @@ window.loadSettings = function(callback) {
   })
 }
 
-function refreshLocation() {
-  window.requestLatitudeLongitude(function(error) {
-    document.getElementById('sunriseSunset').style.display = 'none'
-    document.getElementById('placeName').innerText = error
-  }, function(latitude, longitude) {
-    onUpdateLatitudeLongitude(latitude, longitude, null)
-  })
-}
-
-window.settingsChanged = function() {
+function settingsChanged() {
   if (document.getElementById('Temperature-Fahrenheit').checked) {
     window.setRemote('settings-Temperature', 'Temperature-Fahrenheit')
   } else {
     window.setRemote('settings-Temperature', 'Temperature-Celsius')
   }
-  displayNeedsUpdate = true
-  updateWeather()
+  window.displayNeedsUpdate = true
 
   if (document.getElementById('Hours-12').checked) {
     window.setRemote('settings-Hours', 'Hours-12')
@@ -155,13 +150,29 @@ window.settingsChanged = function() {
     document.body.style.color = 'rgba(0, 0, 0, 0.6)'
   }
 
-  onUpdateLatitudeLongitude(document.getElementById('Latitude').value, document.getElementById('Longitude').value, function(latitude, longitude) {
-    // Forcibly expire the weather data, so that we have to request new weather for the new location.
-    window.setLocal('weatherExpires', 0)
-  })
-
   var color = document.getElementById('ThemeCheck').parentElement.id
   window.setRemote('settings-Color', color)
+}
+
+var userSettingsTimeout = null
+function userChangedCoords() {
+  // Users take time to type, so we only update the coordinates if there's been no input for 3 seconds.
+  // Also, we disable the auto-location change, and show a loading message in the meantime.
+  document.getElementById('sunriseSunset').style.display = 'none'
+  document.getElementById('placeName').innerText = 'Loading location'
+  document.getElementById('refreshLocation').disabled = true
+
+  window.clearTimeout(userSettingsTimeout)
+  userSettingsTimeout = window.setTimeout(function() {
+    document.getElementById('refreshLocation').disabled = false
+    window.coordsChanged({
+      'latitude': parseFloat(document.getElementById('Latitude').value),
+      'longitude': parseFloat(document.getElementById('Longitude').value),
+    }, function(error) {
+      document.getElementById('sunriseSunset').style.display = 'none'
+      document.getElementById('placeName').innerText = error
+    })
+  }, 3000)
 }
 
 })

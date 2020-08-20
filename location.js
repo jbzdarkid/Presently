@@ -38,12 +38,14 @@ window.requestLocation = function(onError, onSuccess) {
     }
 
     navigator.geolocation.getCurrentPosition(function(position) {
-      window.coordsChanged(position.coords, onError)
-      if (onSuccess) onSuccess(position.coords)
+      var coords = {'latitude': position.coords.latitude, 'longitude': position.coords.longitude}
+      window.coordsChanged(coords, onError)
+      if (onSuccess) onSuccess(coords)
     }, function() {
       httpGet('https://ipapi.co/json', 'discover your location', function(error) {
         onError(error)
-      }, function(coords) {
+      }, function(position) {
+        var coords = {'latitude': position.latitude, 'longitude': position.longitude}
         window.coordsChanged(coords, onError)
         if (onSuccess) onSuccess(coords)
       })

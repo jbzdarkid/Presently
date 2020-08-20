@@ -5,8 +5,11 @@ namespace(function() {
 //     Maybe I should always fetch location data as a part of the weather?
 // - Consider img01.png for mobile theme chooser / if window is small
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
-// - https://twcservice.mybluemix.net/rest-api/#/
-// - https://openweathermap.org/price
+// - Support other APIs:
+//   https://twcservice.mybluemix.net/rest-api/#/
+//   https://openweathermap.org/price
+//   Fix weather.com API
+//   Make sure other APIs give a useful error when there's no API key.
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')

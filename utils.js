@@ -44,7 +44,7 @@ function _httpSend(verb, url, headers, body, action, onError, onSuccess) {
   request.send(body)
 }
 
-storage = null
+var storage = null
 if (typeof(chrome) !== 'undefined' && chrome.storage) {
   storage = chrome.storage
 } else if (typeof(browser) !== 'undefined' && browser.storage) {

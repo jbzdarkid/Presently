@@ -1,5 +1,3 @@
-window.WeatherCom = {}
-
 namespace(function() {
 
 var iconCodeToWeather = [
@@ -53,7 +51,26 @@ var iconCodeToWeather = [
   WEATHER_THUNDERSTORM, // 47 - Scattered Thunderstorms
 ]
 
-WeatherCom.getWeather = function(latitude, longitude, onError, onSuccess) {
+window.WeatherCom = {}
+
+WeatherCom.getLocationData = function(coords, onError, onSuccess) {
+  window.getLocal('weather-com-apikey', function(apikey) {
+    if (apikey == undefined) {
+      onError('Missing API key for weather.com')
+      return
+    }
+
+    var url = 'https://api.weather.com/v3/location/search?query=' + coords.latitude + ',' + coords.longitude + '&apiKey=' + apikey + '&format=json&language=en-US'
+    httpGet(url, 'discover information about your location', onError, function(response) {
+      var timezone = response.location.ianaTimeZone[0]
+      var city = response.location.city[0]
+      var state = response.location.adminDistrictCode[0]
+      onSuccess(timezone, city + ', ' + state)
+    })
+  })
+}
+
+WeatherCom.getWeather = function(coords, onError, onSuccess) {
   window.getLocal('weather-com-apikey', function(apikey) {
     if (apikey == undefined) {
       onError('Missing API key for weather.com')
@@ -62,19 +79,19 @@ WeatherCom.getWeather = function(latitude, longitude, onError, onSuccess) {
     var weatherData = [{}, {}, {}, {}, {}]
     var callbacksPending = 2
 
-    var prefix = "https://api.weather.com/v1/geocode/" + latitude + "/" + longitude + "/forecast/"
-    var suffix = "?apiKey=" + apikey + "&units=e&language=en-US"
+    var prefix = 'https://api.weather.com/v1/geocode/' + coords.latitude + '/' + coords.longitude + '/forecast/'
+    var suffix = '?apiKey=' + apikey + '&units=e&language=en-US'
 
-    httpGet(prefix + "/hourly/6hour.json" + suffix, 'fetch the current weather', function(error) {
+    httpGet(prefix + '/hourly/6hour.json' + suffix, 'fetch the current weather', function(error) {
       onError(error)
     }, function(response) {
       var period = response.forecasts[0]
       weatherData[0]['temp'] = period.temp
       weatherData[0]['weather'] = iconCodeToWeather[period.icon_code]
-      if (--callbacksPending == 0) callback(weatherData)
+      if (--callbacksPending == 0) onSuccess(weatherData)
     })
 
-    httpGet(prefix + "/daily/5day.json" + suffix, 'fetch the weather forecast', function(error) {
+    httpGet(prefix + '/daily/5day.json' + suffix, 'fetch the weather forecast', function(error) {
       onError(error)
     }, function(response) {
       var now = new Date()
@@ -84,14 +101,16 @@ WeatherCom.getWeather = function(latitude, longitude, onError, onSuccess) {
         // Skip periods until we find one which has not yet started.
         // This ensures that we will always have a high and a low for the given period,
         // and it avoids duplicating info for the current day.
-        if (new Date(period.fcst_valid) < now) continue
+        // This time is in seconds, not milliseconds.
+        if (new Date(period.fcst_valid * 1000) < now) continue
 
         weatherData[day]['high'] = period.max_temp
         weatherData[day]['low'] = period.min_temp
         weatherData[day]['weather'] = iconCodeToWeather[period.day.icon_code]
         day++
       }
-      if (--callbacksPending == 0) callback(weatherData)
+      if (day < 5) return // Didn't get enough days of data
+      if (--callbacksPending == 0) onSuccess(weatherData)
     })
   })
 }

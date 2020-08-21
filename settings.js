@@ -1,6 +1,11 @@
 namespace(function() {
 
 window.showSettings = function() {
+  window.getSunriseSunset(function() {
+    document.getElementById('sunriseSunset').style.display = 'none'
+    document.getElementById('placeName').innerText = error
+  })
+
   // Fade out the main container, and prepare the settings container for display
   document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards reverse'
   document.getElementById('settings').style.animation = null
@@ -122,6 +127,28 @@ window.loadSettings = function(callback) {
   })
 }
 
+window.getSunriseSunset = function(onError, onSuccess) {
+  if (window.coords == null) return
+  window.weatherApi.getLocationData(window.coords, onError, function(timezone, placeName) {
+    document.getElementById('sunriseSunset').style.display = null
+
+    var sunCalc = SunCalc.getTimes(new Date(), window.coords.latitude, window.coords.longitude)
+    var options = {
+      timeZone: timezone,
+      timeStyle: 'short',
+      hour12: document.getElementById('Hours-12').checked
+    }
+    document.getElementById('Sunrise').innerText = sunCalc.sunrise.toLocaleString('en-US', options)
+    document.getElementById('Sunset').innerText = sunCalc.sunset.toLocaleString('en-US', options)
+    document.getElementById('placeName').innerText = placeName
+    // Round to 3 decimal places. From https://stackoverflow.com/a/11832950
+    document.getElementById('Latitude').value = Math.round((window.coords.latitude + Number.EPSILON) * 1000) / 1000
+    document.getElementById('Longitude').value = Math.round((window.coords.longitude + Number.EPSILON) * 1000) / 1000
+
+    if (onSuccess) onSuccess(placeName)
+  })
+}
+
 function settingsChanged() {
   if (document.getElementById('Temperature-Fahrenheit').checked) {
     window.setRemote('settings-Temperature', 'Temperature-Fahrenheit')
@@ -159,7 +186,7 @@ function userChangedCoords() {
   // Users take time to type, so we only update the coordinates if there's been no input for 3 seconds.
   // Also, we disable the auto-location change, and show a loading message in the meantime.
   document.getElementById('sunriseSunset').style.display = 'none'
-  document.getElementById('placeName').innerText = 'Loading location'
+  document.getElementById('placeName').innerText = 'Loading...'
   document.getElementById('refreshLocation').disabled = true
 
   window.clearTimeout(userSettingsTimeout)

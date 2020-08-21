@@ -1,8 +1,6 @@
 namespace(function() {
 
 // TODOs:
-// - Sunrise & sunset are not recomputed unless the location changes. Maybe I should recompute them when I fetch the weather?
-//     Maybe I should always fetch location data as a part of the weather?
 // - Consider img01.png for mobile theme chooser / if window is small
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
 // - Support other APIs:

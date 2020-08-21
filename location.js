@@ -10,20 +10,9 @@ window.coordsChanged = function(coords, onError) {
   window.coords = coords
   window.setLocal('coords', coords)
 
-  window.weatherApi.getLocationData(coords, onError, function(timezone, placeName) {
-    document.getElementById('sunriseSunset').style.display = null
-
-    var sunCalc = SunCalc.getTimes(new Date(), coords.latitude, coords.longitude)
-    var options = {timeZone: timezone, timeStyle: 'short', hour12: document.getElementById('Hours-12').checked}
-    document.getElementById('Sunrise').innerText = sunCalc.sunrise.toLocaleString('en-US', options)
-    document.getElementById('Sunset').innerText = sunCalc.sunset.toLocaleString('en-US', options)
-    document.getElementById('placeName').innerText = placeName
-    // Round to 3 decimal places. From https://stackoverflow.com/a/11832950
-    document.getElementById('Latitude').value = Math.round((coords.latitude + Number.EPSILON) * 1000) / 1000
-    document.getElementById('Longitude').value = Math.round((coords.longitude + Number.EPSILON) * 1000) / 1000
-
+  window.getSunriseSunset(onError, function(placeName) {
     if (isRealLocationChange) {
-      console.log('Location changed to ' + placeName + ', fetching new weather.')
+      console.log('Location changed to "' + placeName + '", expiring weather data.')
       window.setLocal('weatherExpires', 0)
     }
   })

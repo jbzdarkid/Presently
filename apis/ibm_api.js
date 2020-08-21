@@ -51,9 +51,9 @@ var iconCodeToWeather = [
   WEATHER_THUNDERSTORM, // 47 - Scattered Thunderstorms
 ]
 
-window.WeatherCom = {}
+window.IBMApi = {}
 
-WeatherCom.getLocationData = function(coords, onError, onSuccess) {
+IBMApi.getLocationData = function(coords, onError, onSuccess) {
   window.getLocal('weather-com-apikey', function(apikey) {
     if (apikey == undefined) {
       onError('Missing API key for weather.com')
@@ -70,7 +70,7 @@ WeatherCom.getLocationData = function(coords, onError, onSuccess) {
   })
 }
 
-WeatherCom.getWeather = function(coords, onError, onSuccess) {
+IBMApi.getWeather = function(coords, onError, onSuccess) {
   window.getLocal('weather-com-apikey', function(apikey) {
     if (apikey == undefined) {
       onError('Missing API key for weather.com')
@@ -82,18 +82,14 @@ WeatherCom.getWeather = function(coords, onError, onSuccess) {
     var prefix = 'https://api.weather.com/v1/geocode/' + coords.latitude + '/' + coords.longitude + '/forecast/'
     var suffix = '?apiKey=' + apikey + '&units=e&language=en-US'
 
-    httpGet(prefix + '/hourly/6hour.json' + suffix, 'fetch the current weather', function(error) {
-      onError(error)
-    }, function(response) {
+    httpGet(prefix + '/hourly/6hour.json' + suffix, 'fetch the current weather', onError, function(response) {
       var period = response.forecasts[0]
       weatherData[0]['temp'] = period.temp
       weatherData[0]['weather'] = iconCodeToWeather[period.icon_code]
       if (--callbacksPending == 0) onSuccess(weatherData)
     })
 
-    httpGet(prefix + '/daily/5day.json' + suffix, 'fetch the weather forecast', function(error) {
-      onError(error)
-    }, function(response) {
+    httpGet(prefix + '/daily/5day.json' + suffix, 'fetch the weather forecast', onError, function(response) {
       var now = new Date()
       var day = 1
       for (var i=0; i<response.forecasts.length && day<5; i++) {

@@ -84,8 +84,9 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
 
     httpGet(prefix + '/hourly/6hour.json' + suffix, 'fetch the current weather', onError, function(response) {
       var period = response.forecasts[0]
-      weatherData[0]['temp'] = period.temp
       weatherData[0]['weather'] = iconCodeToWeather[period.icon_code]
+      weatherData[0]['forecast'] = period.phrase_32char
+      weatherData[0]['temp'] = period.temp
       if (--callbacksPending == 0) onSuccess(weatherData)
     })
 

@@ -103,8 +103,9 @@ USApi.getWeather = function(coords, onError, onSuccess) {
 
     httpGet(response.forecastHourly, headers, 'fetch the current weather', onError, function(response) {
       var period = response.properties.periods[0]
-      weatherData[0]['temp'] = period.temperature
       weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
+      weatherData[0]['forecast'] = period.shortForecast
+      weatherData[0]['temp'] = period.temperature
       if (--callbacksPending == 0) onSuccess(weatherData)
     })
 

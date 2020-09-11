@@ -100,9 +100,10 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
         // This time is in seconds, not milliseconds.
         if (new Date(period.fcst_valid * 1000) < now) continue
 
+        weatherData[day]['weather'] = iconCodeToWeather[period.day.icon_code]
+        weatherData[day]['forecast'] = period.narrative
         weatherData[day]['high'] = period.max_temp
         weatherData[day]['low'] = period.min_temp
-        weatherData[day]['weather'] = iconCodeToWeather[period.day.icon_code]
         day++
       }
       if (day < 5) return // Didn't get enough days of data

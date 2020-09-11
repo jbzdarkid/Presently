@@ -121,9 +121,9 @@ USApi.getWeather = function(coords, onError, onSuccess) {
         }
 
         weatherData[day]['weather'] = getWeatherFromIcon(period.icon)
+        weatherData[day]['forecast'] = period.detailedForecast
         weatherData[day]['high'] = period.temperature
         weatherData[day]['low'] = response.properties.periods[i+1].temperature
-        if (weatherData[day]['weather'] == undefined) debugger;
         i += 2
         day++
       }

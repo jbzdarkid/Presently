@@ -44,9 +44,10 @@ function drawWeatherData(weatherData) {
     var day = document.getElementById('forecast-0')
     day.textContent = ''
 
-    var icon = Climacon(weatherData[0].weather, 180, true /* isDaytimeAware */)
-    icon.style.marginBottom = '-10px'
-    day.appendChild(icon)
+    var climacon = Climacon(weatherData[0].weather, 180, true /* isDaytimeAware */)
+    climacon.style.marginBottom = '-10px'
+    climacon.title = weatherData[0].forecast
+    day.appendChild(climacon)
 
     var temp = document.createElement('div')
     temp.style.width = '90px'
@@ -79,7 +80,9 @@ function drawWeatherData(weatherData) {
     day.style.display = 'flex'
     day.textContent = ''
 
-    day.appendChild(Climacon(weatherData[i].weather, 96))
+    var climacon = Climacon(weatherData[i].weather, 96)
+    climacon.title = weatherData[i].forecast
+    day.appendChild(climacon)
 
     var temp = document.createElement('div')
     temp.style.width = '90px'
@@ -139,11 +142,11 @@ window.updateWeather = function() {
       }, function(weatherData) {
         /* Expected data format:
         [
-          {temp: 0, weather: WEATHER_CLEAR},
-          {high: 10, low: 0, weather: WEATHER_CLEAR},
-          {high: 10, low: 0, weather: WEATHER_CLEAR},
-          {high: 10, low: 0, weather: WEATHER_CLEAR},
-          {high: 10, low: 0, weather: WEATHER_CLEAR},
+          {temp: 0, weather: WEATHER_CLOUDY, forecast: "Cloudy, with a chance of meatballs"},
+          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "..."},
+          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "..."},
+          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "..."},
+          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "..."},
         ]*/
 
         // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.

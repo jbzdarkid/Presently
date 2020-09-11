@@ -52,14 +52,14 @@ var iconCodeToWeather = [
 ]
 
 function iconToWeather(icon) {
-  return iconCodeToWeather[parseInt(icon.substring(0, 2))]
+  return iconCodeToWeather[parseInt(icon.substring(0, 2), 10)]
 }
 
 window.OWMApi = {}
 
 OWMApi.getLocationData = function(coords, onError, onSuccess) {
   window.getLocal('open-weathermap-apikey', function(apikey) {
-    if (apikey == undefined) {
+    if (apikey == null) {
       onError('Missing API key for openweathermap.com')
       return
     }
@@ -76,7 +76,7 @@ OWMApi.getLocationData = function(coords, onError, onSuccess) {
 
 OWMApi.getWeather = function(coords, onError, onSuccess) {
   window.getLocal('open-weathermap-apikey', function(apikey) {
-    if (apikey == undefined) {
+    if (apikey == null) {
       onError('Missing API key for openweathermap.com')
       return
     }
@@ -89,7 +89,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
     httpGet(prefix + '/weather' + suffix, 'fetch the current weather', onError, function(response) {
       weatherData[0]['temp'] = response.main.temp
       weatherData[0]['weather'] = iconToWeather(response.weather[0].icon)
-      if (--callbacksPending == 0) onSuccess(weatherData)
+      if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
     httpGet(prefix + '/forecast' + suffix, 'fetch the weather forecast', onError, function(response) {
@@ -109,7 +109,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
         day++
       }
       if (day < 5) return // Didn't get enough days of data
-      if (--callbacksPending == 0) onSuccess(weatherData)
+      if (--callbacksPending === 0) onSuccess(weatherData)
     })
   })
 }

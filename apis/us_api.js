@@ -56,7 +56,7 @@ function getWeatherFromIcon(icon) {
   var end = icon.indexOf(',', start)
   if (end == -1) end = icon.indexOf('?', start)
   var weather = predictionToWeather[icon.substr(start, end - start)]
-  if (weather == undefined) console.error('Failed to convert icon', icon, 'to weather')
+  if (weather == null) console.error('Failed to convert icon', icon, 'to weather')
   return weather
 }
 
@@ -106,7 +106,7 @@ USApi.getWeather = function(coords, onError, onSuccess) {
       weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
       weatherData[0]['forecast'] = period.shortForecast
       weatherData[0]['temp'] = period.temperature
-      if (--callbacksPending == 0) onSuccess(weatherData)
+      if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
     httpGet(response.forecast, headers, 'fetch the weather forecast', onError, function(response) {
@@ -129,7 +129,7 @@ USApi.getWeather = function(coords, onError, onSuccess) {
         day++
       }
       if (day < 5) return // Didn't get enough days of data
-      if (--callbacksPending == 0) onSuccess(weatherData)
+      if (--callbacksPending === 0) onSuccess(weatherData)
     })
   })
 }

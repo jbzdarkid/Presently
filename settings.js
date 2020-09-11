@@ -1,7 +1,7 @@
 namespace(function() {
 
 window.showSettings = function() {
-  window.getSunriseSunset(function() {
+  window.getSunriseSunset(function(error) {
     document.getElementById('sunriseSunset').style.display = 'none'
     document.getElementById('placeName').innerText = error
   })
@@ -31,7 +31,7 @@ function hideSettings() {
   document.getElementById('settings').style.animation = 'fadeIn 500ms 1 forwards reverse'
   document.getElementById('main').style.animation = null
   document.getElementById('settingsButton').onclick = null
-  document.onkeydown = undefined
+  document.onkeydown = null
 
   setTimeout(function() {
     // Hide the settings container, and fade in the main container
@@ -69,41 +69,41 @@ window.loadSettings = function(callback) {
 
   pendingSettings++
   window.getRemote('settings-Temperature', function(value) {
-    if (value == undefined) value = 'Temperature-Fahrenheit'
+    if (value == null) value = 'Temperature-Fahrenheit'
     document.getElementById(value).checked = true
     window.displayNeedsUpdate = true
-    if (--pendingSettings == 0) callback()
+    if (--pendingSettings === 0) callback()
   })
 
   pendingSettings++
   window.getRemote('settings-Hours', function(value) {
-    if (value == undefined) value = 'Hours-12'
+    if (value == null) value = 'Hours-12'
     document.getElementById(value).checked = true
-    if (--pendingSettings == 0) callback()
+    if (--pendingSettings === 0) callback()
   })
 
   pendingSettings++
   window.getRemote('settings-Seconds', function(value) {
-    if (value == undefined) value = 'Seconds-On'
+    if (value == null) value = 'Seconds-On'
     document.getElementById(value).checked = true
-    if (--pendingSettings == 0) callback()
+    if (--pendingSettings === 0) callback()
   })
 
   pendingSettings++
   window.getRemote('settings-Text', function(value) {
-    if (value == undefined) value = 'Text-Light'
+    if (value == null) value = 'Text-Light'
     document.getElementById(value).checked = true
     if (value == 'Text-Light') {
       document.body.style.color = 'rgba(255, 255, 255, 0.7)'
     } else {
       document.body.style.color = 'rgba(0, 0, 0, 0.6)'
     }
-    if (--pendingSettings == 0) callback()
+    if (--pendingSettings === 0) callback()
   })
 
   pendingSettings++
   window.getRemote('settings-Color', function(color) {
-    if (color == undefined) color = '4242BA'
+    if (color == null) color = '4242BA'
     var themes = ['222222', 'E5E5E5', '5CBF94', '84C0D7', '903D3D', 'D2AB59', '6FB269', '6C5287', '3193A5', 'C34D40', '4242BA', '2E3C56', 'E59C2F', '412F3F', 'EA724C', '5C2533', '2D442F', '8DD397']
     for (var theme of themes) {
       var div = document.createElement('div')
@@ -123,7 +123,7 @@ window.loadSettings = function(callback) {
         window.reparent(document.getElementById('ThemeCheck'), div)
       }
     }
-    if (--pendingSettings == 0) callback()
+    if (--pendingSettings === 0) callback()
   })
 }
 

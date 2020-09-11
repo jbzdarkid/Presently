@@ -13,7 +13,7 @@ function normalizedUnits(degreesF) {
   if (document.getElementById('Temperature-Fahrenheit').checked) {
     return degreesF
   } else {
-    var deg = (parseInt(degreesF) - 32) * 5
+    var deg = (parseInt(degreesF, 10) - 32) * 5
     return Math.floor(deg / 9)
   }
 }

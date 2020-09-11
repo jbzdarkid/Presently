@@ -55,7 +55,7 @@ window.IBMApi = {}
 
 IBMApi.getLocationData = function(coords, onError, onSuccess) {
   window.getLocal('weather-com-apikey', function(apikey) {
-    if (apikey == undefined) {
+    if (apikey == null) {
       onError('Missing API key for weather.com')
       return
     }
@@ -72,7 +72,7 @@ IBMApi.getLocationData = function(coords, onError, onSuccess) {
 
 IBMApi.getWeather = function(coords, onError, onSuccess) {
   window.getLocal('weather-com-apikey', function(apikey) {
-    if (apikey == undefined) {
+    if (apikey == null) {
       onError('Missing API key for weather.com')
       return
     }
@@ -87,7 +87,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
       weatherData[0]['weather'] = iconCodeToWeather[period.icon_code]
       weatherData[0]['forecast'] = period.phrase_32char
       weatherData[0]['temp'] = period.temp
-      if (--callbacksPending == 0) onSuccess(weatherData)
+      if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
     httpGet(prefix + '/daily/5day.json' + suffix, 'fetch the weather forecast', onError, function(response) {
@@ -108,7 +108,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
         day++
       }
       if (day < 5) return // Didn't get enough days of data
-      if (--callbacksPending == 0) onSuccess(weatherData)
+      if (--callbacksPending === 0) onSuccess(weatherData)
     })
   })
 }

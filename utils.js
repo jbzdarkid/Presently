@@ -5,11 +5,11 @@ function namespace(code) {
 namespace(function() {
 
 window.httpGet = function(url, headers, action, onError, onSuccess) {
-  if (onSuccess == undefined) { // "headers" optional parameter adjustment
+  if (onSuccess == null) { // "headers" optional parameter adjustment
     onSuccess = onError
     onError = action
     action = headers
-    headers = undefined
+    headers = null
   }
 
   _httpSend('GET', url, headers, null, action, onError, onSuccess)
@@ -23,9 +23,9 @@ function _httpSend(verb, url, headers, body, action, onError, onSuccess) {
   var request = new XMLHttpRequest()
   request.onreadystatechange = function() {
     if (this.readyState != XMLHttpRequest.DONE) return
-    this.onreadystatechange = undefined
+    this.onreadystatechange = null
 
-    if (this.status != 200) {
+    if (this.status !== 200) {
       onError('Received a ' + this.status + ' error while attempting to ' + action)
     } else {
       onSuccess(JSON.parse(this.responseText))
@@ -92,13 +92,13 @@ window.clearStorage = function() {
 }
 
 window.localize = function(key, defaultValue) {
-  var value = undefined
+  var value = null
   if (typeof(chrome) !== 'undefined' && chrome.i18n) {
     value = chrome.i18n.getMessage(key)
   } else if (typeof(browser) !== 'undefined' && browser.i18n) {
     value = browser.i18n.getMessage(key)
   }
-  if (value == undefined || value == '') {
+  if (value == null || value == '') {
     console.warn('No localized string available for "' + key + '", falling back to english.')
     return defaultValue
   }

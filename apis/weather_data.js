@@ -118,9 +118,15 @@ window.drawWeatherData = function(weatherData) {
     day.appendChild(name)
   }
 
-  // TODO: alert display
-  console.log(weatherData.alert[0])
-
+  if (weatherData.alert[0] == null) {
+    document.getElementById('alert').style.display = 'none'
+    document.getElementById('alertText').innerText = ''
+    document.getElementById('alertText').title = ''
+  } else {
+    document.getElementById('alert').style.display = null
+    document.getElementById('alertText').innerText = weatherData.alert[0]
+    document.getElementById('alertText').title = weatherData.alert[1]
+  }
 }
 
 })

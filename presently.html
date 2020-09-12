@@ -16,7 +16,10 @@
   </head>
   <!-- This flexbox keeps the overall layout centered on the page -->
   <body class="noselect" style="display: flex; justify-content: center; margin: 0px; overflow-y: hidden; height: 100%">
-    <img id="settingsButton" alt="Open Settings" src="./resources/f0c9.png" style="position: absolute; top: 6px; left: 15px; height: 48px; cursor: pointer; opacity: 50%">
+    <!-- "Bars" from fontawesome.com: https://fontawesome.com/icons/bars
+          Licensed under https://fontawesome.com/license
+          I have removed extraneous properties from <path>, and added properties to <svg> -->
+    <svg id="settingsButton" alt="Open Settings" style="position: absolute; top: 6px; left: 15px; height: 42px; cursor: pointer; opacity: 50%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg>
     <div id="settings" style="display: none; width: 100%">
       <!-- This outer div keeps the two panels separate, while allowing for position: fixed on the inner div,
            which is required to add a scrollbar. -->
@@ -24,7 +27,10 @@
         <!-- These two divs are required to float the close button in the top right while scrolling -->
         <div style="width: 100%">
           <div style="position: fixed; width: 50%; z-index: 30">
-            <img id="closeSettings" alt="Close Settings" src="./resources/times.png" style="float: right; height: 40px; cursor: pointer; opacity: 30%; margin-right: 15px">
+            <!-- "Times" from fontawesome.com: https://fontawesome.com/icons/times
+                  Licensed under https://fontawesome.com/license
+                  I have removed extraneous properties from <path>, and added properties to <svg>. I have also changed the path fill. -->
+            <svg id="closeSettings" alt="Close Settings" style="float: right; height: 40px; cursor: pointer; opacity: 30%; margin-right: 22px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path fill="black" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
           </div>
         </div>
         <div style="overflow-y: scroll; position: fixed; height: 100%; width: 50%; display: flex; justify-content: flex-start; align-items: center; flex-direction: column; background-color: white; color: black">
@@ -76,7 +82,10 @@
             <label style="font-family: OpenSans-Bold; font-size: 32px">Theme</label>
           </div><div>
             <div id="Theme" style="width: 300px; height: 600px; border-radius: 5px; overflow: hidden"></div>
-            <img id="ThemeCheck" alt="Selected Theme: None" src="./resources/check.png" style="height: 40px; margin-left: 30px; margin-top: 30px">
+            <!-- "Check" from fontawesome.com: https://fontawesome.com/icons/check
+                  Licensed under https://fontawesome.com/license
+                  I have removed extraneous properties from <path>, and added properties to <svg>, and modified the fill/fill opacity of the path. -->
+            <svg id="ThemeCheck" alt="Selected Theme: None" style="height: 40px; margin-left: 30px; margin-top: 30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="black" fill-opacity="66%" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg>
             <!-- Manual padding so themes don't get too close to the bottom -->
             <div style="height: 12px"></div>
           </div>
@@ -88,6 +97,13 @@
     </div>
     <!-- This div keeps the rows in order. Somehow. -->
     <div id="main" style="display: flex; flex-direction: column; justify-content: center">
+      <span id="alert" style="text-align: center; font-size: 32px; font-family: OpenSans-Regular; display: none">
+        <!-- "Exclamation Triangle" from fontawesome.com: https://fontawesome.com/icons/exclamation-triangle
+              Licensed under https://fontawesome.com/license
+              I have removed extraneous properties from <path>, and added properties to <svg> -->
+        <svg alt="Alert icon" style="width: 32px; height: 32px; position: relative; top: 3px; right: 2px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path></svg>
+        <span id="alertText"></span>
+      </span>
       <span id="time" style="text-align: center; font-size: 192px; font-family: OpenSans-Regular; animation: fadeInDown 1s 1 both"></span>
       <span id="date" style="text-align: center; font-size: 32px; font-family: OpenSans-Regular; margin-bottom: 25px; animation: fadeIn 400ms ease-in-out 200ms 1 both"></span>
       <!-- For some reason, this div needs a display: flex in order for the loading icon to spin. -->

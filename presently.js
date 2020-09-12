@@ -9,15 +9,6 @@ namespace(function() {
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
 
-function normalizedUnits(degreesF) {
-  if (document.getElementById('Temperature-Fahrenheit').checked) {
-    return degreesF
-  } else {
-    var deg = (parseInt(degreesF, 10) - 32) * 5
-    return Math.floor(deg / 9)
-  }
-}
-
 var previousWidth = window.innerWidth
 window.onresize = function() {
   if (window.innerWidth < 800 && previousWidth >= 800) {
@@ -32,94 +23,13 @@ window.onresize = function() {
   previousWidth = window.innerWidth
 }
 
-function drawWeatherData(weatherData) {
-  document.getElementById('forecast-loading').style.display = 'none'
-  document.getElementById('forecast-error').innerText = ''
-
-  // This needs to be a flexbox so that the forecast elements float side-by-side.
-  document.getElementById('forecast').style.display = 'flex'
-  document.title = normalizedUnits(weatherData[0].temp) + '\u00B0 | Presently'
-
-  { // i == 0
-    var day = document.getElementById('forecast-0')
-    day.textContent = ''
-
-    var climacon = Climacon(weatherData[0].weather, 180, true /* isDaytimeAware */)
-    climacon.style.marginBottom = '-10px'
-    climacon.title = weatherData[0].forecast
-    day.appendChild(climacon)
-
-    var temp = document.createElement('div')
-    temp.style.width = '90px'
-    day.appendChild(temp)
-
-    var t = document.createElement('div')
-    t.innerText = normalizedUnits(weatherData[0].temp)
-    t.style.textAlign = 'center'
-    t.style.fontFamily = 'OpenSans-Bold'
-    t.style.fontSize = '72px'
-    temp.appendChild(t)
-
-    var name = document.createElement('span')
-    name.innerText = window.localize('current_day_name', 'Now')
-    name.style.fontFamily = 'OpenSans-Regular'
-    name.style.fontSize = '48px'
-    day.appendChild(name)
-  }
-
-  // If the window is too small, do not draw the forecast.
-  if (window.innerWidth < 800) {
-    for (var i=1; i<weatherData.length && i < 5; i++) {
-      document.getElementById('forecast-' + i).style.display = 'none'
-    }
-    return
-  }
-
-  for (var i=1; i<weatherData.length && i < 5; i++) {
-    var day = document.getElementById('forecast-' + i)
-    day.style.display = 'flex'
-    day.textContent = ''
-
-    var climacon = Climacon(weatherData[i].weather, 96)
-    climacon.title = weatherData[i].forecast
-    day.appendChild(climacon)
-
-    var temp = document.createElement('div')
-    temp.style.width = '90px'
-    day.appendChild(temp)
-
-    var h = document.createElement('div')
-    h.innerText = normalizedUnits(weatherData[i].high)
-    h.style.float = 'left'
-    h.style.textAlign = 'right'
-    h.style.fontFamily = 'OpenSans-Regular'
-    h.style.fontSize = '30px'
-    temp.appendChild(h)
-
-    var l = document.createElement('div')
-    l.innerText = normalizedUnits(weatherData[i].low)
-    l.style.float = 'right'
-    l.style.textAlign = 'left'
-    l.style.fontFamily = 'OpenSans-Regular'
-    l.style.fontSize = '30px'
-    l.style.opacity = '0.5'
-    temp.appendChild(l)
-
-    var name = document.createElement('span')
-    name.innerText = DAYS[((new Date()).getDay() + i) % 7]
-    name.style.fontFamily = 'OpenSans-Regular'
-    name.style.fontSize = '24px'
-    day.appendChild(name)
-  }
-}
-
 // Default true when JS loads; we need to draw the display at least once.
 window.displayNeedsUpdate = true
 window.updateWeather = function() {
   if (displayNeedsUpdate) {
     displayNeedsUpdate = false
     window.getLocal('weatherData', function(weatherData) {
-      if (weatherData) drawWeatherData(weatherData)
+      if (weatherData) window.drawWeatherData(weatherData)
     })
   }
 

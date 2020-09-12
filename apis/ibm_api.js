@@ -76,17 +76,15 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
       onError('Missing API key for weather.com')
       return
     }
-    var weatherData = [{}, {}, {}, {}, {}]
-    var callbacksPending = 2
+    var weatherData = new WeatherData()
+    var callbacksPending = 3
 
     var prefix = 'https://api.weather.com/v1/geocode/' + coords.latitude + '/' + coords.longitude + '/forecast/'
     var suffix = '?apiKey=' + apikey + '&units=e&language=en-US'
 
     httpGet(prefix + '/hourly/6hour.json' + suffix, 'fetch the current weather', onError, function(response) {
       var period = response.forecasts[0]
-      weatherData[0]['weather'] = iconCodeToWeather[period.icon_code]
-      weatherData[0]['forecast'] = period.phrase_32char
-      weatherData[0]['temp'] = period.temp
+      weatherData.setCurrent(iconCodeToWeather[period.icon_code], period.phrase_32char, period.temp)
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
@@ -101,14 +99,26 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
         // This time is in seconds, not milliseconds.
         if (new Date(period.fcst_valid * 1000) < now) continue
 
-        weatherData[day]['weather'] = iconCodeToWeather[period.day.icon_code]
-        weatherData[day]['forecast'] = period.narrative
-        weatherData[day]['high'] = period.max_temp
-        weatherData[day]['low'] = period.min_temp
+        weatherData.setForecast(day, iconCodeToWeather[period.day.icon_code], period.narrative, period.max_temp, period.min_temp)
         day++
       }
       if (day < 5) return // Didn't get enough days of data
       if (--callbacksPending === 0) onSuccess(weatherData)
+    })
+
+    var url = 'https://api.weather.com/v3/alerts/headlines?format=json&language=en-US&apiKey=' + apikey
+    httpGet(url + '&geocode=' + coords.latitude + ',' + coords.longitude, 'fetch active weather alerts', function(error) {
+      if (error.includes('204')) {
+        if (--callbacksPending === 0) onSuccess(weatherData)
+      } else {
+        onError(error)
+      }
+    }, function(response) {
+      url = url.replace('/headlines?', '/detail?')
+      httpGet(url + '&alertId=' + response.alerts[0].detailKey, 'fetch active weather alerts', onError, function(response) {
+        weatherData.setAlert(response.alertDetail.eventDescription, response.alertDetail.texts[0].description)
+        if (--callbacksPending === 0) onSuccess(weatherData)
+      })
     })
   })
 }

@@ -95,17 +95,15 @@ USApi.getLocationData = function(coords, onError, onSuccess) {
 
 USApi.getWeather = function(coords, onError, onSuccess) {
   getPointInfo(coords, onError, function(response) {
-    var weatherData = [{}, {}, {}, {}, {}]
-    var callbacksPending = 2
+    var weatherData = new WeatherData()
+    var callbacksPending = 3
 
     // Force a new weather fetch by setting a custom header
     var headers = {'Feature-Flags': (new Date()).getTime()}
 
     httpGet(response.forecastHourly, headers, 'fetch the current weather', onError, function(response) {
       var period = response.properties.periods[0]
-      weatherData[0]['weather'] = getWeatherFromIcon(period.icon)
-      weatherData[0]['forecast'] = period.shortForecast
-      weatherData[0]['temp'] = period.temperature
+      weatherData.setCurrent(getWeatherFromIcon(period.icon), period.shortForecast, period.temperature)
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
@@ -121,14 +119,20 @@ USApi.getWeather = function(coords, onError, onSuccess) {
           continue
         }
 
-        weatherData[day]['weather'] = getWeatherFromIcon(period.icon)
-        weatherData[day]['forecast'] = period.detailedForecast
-        weatherData[day]['high'] = period.temperature
-        weatherData[day]['low'] = response.properties.periods[i+1].temperature
+        weatherData.setForecast(day, getWeatherFromIcon(period.icon), period.detailedForecast, period.temperature, response.properties.periods[i+1].temperature)
         i += 2
         day++
       }
       if (day < 5) return // Didn't get enough days of data
+      if (--callbacksPending === 0) onSuccess(weatherData)
+    })
+
+    var baseUrl = 'https://api.weather.gov/alerts/active?status=actual&message_type=alert&limit=1&point='
+    httpGet(baseUrl + coords.latitude + ',' + coords.longitude, headers, 'fetch active weather alerts', onError, function(response) {
+      if (response.features.length == 0) return null
+
+      weatherData.setAlert(response.features[0].properties.event, response.features[0].properties.description)
+
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
   })

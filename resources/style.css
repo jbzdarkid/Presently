@@ -49,8 +49,8 @@ https://github.com/google/fonts/blob/master/apache/opensans/LICENSE.txt
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 @keyframes spin {
-  0%   {transform: rotate(0deg)   translate(0px, -5px);}
-  100% {transform: rotate(360deg) translate(0px, -5px);}
+  0%   { transform: rotate(0deg)   translate(0px, -5px); }
+  100% { transform: rotate(360deg) translate(0px, -5px); }
 }
 @keyframes bounceIn {
   0%   { opacity: 0; transform: scale(0.3);  }
@@ -59,8 +59,8 @@ https://github.com/google/fonts/blob/master/apache/opensans/LICENSE.txt
   100% {             transform: scale(1);    }
 }
 @keyframes fadeIn {
-  0%   {opacity: 0;}
-  100% {opacity: 1;}
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 @keyframes fadeInUp {
   0%   { opacity: 0; transform: translateY(40px); }

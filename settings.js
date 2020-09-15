@@ -124,6 +124,23 @@ window.loadSettings = function(callback) {
     }
     if (--pendingSettings === 0) callback()
   })
+
+  pendingSettings++
+  window.getRemote('settings-API', function(api) {
+    if (api == 'IBMApi') {
+      window.weatherApi = window.IBMApi
+    } else if (api == 'OWMApi') {
+      window.weatherApi = window.OWMApi
+    } else if (api == 'WBApi') {
+      window.weatherApi = window.WBApi
+    } else if (api == 'USApi') {
+      window.weatherApi = window.USApi
+    } else {
+      window.setRemote('settings-API', 'USApi')
+      window.weatherApi = window.USApi
+    }
+    if (--pendingSettings === 0) callback()
+  })
 }
 
 window.getSunriseSunset = function(onError, onSuccess) {

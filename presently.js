@@ -5,8 +5,6 @@ namespace(function() {
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
 // - "Show today's forecast": {Never, Before noon, Always}
 
-// Add OWM support
-
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
 
@@ -22,6 +20,11 @@ window.onresize = function() {
     timeExpires = new Date(0) // Forcibly expire the time to fetch seconds
   }
   previousWidth = window.innerWidth
+}
+
+function onForecastError(error) {
+  document.getElementById('forecast-loading').style.display = 'flex'
+  document.getElementById('forecast-error').innerText = error
 }
 
 // Default true when JS loads; we need to draw the display at least once.
@@ -45,12 +48,8 @@ window.updateWeather = function() {
     window.setLocal('weatherExpires', weatherExpires.getTime())
 
     console.log('Weather data is expired, fetching new weather data...')
-    window.requestLocation(function(error) {
-      document.getElementById('forecast-error').innerText = error
-    }, function(coords) {
-      weatherApi.getWeather(coords, function(error) {
-        document.getElementById('forecast-error').innerText = error
-      }, function(weatherData) {
+    window.requestLocation(onForecastError, function(coords) {
+      weatherApi.getWeather(coords, onForecastError, function(weatherData) {
         /* Expected data format:
         [
           {temp: 0, weather: WEATHER_CLOUDY, forecast: "Cloudy, with a chance of meatballs"},
@@ -109,17 +108,14 @@ function mainLoop() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  window.weatherApi = window.USApi
-
-  // Request the user's location once on page load to populate sunrise/sundown times.
-  // On success, we also request a repaint, since this will fix any nighttime climacons.
-  window.requestLocation(function(error) {
-    document.getElementById('forecast-error').innerText = error
-  }, function(success) {
-    displayNeedsUpdate = true
-  })
-
   window.loadSettings(function() {
+    // Request the user's location once on page load to populate sunrise/sundown times.
+    // On success, we also request a repaint, since this will fix any nighttime climacons.
+    // We need to do this after settings, so that we know which API to call.
+    window.requestLocation(onForecastError, function(success) {
+      displayNeedsUpdate = true
+    })
+
     // If we navigated to ?settings (i.e. from the extension menu), immediately show settings.
     if (document.location.search == '?settings') {
       window.showSettings()

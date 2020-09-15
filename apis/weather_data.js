@@ -75,11 +75,15 @@ window.drawWeatherData = function(weatherData) {
 
   // If the window is too small, do not draw the forecast.
   if (window.innerWidth < 800) {
+    // Also, push the current weather down, so it doesn't clip with the date
+    document.getElementById('forecast-0').style.top = '0px'
     for (var i=1; i < 5; i++) {
       document.getElementById('forecast-' + i).style.display = 'none'
     }
     return
   }
+  // Otherwise, restore the offset for current weather
+  document.getElementById('forecast-0').style.top = '-80px'
 
   for (var i=1; i < 5; i++) {
     var day = document.getElementById('forecast-' + i)

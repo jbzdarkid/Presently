@@ -60,17 +60,9 @@ window.OWMApi = {}
 OWMApi.getLocationData = function(coords, onError, onSuccess) {
   window.getLocal('open-weathermap-apikey', function(apikey) {
     if (apikey == null) {
-      onError('Missing API key for openweathermap.com')
+      onError('Missing API key for openweathermap.org')
       return
     }
-
-    // var url = 'https://api.weather.com/v3/location/search?query=' + coords.latitude + ',' + coords.longitude + '&apiKey=' + apikey + '&format=json&language=en-US'
-    // httpGet(url, 'discover information about your location', onError, function(response) {
-    //   var timezone = response.location.ianaTimeZone[0]
-    //   var city = response.location.city[0]
-    //   var state = response.location.adminDistrictCode[0]
-    //   onSuccess(timezone, city + ', ' + state)
-    // })
   })
 }
 
@@ -80,15 +72,14 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
       onError('Missing API key for openweathermap.com')
       return
     }
-    var weatherData = [{}, {}, {}, {}, {}]
+    var weatherData = new WeatherData()
     var callbacksPending = 2
 
     var prefix = 'https://api.openweathermap.org/data/2.5'
-    var suffix = '?lat=' + coords.latitude + '&lon=' + coords.longitude + '&units=metric&appid=' + apiKey
+    var suffix = '?lat=' + coords.latitude + '&lon=' + coords.longitude + '&units=metric&appid=' + apikey
 
     httpGet(prefix + '/weather' + suffix, 'fetch the current weather', onError, function(response) {
-      weatherData[0]['temp'] = response.main.temp
-      weatherData[0]['weather'] = iconToWeather(response.weather[0].icon)
+      weatherData.setCurrent(iconToWeather(response.weather[0].icon), response.weather[0].main, response.main.temp)
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
@@ -103,9 +94,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
         // This time is in seconds, not milliseconds.
         if (new Date(period.dt * 1000) < now) continue
 
-        weatherData[day]['high'] = period.main.temp_max
-        weatherData[day]['low'] = period.main.temp_min
-        weatherData[day]['weather'] = iconCodeToWeather(period.weather[0].icon)
+        weatherData.setForecast(day, iconToWeather(period.weather[0].icon), period.weather[0].main, period.main.temp_max, period.main.temp_min)
         day++
       }
       if (day < 5) return // Didn't get enough days of data

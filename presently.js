@@ -24,7 +24,7 @@ window.onresize = function() {
 }
 
 function onForecastError(error) {
-  document.getElementById('forecast-loading').style.display = null
+  document.getElementById('forecast-loading').style.display = 'flex'
   document.getElementById('forecast-error').innerText = error
 }
 

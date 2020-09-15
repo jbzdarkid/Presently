@@ -3,6 +3,7 @@ namespace(function() {
 // TODOs:
 // - Consider img01.png for mobile theme chooser / if window is small
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
+// - "Show today's forecast": {Never, Before noon, Always}
 
 // Add OWM support
 

@@ -1,7 +1,7 @@
 namespace(function() {
 
 window.coords = null
-window.coordsChanged = function(coords, onError) {
+window.coordsChanged = function(onError, coords) {
   if (window.coords == coords) return
 
   // If this is the first time we set the coords since page load, it's not a legitimate location change.
@@ -21,21 +21,19 @@ window.coordsChanged = function(coords, onError) {
 window.requestLocation = function(onError, onSuccess) {
   window.getLocal('coords', function(coords) {
     if (coords) {
-      window.coordsChanged(coords, onError)
+      window.coordsChanged(onError, coords)
       if (onSuccess) onSuccess(coords)
       return
     }
 
     navigator.geolocation.getCurrentPosition(function(position) {
       var coords = {'latitude': position.coords.latitude, 'longitude': position.coords.longitude}
-      window.coordsChanged(coords, onError)
+      window.coordsChanged(onError, coords)
       if (onSuccess) onSuccess(coords)
     }, function() {
-      httpGet('https://ipapi.co/json', 'discover your location', function(error) {
-        onError(error)
-      }, function(position) {
+      httpGet('https://ipapi.co/json', 'discover your location', onError, function(position) {
         var coords = {'latitude': position.latitude, 'longitude': position.longitude}
-        window.coordsChanged(coords, onError)
+        window.coordsChanged(onError, coords)
         if (onSuccess) onSuccess(coords)
       })
     })

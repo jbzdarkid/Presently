@@ -1,10 +1,12 @@
 namespace(function() {
 
+function onSunriseError(error) {
+  document.getElementById('sunriseSunset').style.display = 'none'
+  document.getElementById('placeName').innerText = error
+}
+
 window.showSettings = function() {
-  window.getSunriseSunset(function(error) {
-    document.getElementById('sunriseSunset').style.display = 'none'
-    document.getElementById('placeName').innerText = error
-  })
+  window.getSunriseSunset(onSunriseError)
 
   // Fade out the main container, and prepare the settings container for display
   document.getElementById('main').style.animation = 'fadeIn 500ms 1 forwards reverse'
@@ -59,10 +61,7 @@ window.loadSettings = function(callback) {
   document.getElementById('closeSettings').onclick = hideSettings
   document.getElementById('refreshLocation').onclick = function() {
     window.setLocal('coords', null) // When the user asks for a refresh, we clear the coordinates.
-    window.requestLocation(function(error) {
-      document.getElementById('sunriseSunset').style.display = 'none'
-      document.getElementById('placeName').innerText = error
-    })
+    window.requestLocation(onSunriseError)
   }
 
   var pendingSettings = 0
@@ -192,12 +191,9 @@ function userChangedCoords() {
   window.clearTimeout(userSettingsTimeout)
   userSettingsTimeout = window.setTimeout(function() {
     document.getElementById('refreshLocation').disabled = false
-    window.coordsChanged({
+    window.coordsChanged(onSunriseError, {
       'latitude': parseFloat(document.getElementById('Latitude').value),
       'longitude': parseFloat(document.getElementById('Longitude').value),
-    }, function(error) {
-      document.getElementById('sunriseSunset').style.display = 'none'
-      document.getElementById('placeName').innerText = error
     })
   }, 3000)
 }

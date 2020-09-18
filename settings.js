@@ -128,6 +128,14 @@ window.loadSettings = function(callback) {
   })
 
   pendingSettings++
+  window.getRemote('settings-TodayForecast', function(value) {
+    if (value == null) value = 'TodayForecast-Noon'
+    document.getElementById('TodayForecast').value = value
+    document.getElementById('TodayForecast').onchange = settingsChanged
+    if (--pendingSettings === 0) callback()
+  })
+
+  pendingSettings++
   window.getRemote('settings-API', function(api) {
     if (api == 'IBMApi') {
       window.weatherApi = window.IBMApi
@@ -173,7 +181,6 @@ function settingsChanged() {
   } else {
     window.setRemote('settings-Temperature', 'Temperature-Celsius')
   }
-  window.displayNeedsUpdate = true
 
   if (document.getElementById('Hours-12').checked) {
     window.setRemote('settings-Hours', 'Hours-12')
@@ -192,11 +199,15 @@ function settingsChanged() {
     document.body.style.color = 'rgba(255, 255, 255, 0.7)'
   } else {
     window.setRemote('settings-Text', 'Text-Dark')
-    document.body.style.color = 'rgba(0, 0, 0, 0.6)'
+    document.body.style.color = 'rgba(0,   0,   0,   0.6)'
   }
+
+  window.setRemote('settings-TodayForecast', document.getElementById('TodayForecast').value)
 
   var color = document.getElementById('ThemeCheck').parentElement.id
   window.setRemote('settings-Color', color)
+
+  window.displayNeedsUpdate = true
 }
 
 var userSettingsTimeout = null

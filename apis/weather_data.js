@@ -4,7 +4,7 @@ var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, 
 
 window.WeatherData = class{
   constructor() {
-    this.data = [{}, {}, {}, {}, {}]
+    this.data = [{}, {}, {}, {}, {}, {}]
     this.alert = []
   }
 
@@ -90,8 +90,19 @@ window.drawWeatherData = function(weatherData) {
     day.style.display = 'flex'
     day.textContent = ''
 
-    var climacon = Climacon(weatherData.data[i].weather, 96)
-    climacon.title = weatherData.data[i].forecast
+    // var todayForecast = document.getElementById('TodayForecast').value
+    // var now = new Date()
+    // if (todayForecast == 'TodayForecast-Never' ||
+    //     (todayForecast == 'TodayForecast-6AM' && now < 6) ||
+    //     (todayForecast == 'TodayForecast-Noon' && now < 12) ||
+    //     (todayForecast == 'TodayForecast-6PM' && now < 18)) {
+    //   var datum = weatherData.data[i + 1]
+    // } else {
+      var datum = weatherData.data[i]
+    // }
+
+    var climacon = Climacon(datum.weather, 96)
+    climacon.title = datum.forecast
     day.appendChild(climacon)
 
     var temp = document.createElement('div')
@@ -99,7 +110,7 @@ window.drawWeatherData = function(weatherData) {
     day.appendChild(temp)
 
     var h = document.createElement('div')
-    h.innerText = normalizedUnits(weatherData.data[i].high)
+    h.innerText = normalizedUnits(datum.high)
     h.style.float = 'left'
     h.style.textAlign = 'right'
     h.style.fontFamily = 'OpenSans-Regular'
@@ -107,7 +118,7 @@ window.drawWeatherData = function(weatherData) {
     temp.appendChild(h)
 
     var l = document.createElement('div')
-    l.innerText = normalizedUnits(weatherData.data[i].low)
+    l.innerText = normalizedUnits(datum.low)
     l.style.float = 'right'
     l.style.textAlign = 'left'
     l.style.fontFamily = 'OpenSans-Regular'

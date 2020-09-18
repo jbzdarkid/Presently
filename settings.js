@@ -24,7 +24,9 @@ window.showSettings = function() {
     // Reset the animation so that it can play again next time
     document.getElementById('settings').style.animation = null
     document.getElementById('closeSettings').onclick = hideSettings
-    document.onkeydown = function(event) {if (event.key === 'Escape') hideSettings()}
+    document.onkeydown = function(event) {
+      if (event.key === 'Escape') hideSettings()
+    }
   }, 1000)
 }
 
@@ -70,7 +72,7 @@ window.loadSettings = function(callback) {
   window.getRemote('settings-Temperature', function(value) {
     if (value == null) value = 'Temperature-Fahrenheit'
     document.getElementById(value).checked = true
-    window.displayNeedsUpdate = true
+    // window.displayNeedsUpdate = true
     if (--pendingSettings === 0) callback()
   })
 
@@ -95,7 +97,7 @@ window.loadSettings = function(callback) {
     if (value == 'Text-Light') {
       document.body.style.color = 'rgba(255, 255, 255, 0.7)'
     } else {
-      document.body.style.color = 'rgba(0, 0, 0, 0.6)'
+      document.body.style.color = 'rgba(0,   0,   0,   0.6)'
     }
     if (--pendingSettings === 0) callback()
   })

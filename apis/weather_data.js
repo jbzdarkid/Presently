@@ -77,7 +77,7 @@ window.drawWeatherData = function(weatherData) {
   if (window.innerWidth < 800) {
     // Also, push the current weather down, so it doesn't clip with the date
     document.getElementById('forecast-0').style.top = '0px'
-    for (var i=1; i < 5; i++) {
+    for (var i=1; i<5; i++) {
       document.getElementById('forecast-' + i).style.display = 'none'
     }
     return
@@ -85,7 +85,7 @@ window.drawWeatherData = function(weatherData) {
   // Otherwise, restore the offset for current weather
   document.getElementById('forecast-0').style.top = '-80px'
 
-  for (var i=1; i < 5; i++) {
+  for (var i=1; i<5; i++) {
     var day = document.getElementById('forecast-' + i)
     day.style.display = 'flex'
     day.textContent = ''

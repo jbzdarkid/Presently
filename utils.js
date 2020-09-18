@@ -105,14 +105,6 @@ window.localize = function(key, defaultValue) {
   return value
 }
 
-window.timeToString = function(time, separator = ' ') {
-  var hours = time.getHours()
-  if (document.getElementById('Hours-12').checked) {
-    hours = (hours + 11) % 12 + 1 // Convert 0-23 to 1-12
-  }
-  return hours.toString().padStart(2, '0') + separator + time.getMinutes().toString().padStart(2, '0')
-}
-
 window.reparent = function(child, newParent) {
   var oldParent = child.parentElement
   oldParent.removeChild(child)

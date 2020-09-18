@@ -89,7 +89,12 @@ function updateTime() {
   $('#second').css('transform', 'rotate(' + second + 'deg)');
   */
 
-  var timeString = window.timeToString(now)
+  var hours = now.getHours()
+  if (document.getElementById('Hours-12').checked) {
+    hours = (hours + 11) % 12 + 1 // Convert 0-23 to 1-12
+  }
+  var timeString = hours.toString().padStart(2, '0')
+  timeString += ' ' + now.getMinutes().toString().padStart(2, '0')
   // Don't show seconds if the window isn't wide enough
   if (window.innerWidth >= 800 && document.getElementById('Seconds-On').checked) {
     timeString += ' ' + now.getSeconds().toString().padStart(2, '0')

@@ -16,7 +16,7 @@
     <title>--&deg; | Presently</title>
   </head>
   <!-- This flexbox keeps the overall layout centered on the page -->
-  <body class="noselect" style="display: flex; justify-content: center; margin: 0px; overflow-y: hidden; height: 100%">
+  <body class="noselect" style="display: flex; justify-content: center; margin: 0px; height: 100%">
     <!-- "Bars" from fontawesome.com: https://fontawesome.com/icons/bars
           Licensed under https://fontawesome.com/license
           I have removed extraneous properties from <path>, and added properties to <svg> -->
@@ -97,8 +97,12 @@
       </div>
     </div>
     <!-- This div keeps the rows in order. Somehow. -->
-    <div id="main" style="display: flex; flex-direction: column; justify-content: center">
-      <span id="alert" style="text-align: center; font-size: 32px; margin-bottom: 32px; font-family: OpenSans-Regular; display: none; animation: fadeIn 1s linear">
+    <div id="main" style="display: flex; flex-direction: column">
+      <!-- This div with margin-top: auto along with a margin-bottom: auto below is here
+           so that the content stays centered if there is sufficient space, and if there is not
+           the alert is default visible and the weather scrolls offscreen. -->
+      <span style="margin-top: auto"></span>
+      <span id="alert" style="text-align: center; font-size: 32px; margin: 32px; font-family: OpenSans-Regular; display: none; animation: fadeIn 1s linear">
         <!-- "Exclamation Triangle" from fontawesome.com: https://fontawesome.com/icons/exclamation-triangle
               Licensed under https://fontawesome.com/license
               I have removed extraneous properties from <path>, and added properties to <svg> -->
@@ -122,6 +126,7 @@
         <div id="forecast-3" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 400ms both; min-width: 150px"></div>
         <div id="forecast-4" style="flex: 1 1 0px; display: flex; flex-direction: column; align-items: center; animation: fadeInUp 1s 1 600ms both; min-width: 150px"></div>
       </div>
+      <div style="margin-bottom: auto">
     </div>
   </body>
 </html>

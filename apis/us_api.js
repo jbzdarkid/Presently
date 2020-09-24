@@ -129,9 +129,9 @@ USApi.getWeather = function(coords, onError, onSuccess) {
 
     var baseUrl = 'https://api.weather.gov/alerts/active?status=actual&message_type=alert&limit=1&point='
     httpGet(baseUrl + coords.latitude + ',' + coords.longitude, headers, 'fetch active weather alerts', onError, function(response) {
-      if (response.features.length == 0) return null
-
-      weatherData.setAlert(response.features[0].properties.event, response.features[0].properties.description)
+      if (response.features.length > 0) {
+        weatherData.setAlert(response.features[0].properties.event, response.features[0].properties.description)
+      }
 
       if (--callbacksPending === 0) onSuccess(weatherData)
     })

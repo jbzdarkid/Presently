@@ -24,8 +24,16 @@ window.onresize = function() {
 }
 
 function onForecastError(error) {
-  document.getElementById('forecast-loading').style.display = 'flex'
-  document.getElementById('forecast-error').innerText = error
+  window.getLocal('weatherExpires', function(weatherExpires) {
+    var weatherVeryExpired = new Date(weatherExpires)
+    weatherVeryExpired.setHours(weatherVeryExpired.getHours() + 1)
+    // For one hour past its expiration, we ignore errors and keep showing the stale weather.
+    if (weatherExpires && (new Date() > weatherVeryExpired)) return
+
+    document.getElementById('forecast-loading').style.display = 'flex'
+    document.getElementById('forecast-error').innerText = error
+    document.getElementById('forecast').style.display = 'none'
+  })
 }
 
 // Default true when JS loads; we need to draw the display at least once.

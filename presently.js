@@ -7,6 +7,9 @@ namespace(function() {
 //   This is wired up, but I need to figure out how to do this in the various APIs.
 // - Make sure things fade out, where possible. E.g. errors going away / alerts going away
 // - When resizing the weather, persist the error (if shown)
+// - We need to make a decision (at +1h) to just *remove* the weatherData. Then, the hack I did for 'show error or weather' is just 'show error if forecast is hidden'
+//   This will also deal with awkwardness when refreshing the page (within the 5m interval)
+// - At some point in the future, invest in more "english" strings for failures (i.e. not "503" or "0", use "API down" or "Network disconnected")
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')

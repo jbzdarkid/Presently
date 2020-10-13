@@ -7,8 +7,6 @@ namespace(function() {
 //   This is wired up, but I need to figure out how to do this in the various APIs.
 // - Make sure things fade out, where possible. E.g. errors going away / alerts going away
 // - When resizing the weather, persist the error (if shown)
-// - We need to make a decision (at +1h) to just *remove* the weatherData. Then, the hack I did for 'show error or weather' is just 'show error if forecast is hidden'
-//   This will also deal with awkwardness when refreshing the page (within the 5m interval)
 // - At some point in the future, invest in more "english" strings for failures (i.e. not "503" or "0", use "API down" or "Network disconnected")
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
@@ -29,12 +27,12 @@ window.onresize = function() {
 }
 
 function onForecastError(error) {
-  window.getLocal('weatherExpires', function(weatherExpires) {
-    var weatherVeryExpired = new Date(weatherExpires)
-    weatherVeryExpired.setHours(weatherVeryExpired.getHours() + 1)
-    // For one hour past its expiration, we ignore errors and keep showing the stale weather.
-    if (weatherExpires && (new Date() > weatherVeryExpired)) return
+  window.getLocal('weatherVeryExpires', function(weatherVeryExpires) {
+    var now = new Date()
+    if (weatherVeryExpires && now.getTime() < weatherVeryExpires) return
 
+    // The weather is very expired, discard it and show an error.
+    window.setLocal('weatherData', undefined)
     document.getElementById('forecast-loading').style.display = 'flex'
     document.getElementById('forecast-error').innerText = error
     document.getElementById('forecast').style.display = 'none'
@@ -67,16 +65,19 @@ window.updateWeather = function() {
         /* Expected data format:
         [
           {temp: 0, weather: WEATHER_CLOUDY, forecast: "Cloudy, with a chance of meatballs"},
-          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "..."},
-          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "..."},
-          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "..."},
-          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "..."},
+          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
+          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
+          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
+          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
         ]*/
 
         // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
         weatherExpires = new Date()
         weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
         window.setLocal('weatherExpires', weatherExpires.getTime())
+        var weatherVeryExpires = new Date(weatherExpires)
+        weatherVeryExpires.setHours(weatherExpires.getHours() + 2, 0, 0, 0)
+        window.getLocal('weatherVeryExpires', weatherVeryExpires.getTime())
         window.setLocal('weatherData', weatherData)
 
         drawWeatherData(weatherData)

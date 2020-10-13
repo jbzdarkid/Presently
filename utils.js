@@ -24,6 +24,7 @@ function _httpSend(verb, url, headers, body, action, onError, onSuccess) {
   request.onreadystatechange = function() {
     if (this.readyState != XMLHttpRequest.DONE) return
     this.onreadystatechange = null
+    this.ontimeout = null
 
     if (this.status !== 200) {
       onError('Received a ' + this.status + ' error while attempting to ' + action)
@@ -31,6 +32,13 @@ function _httpSend(verb, url, headers, body, action, onError, onSuccess) {
       onSuccess(JSON.parse(this.responseText))
     }
   }
+  request.ontimeout = function() {
+    this.onreadystatechange = null
+    this.ontimeout = null
+
+    onError('Network timed out while attempting to ' + action)
+  }
+
   request.timeout = 120000 // 120,000 milliseconds = 2 minutes
   request.open(verb, url, true)
   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')

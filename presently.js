@@ -75,12 +75,13 @@ window.updateWeather = function() {
         weatherExpires = new Date()
         weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
         window.setLocal('weatherExpires', weatherExpires.getTime())
-        var weatherVeryExpires = new Date(weatherExpires)
-        weatherVeryExpires.setHours(weatherExpires.getHours() + 2, 0, 0, 0)
-        window.getLocal('weatherVeryExpires', weatherVeryExpires.getTime())
-        window.setLocal('weatherData', weatherData)
 
-        drawWeatherData(weatherData)
+        var weatherVeryExpires = new Date()
+        weatherVeryExpires.setHours(weatherVeryExpires.getHours() + 2, 0, 0, 0)
+        window.setLocal('weatherVeryExpires', weatherVeryExpires.getTime())
+
+        window.setLocal('weatherData', weatherData)
+        window.drawWeatherData(weatherData)
       })
     })
   })

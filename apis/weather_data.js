@@ -106,31 +106,28 @@ window.drawWeatherData = function(weatherData) {
     day.appendChild(climacon)
 
     var temp = document.createElement('div')
-    temp.style.width = '90px'
+    temp.style = 'display: flex; justify-content: space-around; flex-wrap: wrap'
     day.appendChild(temp)
 
     var h = document.createElement('div')
     h.innerText = normalizedUnits(datum.high)
-    h.style.float = 'left'
-    h.style.textAlign = 'right'
-    h.style.fontFamily = 'OpenSans-Regular'
-    h.style.fontSize = '30px'
+    h.style = 'font-family: OpenSans-Regular; font-size: 30px; flex-grow: 0'
     temp.appendChild(h)
 
     var l = document.createElement('div')
     l.innerText = normalizedUnits(datum.low)
-    l.style.float = 'right'
-    l.style.textAlign = 'left'
-    l.style.fontFamily = 'OpenSans-Regular'
-    l.style.fontSize = '30px'
-    l.style.opacity = '0.5'
+    l.style = 'font-family: OpenSans-Regular; font-size: 30px; opacity: 0.5'
     temp.appendChild(l)
+
+    var br = document.createElement('div')
+    br.style = 'flex-basis: 100%; height: 0px'
+    temp.appendChild(br)
 
     var name = document.createElement('span')
     name.innerText = DAYS[((new Date()).getDay() + i) % 7]
     name.style.fontFamily = 'OpenSans-Regular'
     name.style.fontSize = '24px'
-    day.appendChild(name)
+    temp.appendChild(name)
   }
 
   if (weatherData.alert[0] == null) {

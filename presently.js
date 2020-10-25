@@ -1,12 +1,12 @@
 namespace(function() {
 
 // TODOs:
+// - When resizing the weather, persist the error (if shown)
 // - Consider img01.png for mobile theme chooser / if window is small
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
 // - "Show today's forecast": {Never, Before noon, Always}
 //   This is wired up, but I need to figure out how to do this in the various APIs.
 // - Make sure things fade out, where possible. E.g. errors going away / alerts going away
-// - When resizing the weather, persist the error (if shown)
 // - At some point in the future, invest in more "english" strings for failures (i.e. not "503" or "0", use "API down" or "Network disconnected")
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')

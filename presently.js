@@ -7,7 +7,7 @@ namespace(function() {
 // - "Show today's forecast": {Never, Before noon, Always}
 //   This is wired up, but I need to figure out how to do this in the various APIs.
 // - Make sure things fade out, where possible. E.g. errors going away / alerts going away
-// - At some point in the future, invest in more "english" strings for failures (i.e. not "503" or "0", use "API down" or "Network disconnected")
+// - At some point in the future, invest in more "English" strings for failures (i.e. not "503" or "0", use "API down" or "Network disconnected")
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
@@ -70,6 +70,7 @@ window.updateWeather = function() {
           {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
           {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
         ]*/
+        console.log('Successfully fetched weather data')
 
         // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
         weatherExpires = new Date()

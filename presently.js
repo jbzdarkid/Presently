@@ -29,14 +29,56 @@ window.onresize = function() {
 
 function onForecastError(error) {
   window.getLocal('weatherVeryExpires', function(weatherVeryExpires) {
-    var now = new Date()
-    if (weatherVeryExpires && now.getTime() < weatherVeryExpires) return
+    var now = (new Date()).getTime()
+    if (weatherVeryExpires && now < weatherVeryExpires) return
 
     // The weather is very expired, discard it and show an error.
     window.setLocal('weatherData', undefined)
     document.getElementById('forecast-loading').style.display = 'flex'
     document.getElementById('forecast-error').innerText = error
     document.getElementById('forecast').style.display = 'none'
+  })
+}
+
+// var displayNeedsUpdate = true
+function updateWeather2() {
+  window.getLocal('weatherVeryExpires', function(weatherVeryExpires) {
+    window.getLocal('weatherExpires', function(weatherExpires) {
+      window.getLocal('weatherData', function(weatherData) {
+        var now = (new Date()).getTime()
+
+        // If the display needs to be updated, we bypass this check --
+        // but we still don't want to draw weather data if it's very expired.
+        if (!displayNeedsUpdate && weatherExpires && now < weatherExpires) {
+          // Weather not expired, nothing to do.
+          return
+        }
+
+        if (weatherData && weatherVeryExpires && now < weatherVeryExpires) {
+          // We have weather data and it's not very expired: Draw weather
+          window.drawWeatherData(weatherData)
+          displayNeedsUpdate = false
+          return
+        }
+
+        // Weather expired
+        window.requestLocation(onForecastError, function(coords) {
+          weatherApi.getWeather(coords, onForecastError, function(weatherData) {
+            var weatherExpires = new Date()
+            weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
+            window.setLocal('weatherExpires', weatherExpires.getTime())
+
+            var weatherVeryExpires = new Date()
+            weatherVeryExpires.setHours(weatherVeryExpires.getHours() + 2, 0, 0, 0)
+            window.setLocal('weatherVeryExpires', weatherVeryExpires.getTime())
+
+            window.setLocal('weatherData', weatherData)
+            window.drawWeatherData(weatherData)
+            displayNeedsUpdate = false
+          })
+        })
+      })
+    })
   })
 }
 
@@ -124,7 +166,7 @@ function updateTime() {
 
 function mainLoop() {
   updateTime()
-  updateWeather()
+  updateWeather2()
 
   setTimeout(mainLoop, 100)
 }

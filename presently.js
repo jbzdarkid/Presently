@@ -40,7 +40,8 @@ function onForecastError(error) {
   })
 }
 
-// var displayNeedsUpdate = true
+// Default true when JS loads; we need to draw the display at least once.
+var displayNeedsUpdate = true
 function updateWeather2() {
   window.getLocal('weatherVeryExpires', function(weatherVeryExpires) {
     window.getLocal('weatherExpires', function(weatherExpires) {
@@ -77,55 +78,6 @@ function updateWeather2() {
             displayNeedsUpdate = false
           })
         })
-      })
-    })
-  })
-}
-
-// Default true when JS loads; we need to draw the display at least once.
-window.displayNeedsUpdate = true
-window.updateWeather = function() {
-  if (displayNeedsUpdate) {
-    displayNeedsUpdate = false
-    window.getLocal('weatherData', function(weatherData) {
-      if (weatherData) window.drawWeatherData(weatherData)
-    })
-  }
-
-  window.getLocal('weatherExpires', function(weatherExpires) {
-    var now = new Date()
-    if (weatherExpires && now.getTime() < weatherExpires) return // Weather not expired, nothing to do.
-
-    // We've decided we're going update the weather data -- prevent any other updates for 5 minutes,
-    // to avoid making unnecessary network calls. We'll give it a longer expiration if the call succeeds.
-    weatherExpires = now
-    weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
-    window.setLocal('weatherExpires', weatherExpires.getTime())
-
-    console.log('Weather data is expired, fetching new weather data...')
-    window.requestLocation(onForecastError, function(coords) {
-      weatherApi.getWeather(coords, onForecastError, function(weatherData) {
-        /* Expected data format:
-        [
-          {temp: 0, weather: WEATHER_CLOUDY, forecast: "Cloudy, with a chance of meatballs"},
-          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
-          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
-          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
-          {high: 10, low: 0, weather: WEATHER_CLEAR, forecast: "Clear skies all day, with a chance..."},
-        ]*/
-        console.log('Successfully fetched weather data')
-
-        // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
-        weatherExpires = new Date()
-        weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
-        window.setLocal('weatherExpires', weatherExpires.getTime())
-
-        var weatherVeryExpires = new Date()
-        weatherVeryExpires.setHours(weatherVeryExpires.getHours() + 2, 0, 0, 0)
-        window.setLocal('weatherVeryExpires', weatherVeryExpires.getTime())
-
-        window.setLocal('weatherData', weatherData)
-        window.drawWeatherData(weatherData)
       })
     })
   })

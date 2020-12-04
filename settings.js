@@ -72,7 +72,6 @@ window.loadSettings = function(callback) {
   window.getRemote('settings-Temperature', function(value) {
     if (value == null) value = 'Temperature-Fahrenheit'
     document.getElementById(value).checked = true
-    // window.displayNeedsUpdate = true
     if (--pendingSettings === 0) callback()
   })
 

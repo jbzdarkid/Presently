@@ -124,6 +124,19 @@ function mainLoop() {
   setTimeout(mainLoop, 100)
 }
 
+document.addEventListener("keydown", function(event) {
+  if (String.fromCharCode(event.keyCode) === 'T') {
+    if (document.getElementById('Temperature-Fahrenheit').checked) {
+      window.setRemote('settings-Temperature', 'Temperature-Celsius')
+      document.getElementById('Temperature-Celsius').checked = true
+    } else {
+      window.setRemote('settings-Temperature', 'Temperature-Fahrenheit')
+      document.getElementById('Temperature-Fahrenheit').checked = true
+    }
+    displayNeedsUpdate = true
+  }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
   window.loadSettings(function() {
     // Request the user's location once on page load to populate sunrise/sundown times.

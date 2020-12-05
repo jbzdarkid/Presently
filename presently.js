@@ -1,14 +1,15 @@
 namespace(function() {
 
-// TODOs:
+// SHIP BLOCKERS:
 // - When resizing the weather, persist the error (if shown)
-// - Consider img01.png for mobile theme chooser / if window is small
+
+// TODOs:
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
 // - "Show today's forecast": {Never, Before noon, Always}
 //   This is wired up, but I need to figure out how to do this in the various APIs.
 // - Make sure things fade out, where possible. E.g. errors going away / alerts going away
-// - At some point in the future, invest in more "English" strings for failures (i.e. not "503" or "0", use "API down" or "Network disconnected")
-// - Don't fail to show weather if the alerts don't load. Just don't show any alerts.
+// - Invest in more "English" strings for network failures (i.e. not "503" or "0", use "API unavailable" or "Network disconnected")
+// - Add real support for changing weather APIs (dropdown list + textbox for API key)
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
@@ -41,28 +42,30 @@ function onForecastError(error) {
 }
 
 // Default true when JS loads; we need to draw the display at least once.
-var displayNeedsUpdate = true
-function updateWeather2() {
+window.displayNeedsUpdate = true
+function updateWeather() {
   window.getLocal('weatherVeryExpires', function(weatherVeryExpires) {
     window.getLocal('weatherExpires', function(weatherExpires) {
       window.getLocal('weatherData', function(weatherData) {
         var now = (new Date()).getTime()
 
-        // If the display needs to be updated, we bypass this check --
-        // but we still don't want to draw weather data if it's very expired.
-        if (!displayNeedsUpdate && weatherExpires && now < weatherExpires) {
-          // Weather not expired, nothing to do.
-          return
-        }
-
-        if (weatherData && weatherVeryExpires && now < weatherVeryExpires) {
-          // We have weather data and it's not very expired: Draw weather
+        // If we need to redraw the display, do so as long as we have weather data that's not very expired.
+        if (displayNeedsUpdate && weatherData && weatherVeryExpires && now < weatherVeryExpires) {
           window.drawWeatherData(weatherData)
           displayNeedsUpdate = false
           return
         }
 
-        // Weather expired
+        // If the weather is not expired, exit.
+        if (weatherExpires && now < weatherExpires) return
+
+        // Else, the weather is expired and should be updated.
+        // We prevent any updates for 5 minutes to avoid making excessive network calls.
+        // If the weather update succeeds, we'll set a later expiration time.
+        weatherExpires = new Date()
+        weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
+        window.setLocal('weatherExpires', weatherExpires.getTime())
+
         window.requestLocation(onForecastError, function(coords) {
           weatherApi.getWeather(coords, onForecastError, function(weatherData) {
             var weatherExpires = new Date()
@@ -119,7 +122,7 @@ function updateTime() {
 
 function mainLoop() {
   updateTime()
-  updateWeather2()
+  updateWeather()
 
   setTimeout(mainLoop, 100)
 }

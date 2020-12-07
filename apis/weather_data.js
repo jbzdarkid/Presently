@@ -106,11 +106,11 @@ window.drawWeatherData = function(weatherData) {
     day.appendChild(climacon)
 
     var temp = document.createElement('div')
-    temp.style = 'display: flex; justify-content: space-between; flex-direction: column'
+    temp.style = 'display: flex; align-items: center; flex-direction: column; width: 100%'
     day.appendChild(temp)
 
     var highAndLow = document.createElement('div')
-    highAndLow.style = 'display: flex; justify-content: space-around'
+    highAndLow.style = 'display: flex; justify-content: space-around; width: 100%'
     temp.appendChild(highAndLow)
 
     var high = document.createElement('div')

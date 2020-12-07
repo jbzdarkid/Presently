@@ -106,22 +106,22 @@ window.drawWeatherData = function(weatherData) {
     day.appendChild(climacon)
 
     var temp = document.createElement('div')
-    temp.style = 'display: flex; justify-content: space-around; flex-wrap: wrap'
+    temp.style = 'display: flex; justify-content: space-between; flex-direction: column'
     day.appendChild(temp)
 
-    var h = document.createElement('div')
-    h.innerText = normalizedUnits(datum.high)
-    h.style = 'font-family: OpenSans-Regular; font-size: 30px; flex-grow: 0'
-    temp.appendChild(h)
+    var highAndLow = document.createElement('div')
+    highAndLow.style = 'display: flex; justify-content: space-around'
+    temp.appendChild(highAndLow)
 
-    var l = document.createElement('div')
-    l.innerText = normalizedUnits(datum.low)
-    l.style = 'font-family: OpenSans-Regular; font-size: 30px; opacity: 0.5'
-    temp.appendChild(l)
+    var high = document.createElement('div')
+    high.innerText = normalizedUnits(datum.high)
+    high.style = 'font-family: OpenSans-Regular; font-size: 30px'
+    highAndLow.appendChild(high)
 
-    var br = document.createElement('div')
-    br.style = 'flex-basis: 100%; height: 0px'
-    temp.appendChild(br)
+    var low = document.createElement('div')
+    low.innerText = normalizedUnits(datum.low)
+    low.style = 'font-family: OpenSans-Regular; font-size: 30px; opacity: 0.5'
+    highAndLow.appendChild(low)
 
     var name = document.createElement('span')
     name.innerText = DAYS[((new Date()).getDay() + i) % 7]

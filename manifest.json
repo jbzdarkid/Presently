@@ -1,10 +1,11 @@
 {
   "name": "Presently",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "manifest_version": 2,
   "permissions": ["storage"],
   "chrome_url_overrides": {"newtab": "presently.html"},
   "options_page": "presently.html?settings",
   "default_locale": "en",
-  "description": "Displays the current weather & upcoming forecast on the new tab page."
+  "description": "Displays the current weather & upcoming forecast on the new tab page.",
+  "icons": {"128": "resources/icon-full.png"}
 }

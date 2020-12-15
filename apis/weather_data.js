@@ -5,6 +5,7 @@ var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, 
 window.WeatherData = class{
   constructor() {
     this.data = [{}, {}, {}, {}, {}, {}]
+    this.data2 = []
     this.alert = []
   }
 
@@ -26,6 +27,15 @@ window.WeatherData = class{
   setAlert(summary, description) {
     if (summary == null) throw 'Summary cannot be empty in setAlert'
     this.alert = [summary, description]
+  }
+
+  addPeriod(period) {
+    if (period.startTime == null) throw 'Period must have a startTime'
+    if (period.weather == null) throw 'Period must have weather'
+    if (period.forecast == null) throw 'Period must have a forecast'
+    if (period.high == null) throw 'Period must have a high'
+    if (period.low == null) throw 'Period must have a low'
+    this.data2.push(period)
   }
 }
 

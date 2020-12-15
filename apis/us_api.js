@@ -108,6 +108,17 @@ USApi.getWeather = function(coords, onError, onSuccess) {
     })
 
     httpGet(response.forecast, headers, 'fetch the weather forecast', onError, function(response) {
+      for (var i=0; i<response.properties.periods.length; i++) {
+        var period = response.properties.periods[i]
+        weatherData.addPeriod({
+          'startTime': period.startTime,
+          'weather': getWeatherFromIcon(period.icon),
+          'forecast': period.detailedForecast,
+          'high': period.temperature,
+          'low': period.temperature,
+        })
+      }
+
       var tomorrow = new Date().setHours(24, 0, 0, 0)
       var day = 1
       for (var i=0; i<response.properties.periods.length && day<5;) {

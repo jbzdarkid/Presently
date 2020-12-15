@@ -89,6 +89,28 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
     })
 
     httpGet(prefix + '/daily/5day.json' + suffix, 'fetch the weather forecast', onError, function(response) {
+      for (var i=0; i<response.forecasts.length; i++) {
+        var period = response.forecasts[i]
+        if (period.day) {
+          weatherData.addPeriod({
+            'startTime': period.day.fcst_valid,
+            'weather': iconCodeToWeather[period.day.icon_code],
+            'forecast': period.day.narrative,
+            'high': period.day.temp,
+            'low': period.day.temp,
+          })
+        }
+        if (period.night) {
+          weatherData.addPeriod({
+            'startTime': period.night.fcst_valid,
+            'weather': iconCodeToWeather[period.night.icon_code],
+            'forecast': period.night.narrative,
+            'high': period.night.temp,
+            'low': period.night.temp,
+          })
+        }
+      }
+
       var now = new Date()
       var day = 1
       for (var i=0; i<response.forecasts.length && day<5; i++) {

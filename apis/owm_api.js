@@ -84,6 +84,17 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
     })
 
     httpGet(prefix + '/forecast' + suffix, 'fetch the weather forecast', onError, function(response) {
+      for (var i=0; i<response.list.length; i++) {
+        var period = response.list[i]
+        weatherData.addPeriod({
+          'startTime': period.dt,
+          'weather': iconToWeather(period.weather[0].icon),
+          'forecast': period.weather[0].main,
+          'high': period.main.temp_max,
+          'low': period.main.temp_min,
+        })
+      }
+
       var now = new Date()
       var day = 1
       for (var i=0; i<response.list.length && day<5; i++) {

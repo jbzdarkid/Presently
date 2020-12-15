@@ -58,7 +58,7 @@ function iconToWeather(icon) {
 window.OWMApi = {}
 
 OWMApi.getLocationData = function(coords, onError, onSuccess) {
-  window.getLocal('open-weathermap-apikey', function(apikey) {
+  window.getRemote('open-weathermap-apikey', function(apikey) {
     if (apikey == null) {
       onError('Missing API key for openweathermap.org')
       return
@@ -67,7 +67,7 @@ OWMApi.getLocationData = function(coords, onError, onSuccess) {
 }
 
 OWMApi.getWeather = function(coords, onError, onSuccess) {
-  window.getLocal('open-weathermap-apikey', function(apikey) {
+  window.getRemote('open-weathermap-apikey', function(apikey) {
     if (apikey == null) {
       onError('Missing API key for openweathermap.com')
       return

@@ -54,7 +54,7 @@ var iconCodeToWeather = [
 window.IBMApi = {}
 
 IBMApi.getLocationData = function(coords, onError, onSuccess) {
-  window.getLocal('weather-com-apikey', function(apikey) {
+  window.getRemote('weather-com-apikey', function(apikey) {
     if (apikey == null) {
       onError('Missing API key for weather.com')
       return
@@ -71,7 +71,7 @@ IBMApi.getLocationData = function(coords, onError, onSuccess) {
 }
 
 IBMApi.getWeather = function(coords, onError, onSuccess) {
-  window.getLocal('weather-com-apikey', function(apikey) {
+  window.getRemote('weather-com-apikey', function(apikey) {
     if (apikey == null) {
       onError('Missing API key for weather.com')
       return

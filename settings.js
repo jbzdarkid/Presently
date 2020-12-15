@@ -55,9 +55,14 @@ window.loadSettings = function(callback) {
   for (var input of document.getElementsByTagName('input')) {
     if (input.id == 'Latitude' || input.id == 'Longitude') {
       input.onchange = userChangedCoords
+    } else if (input.id == 'API-Key-Value') {
+      // Do nothing, onchange functionality depends on the active API
     } else {
       input.onchange = settingsChanged
     }
+  }
+  for (var input of document.getElementsByTagName('select')) {
+    input.onchange = settingsChanged
   }
   document.getElementById('settingsButton').onclick = showSettings
   document.getElementById('closeSettings').onclick = hideSettings
@@ -137,18 +142,9 @@ window.loadSettings = function(callback) {
 
   pendingSettings++
   window.getRemote('settings-API', function(api) {
-    if (api == 'IBMApi') {
-      window.weatherApi = window.IBMApi
-    } else if (api == 'OWMApi') {
-      window.weatherApi = window.OWMApi
-    } else if (api == 'WBApi') {
-      window.weatherApi = window.WBApi
-    } else if (api == 'USApi') {
-      window.weatherApi = window.USApi
-    } else {
-      window.setRemote('settings-API', 'USApi')
-      window.weatherApi = window.USApi
-    }
+    setApi(api)
+
+    document.getElementById('API-Choice').value = api
     if (--pendingSettings === 0) callback()
   })
 }
@@ -207,6 +203,17 @@ function settingsChanged() {
   var color = document.getElementById('ThemeCheck').parentElement.id
   window.setRemote('settings-Color', color)
 
+  var api = document.getElementById('API-Choice').value
+  setApi(api)
+  window.setRemote('settings-API', api)
+  // When you select a new API, we need to start a timeout to fetch new API data (whether or not the API key changed).
+  // Obviously, if the user starts typing in the API key field, we cancel that.
+  window.clearTimeout(apiKeyTimeout)
+  apiKeyTimeout = window.setTimeout(function() {
+    console.log('API changed to ' + api + ' changed, expiring weather data.')
+    window.setLocal('weatherExpires', 0)
+  }, 5000)
+
   window.displayNeedsUpdate = true
 }
 
@@ -226,6 +233,45 @@ function userChangedCoords() {
       'longitude': parseFloat(document.getElementById('Longitude').value),
     })
   }, 3000)
+}
+
+var apiKeyTimeout = null
+function setApi(api) {
+  var keyName = ''
+  if (api == 'IBMApi') {
+    window.weatherApi = window.IBMApi
+    keyName = 'weather-com-apikey'
+  } else if (api == 'OWMApi') {
+    window.weatherApi = window.OWMApi
+    keyName = 'open-weathermap-apikey'
+  } else if (api == 'WBApi') {
+    window.weatherApi = window.WBApi
+    keyName = 'weatherbit-apikey'
+  } else if (api == 'USApi') {
+    window.weatherApi = window.USApi
+  } else { // Default to the US API if no API was previously chosen
+    api = 'USApi'
+    window.setRemote('settings-API', 'USApi')
+    window.weatherApi = window.USApi
+  }
+
+  if (api == 'USApi') { // The US API does not require an API key
+    document.getElementById('API-Key').style.display = 'none'
+  } else {
+    document.getElementById('API-Key').style.display = null
+    window.getRemote(keyName, function(result) {
+      document.getElementById('API-Key-Value').value = result ? result : ''
+
+      document.getElementById('API-Key-Value').oninput = function() {
+        window.clearTimeout(apiKeyTimeout)
+        apiKeyTimeout = window.setTimeout(function() {
+          window.setRemote(keyName, document.getElementById('API-Key-Value').value)
+          console.log('API key for ' + api + ' changed, expiring weather data.')
+          window.setLocal('weatherExpires', 0)
+        }, 500)
+      }
+    })
+  }
 }
 
 })

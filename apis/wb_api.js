@@ -57,7 +57,7 @@ WBApi.getLocationData = function(coords, onError, onSuccess) {
       return
     }
 
-    window.getLocal('weatherbit-apikey', function(apikey) {
+    window.getRemote('weatherbit-apikey', function(apikey) {
       if (apikey == null) {
         onError('Missing API key for weatherbit.io')
         return
@@ -77,7 +77,7 @@ WBApi.getLocationData = function(coords, onError, onSuccess) {
 }
 
 WBApi.getWeather = function(coords, onError, onSuccess) {
-  window.getLocal('weatherbit-apikey', function(apikey) {
+  window.getRemote('weatherbit-apikey', function(apikey) {
     if (apikey == null) {
       onError('Missing API key for weatherbit.io')
       return

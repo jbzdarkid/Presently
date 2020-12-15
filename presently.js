@@ -9,7 +9,6 @@ namespace(function() {
 //   This is wired up, but I need to figure out how to do this in the various APIs.
 // - Make sure things fade out, where possible. E.g. errors going away / alerts going away
 // - Invest in more "English" strings for network failures (i.e. not "503" or "0", use "API unavailable" or "Network disconnected")
-// - Add real support for changing weather APIs (dropdown list + textbox for API key)
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')
@@ -65,9 +64,11 @@ function updateWeather() {
         weatherExpires = new Date()
         weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
         window.setLocal('weatherExpires', weatherExpires.getTime())
+        console.log('Fetching new weather data...')
 
         window.requestLocation(onForecastError, function(coords) {
           weatherApi.getWeather(coords, onForecastError, function(weatherData) {
+            console.log('Fetched new weather data')
             var weatherExpires = new Date()
             weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
             window.setLocal('weatherExpires', weatherExpires.getTime())

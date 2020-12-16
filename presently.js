@@ -2,6 +2,7 @@ namespace(function() {
 
 // SHIP BLOCKERS:
 // - When resizing the weather, persist the error (if shown)
+// - When changing weather APIs, you probably to refresh location.
 
 // TODOs:
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans

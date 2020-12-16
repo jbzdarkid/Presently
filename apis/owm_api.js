@@ -76,7 +76,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
     var callbacksPending = 2
 
     var prefix = 'https://api.openweathermap.org/data/2.5'
-    var suffix = '?lat=' + coords.latitude + '&lon=' + coords.longitude + '&units=metric&appid=' + apikey
+    var suffix = '?lat=' + coords.latitude + '&lon=' + coords.longitude + '&units=imperial&appid=' + apikey
 
     httpGet(prefix + '/weather' + suffix, 'fetch the current weather', onError, function(response) {
       weatherData.setCurrent(iconToWeather(response.weather[0].icon), response.weather[0].main, response.main.temp)

@@ -12,7 +12,7 @@ window.WeatherData = class{
   setCurrent(weather, forecast, temp) {
     this.data[0]['weather'] = weather
     this.data[0]['forecast'] = forecast
-    this.data[0]['temp'] = temp
+    this.data[0]['temp'] = Math.round(temp)
   }
 
   setForecast(day, weather, forecast, high, low) {
@@ -20,8 +20,8 @@ window.WeatherData = class{
     if (high < low) throw 'High cannot be less than low in setForecast'
     this.data[day]['weather'] = weather
     this.data[day]['forecast'] = forecast
-    this.data[day]['high'] = high
-    this.data[day]['low'] = low
+    this.data[day]['high'] = Math.round(high)
+    this.data[day]['low'] = Math.round(low)
   }
 
   setAlert(summary, description) {
@@ -35,6 +35,8 @@ window.WeatherData = class{
     if (period.forecast == null) throw 'Period must have a forecast'
     if (period.high == null) throw 'Period must have a high'
     if (period.low == null) throw 'Period must have a low'
+    period.high = Math.round(period.high)
+    period.low = Math.round(period.low)
     this.data2.push(period)
   }
 }

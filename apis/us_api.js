@@ -89,7 +89,7 @@ USApi.getLocationData = function(coords, onError, onSuccess) {
     var timezone = response.timeZone
     var city = response.relativeLocation.properties.city
     var state = response.relativeLocation.properties.state
-    onSuccess(timezone, city + ', ' + state)
+    onSuccess(timezone, null, city + ', ' + state)
   })
 }
 

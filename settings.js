@@ -151,14 +151,19 @@ window.loadSettings = function(callback) {
 
 window.getSunriseSunset = function(onError, onSuccess) {
   if (window.coords == null) return
-  window.weatherApi.getLocationData(window.coords, onError, function(timezone, placeName) {
+  window.weatherApi.getLocationData(window.coords, onError, function(timezone, tzOffset, placeName) {
     document.getElementById('sunriseSunset').style.display = null
 
     var sunCalc = SunCalc.getTimes(new Date(), window.coords.latitude, window.coords.longitude)
     var options = {
-      timeZone: timezone,
+      timeZone: timezone ? timezone : 'UTC',
       timeStyle: 'short',
       hour12: document.getElementById('Hours-12').checked
+    }
+    if (tzOffset) {
+       // Some APIs return an tzOffset in seconds instead of a timezone name. As such, we need to adjust the time directly.
+      sunCalc.sunrise.setSeconds(sunCalc.sunrise.getSeconds() + tzOffset)
+      sunCalc.sunset.setSeconds(sunCalc.sunset.getSeconds() + tzOffset)
     }
     document.getElementById('Sunrise').innerText = sunCalc.sunrise.toLocaleString('en-US', options)
     document.getElementById('Sunset').innerText = sunCalc.sunset.toLocaleString('en-US', options)

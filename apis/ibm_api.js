@@ -65,7 +65,7 @@ IBMApi.getLocationData = function(coords, onError, onSuccess) {
       var timezone = response.location.ianaTimeZone[0]
       var city = response.location.city[0]
       var state = response.location.adminDistrictCode[0]
-      onSuccess(timezone, city + ', ' + state)
+      onSuccess(timezone, null, city + ', ' + state)
     })
   })
 }

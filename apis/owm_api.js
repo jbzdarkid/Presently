@@ -57,12 +57,33 @@ function iconToWeather(icon) {
 
 window.OWMApi = {}
 
+// This information just comes for free alongside the current weather.
+// So, we should always check to see if it's cached.
 OWMApi.getLocationData = function(coords, onError, onSuccess) {
-  window.getRemote('open-weathermap-apikey', function(apikey) {
-    if (apikey == null) {
-      onError('Missing API key for openweathermap.org')
+  var key = 'owmapi,location,' + coords.latitude + ',' + coords.longitude
+  window.getRemote(key, function(response) {
+    if (response) {
+      var tzOffset = response.timezone
+      var city = response.name
+      onSuccess(null, tzOffset, city)
       return
     }
+
+    window.getRemote('open-weathermap-apikey', function(apikey) {
+      if (apikey == null) {
+        onError('Missing API key for openweathermap.org')
+        return
+      }
+
+      var prefix = 'https://api.openweathermap.org/data/2.5'
+      var suffix = '?lat=' + coords.latitude + '&lon=' + coords.longitude + '&units=imperial&appid=' + apikey
+      httpGet(prefix + '/weather' + suffix, 'discover information about your location', onError, function(response) {
+        window.setRemote(key, response)
+        var tzOffset = response.timezone
+        var city = response.name
+        onSuccess(null, tzOffset, city)
+      })
+    })
   })
 }
 
@@ -77,21 +98,24 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
 
     var prefix = 'https://api.openweathermap.org/data/2.5'
     var suffix = '?lat=' + coords.latitude + '&lon=' + coords.longitude + '&units=imperial&appid=' + apikey
-
     httpGet(prefix + '/weather' + suffix, 'fetch the current weather', onError, function(response) {
+      var key = 'owmapi,location,' + coords.latitude + ',' + coords.longitude
+      window.setRemote(key, response)
+
       weatherData.setCurrent(iconToWeather(response.weather[0].icon), response.weather[0].main, response.main.temp)
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
     httpGet(prefix + '/forecast' + suffix, 'fetch the weather forecast', onError, function(response) {
+      debugger
       for (var i=0; i<response.list.length; i++) {
         var period = response.list[i]
         weatherData.addPeriod({
           'startTime': period.dt,
           'weather': iconToWeather(period.weather[0].icon),
           'forecast': period.weather[0].main,
-          'high': period.main.temp_max,
-          'low': period.main.temp_min,
+          'high': period.main.temp,
+          'low': period.main.temp,
         })
       }
 

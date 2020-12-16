@@ -50,10 +50,10 @@ WBApi.getLocationData = function(coords, onError, onSuccess) {
   var key = 'wbapi,location,' + coords.latitude + ',' + coords.longitude
   window.getRemote(key, function(response) {
     if (response) {
-      var timezone = response.data.timezone
-      var city = response.data.city_name
-      var state = response.data.state_code
-      onSuccess(timezone, city + ', ' + state)
+      var timezone = response.data[0].timezone
+      var city = response.data[0].city_name
+      var state = response.data[0].state_code
+      onSuccess(timezone, null, city + ', ' + state)
       return
     }
 
@@ -67,10 +67,10 @@ WBApi.getLocationData = function(coords, onError, onSuccess) {
       var suffix = '?units=I&key=' + apikey + '&lat=' + coords.latitude + '&lon=' + coords.longitude
       httpGet(prefix + '/current' + suffix, 'discover information about your location', onError, function(response) {
         window.setRemote(key, response)
-        var timezone = response.data.timezone
-        var city = response.data.city_name
-        var state = response.data.state_code
-        onSuccess(timezone, city + ', ' + state)
+        var timezone = response.data[0].timezone
+        var city = response.data[0].city_name
+        var state = response.data[0].state_code
+        onSuccess(timezone, null, city + ', ' + state)
       })
     })
   })
@@ -125,7 +125,9 @@ WBApi.getWeather = function(coords, onError, onSuccess) {
     })
 
     httpGet(prefix + '/alerts' + suffix, 'fetch active weather alerts', onError, function(response) {
-      weatherData.setAlert(response.alerts[0].title, response.alerts[0].description)
+      if (response.alerts.length > 0) {
+        weatherData.setAlert(response.alerts[0].title, response.alerts[0].description)
+      }
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
   })

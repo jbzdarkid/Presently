@@ -118,23 +118,6 @@ USApi.getWeather = function(coords, onError, onSuccess) {
           'low': period.temperature,
         })
       }
-
-      var tomorrow = new Date().setHours(24, 0, 0, 0)
-      var day = 1
-      for (var i=0; i<response.properties.periods.length && day<5;) {
-        var period = response.properties.periods[i]
-        // Skip periods until we find one which starts after midnight.
-        // This ensures that we show a proper forecast beginning on the next day.
-        if (new Date(period.startTime) < tomorrow) {
-          i++
-          continue
-        }
-
-        weatherData.setForecast(day, getWeatherFromIcon(period.icon), period.detailedForecast, period.temperature, response.properties.periods[i+1].temperature)
-        i += 2
-        day++
-      }
-      if (day < 5) return // Didn't get enough days of data
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 

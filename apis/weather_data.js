@@ -4,29 +4,18 @@ var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, 
 
 window.WeatherData = class{
   constructor() {
-    this.data = [{}, {}, {}, {}, {}, {}]
+    this.current = {}
     this.periods = []
     this.alert = []
   }
 
   setCurrent(weather, forecast, temp) {
+    if (weather == null) throw 'setCurrent must have a weather'
+    if (forecast == null) throw 'setCurrent must have a forecast'
+    if (temp == null) throw 'setCurrent must have a temp'
     this.data[0]['weather'] = weather
     this.data[0]['forecast'] = forecast
     this.data[0]['temp'] = Math.round(temp)
-  }
-
-  setForecast(day, weather, forecast, high, low) {
-    if (weather == null) throw 'Weather cannot be empty in setForecast'
-    if (high < low) throw 'High cannot be less than low in setForecast'
-    this.data[day]['weather'] = weather
-    this.data[day]['forecast'] = forecast
-    this.data[day]['high'] = Math.round(high)
-    this.data[day]['low'] = Math.round(low)
-  }
-
-  setAlert(summary, description) {
-    if (summary == null) throw 'Summary cannot be empty in setAlert'
-    this.alert = [summary, description]
   }
 
   addPeriod(period) {
@@ -38,6 +27,12 @@ window.WeatherData = class{
     period.high = Math.round(period.high)
     period.low = Math.round(period.low)
     this.periods.push(period)
+    this.periods.sort(function(a, b) {return a.startTime - b.startTime})
+  }
+
+  setAlert(summary, description) {
+    if (summary == null) throw 'Summary cannot be empty in setAlert'
+    this.alert = [summary, description]
   }
 }
 

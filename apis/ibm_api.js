@@ -110,21 +110,6 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
           })
         }
       }
-
-      var now = new Date()
-      var day = 1
-      for (var i=0; i<response.forecasts.length && day<5; i++) {
-        var period = response.forecasts[i]
-        // Skip periods until we find one which has not yet started.
-        // This ensures that we will always have a high and a low for the given period,
-        // and it avoids duplicating info for the current day.
-        // This time is in seconds, not milliseconds.
-        if (new Date(period.fcst_valid * 1000) < now) continue
-
-        weatherData.setForecast(day, iconCodeToWeather[period.day.icon_code], period.narrative, period.max_temp, period.min_temp)
-        day++
-      }
-      if (day < 5) return // Didn't get enough days of data
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 

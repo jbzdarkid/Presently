@@ -13,9 +13,11 @@ window.WeatherData = class{
     if (weather == null) throw 'setCurrent must have a weather'
     if (forecast == null) throw 'setCurrent must have a forecast'
     if (temp == null) throw 'setCurrent must have a temp'
-    this.data[0]['weather'] = weather
-    this.data[0]['forecast'] = forecast
-    this.data[0]['temp'] = Math.round(temp)
+    this.current = {
+      'weather': weather,
+      'forecast': forecast,
+      'temp': temp,
+    }
   }
 
   addPeriod(period) {
@@ -45,23 +47,23 @@ function normalizedUnits(degreesF) {
   }
 }
 
-function drawCurrentWeather(weather, forecast, temp) {
+function drawCurrentWeather(data) {
   var day = document.getElementById('forecast-0')
   day.textContent = ''
 
-  var climacon = Climacon(weather, 180, true /* isDaytimeAware */)
+  var climacon = Climacon(data.weather, 180, true /* isDaytimeAware */)
   climacon.style.marginBottom = '-10px'
-  climacon.title = forecast
+  climacon.title = data.forecast
   day.appendChild(climacon)
 
   var tempDiv = document.createElement('div')
   tempDiv.style.width = '90px'
   day.appendChild(tempDiv)
 
-  document.title = normalizedUnits(temp) + '\u00B0 | Presently'
+  document.title = normalizedUnits(data.temp) + '\u00B0 | Presently'
 
   var t = document.createElement('div')
-  t.innerText = normalizedUnits(temp)
+  t.innerText = normalizedUnits(data.temp)
   t.style.textAlign = 'center'
   t.style.fontFamily = 'OpenSans-Bold'
   t.style.fontSize = '72px'
@@ -115,12 +117,15 @@ function drawForecast(day, weather, forecast, highTemp, lowTemp, dayOfWeek) {
   temp.appendChild(name)
 }
 
-window.drawWeatherData2 = function(weatherData) {
+window.drawWeatherData = function(weatherData) {
   document.getElementById('forecast-loading').style.display = 'none'
   document.getElementById('forecast-error').innerText = ''
 
   // This needs to be a flexbox so that the forecast elements float side-by-side.
   document.getElementById('forecast').style.display = 'flex'
+
+  // Always draw the current weather
+  drawCurrentWeather(weatherData.current)
 
   var now = new Date()
   var nextDay = new Date(now)
@@ -132,7 +137,7 @@ window.drawWeatherData2 = function(weatherData) {
   var high = -9999
   var low = 9999
 
-  // Note: day<5 because we only draw 4 forecast days.
+  // Note: day < 5 because we only draw 4 forecast days.
   for (var i=0; i<weatherData.periods.length && day < 5; i++) {
     var period = weatherData.periods[i]
     // Search for the last period which applies (next period starts in the future)
@@ -151,12 +156,12 @@ window.drawWeatherData2 = function(weatherData) {
 
     // Otherwise, draw the accumulated weather data.
     if (day == 0) {
-      drawCurrentWeather(weather, forecast, Math.round((high + low) / 2))
       var todayForecast = document.getElementById('TodayForecast').value
       if ((todayForecast == 'TodayForecast-6AM'  && now.getHours() < 6)  ||
           (todayForecast == 'TodayForecast-Noon' && now.getHours() < 12) ||
           (todayForecast == 'TodayForecast-6PM'  && now.getHours() < 18) ||
           (todayForecast == 'TodayForecast-Always')) {
+        // Compute dayOfWeek before incrementing day, since this is the current forecast.
         var dayOfWeek = DAYS[((new Date()).getDay() + day) % 7]
         day++
         drawForecast(day, weather, forecast, high, low, dayOfWeek)
@@ -170,44 +175,6 @@ window.drawWeatherData2 = function(weatherData) {
     var forecast = null
     var high = -9999
     var low = 9999
-  }
-}
-
-window.drawWeatherData = function(weatherData) {
-  document.getElementById('forecast-loading').style.display = 'none'
-  document.getElementById('forecast-error').innerText = ''
-
-  // This needs to be a flexbox so that the forecast elements float side-by-side.
-  document.getElementById('forecast').style.display = 'flex'
-
-  drawCurrentWeather(weatherData.data[0].weather, weatherData.data[0].forecast, weatherData.data[0].temp)
-
-  // If the window is too small, do not draw the forecast.
-  if (window.innerWidth < 800) return
-
-  for (var i=1; i<5; i++) {
-  // var todayForecast = document.getElementById('TodayForecast').value
-  // var now = new Date()
-  // if (todayForecast == 'TodayForecast-Never' ||
-  //     (todayForecast == 'TodayForecast-6AM' && now < 6) ||
-  //     (todayForecast == 'TodayForecast-Noon' && now < 12) ||
-  //     (todayForecast == 'TodayForecast-6PM' && now < 18)) {
-  //   var datum = weatherData.data[day + 1]
-  // } else {
-    var datum = weatherData.data[i]
-  // }
-
-    drawForecast(i, datum.weather, datum.forecast, datum.high, datum.low)
-  }
-
-  if (weatherData.alert[0] == null) {
-    document.getElementById('alert').style.display = 'none'
-    document.getElementById('alertText').innerText = ''
-    document.getElementById('alertText').title = ''
-  } else {
-    document.getElementById('alert').style.display = null
-    document.getElementById('alertText').innerText = weatherData.alert[0]
-    document.getElementById('alertText').title = weatherData.alert[1]
   }
 }
 

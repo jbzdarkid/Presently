@@ -48,7 +48,7 @@ function updateWeather() {
 
         // If we need to redraw the display, do so as long as we have weather data that's not very expired.
         if (displayNeedsUpdate && weatherData && weatherVeryExpires && now < weatherVeryExpires) {
-          window.drawWeatherData2(weatherData)
+          window.drawWeatherData(weatherData)
           displayNeedsUpdate = false
           return
         }
@@ -76,7 +76,7 @@ function updateWeather() {
             window.setLocal('weatherVeryExpires', weatherVeryExpires.getTime())
 
             window.setLocal('weatherData', weatherData)
-            window.drawWeatherData2(weatherData)
+            window.drawWeatherData(weatherData)
             displayNeedsUpdate = false
           })
         })

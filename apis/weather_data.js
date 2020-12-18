@@ -161,13 +161,13 @@ window.drawWeatherData = function(weatherData) {
           (todayForecast == 'TodayForecast-Noon' && now.getHours() < 12) ||
           (todayForecast == 'TodayForecast-6PM'  && now.getHours() < 18) ||
           (todayForecast == 'TodayForecast-Always')) {
-        // Compute dayOfWeek before incrementing day, since this is the current forecast.
-        var dayOfWeek = DAYS[((new Date()).getDay() + day) % 7]
+        // Compute dayOfWeek before incrementing day, since this is the forecast for today.
+        var dayOfWeek = DAYS[(now.getDay() + day) % 7]
         day++
         drawForecast(day, weather, forecast, high, low, dayOfWeek)
       }
     } else {
-      drawForecast(day, weather, forecast, high, low, DAYS[((new Date()).getDay() + day) % 7])
+      drawForecast(day, weather, forecast, high, low, DAYS[(now.getDay() + day) % 7])
     }
     day++
     nextDay.setHours(24, 0, 0, 0)

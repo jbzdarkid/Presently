@@ -5,8 +5,6 @@ namespace(function() {
 
 // TODOs:
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
-// - "Show today's forecast": {Never, Before noon, Always}
-//   This is wired up, but I need to figure out how to do this in the various APIs.
 // - Make sure things fade out, where possible. E.g. errors going away / alerts going away
 // - Invest in more "English" strings for network failures (i.e. not "503" or "0", use "API unavailable" or "Network disconnected")
 
@@ -50,7 +48,7 @@ function updateWeather() {
 
         // If we need to redraw the display, do so as long as we have weather data that's not very expired.
         if (displayNeedsUpdate && weatherData && weatherVeryExpires && now < weatherVeryExpires) {
-          window.drawWeatherData(weatherData)
+          window.drawWeatherData2(weatherData)
           displayNeedsUpdate = false
           return
         }
@@ -78,7 +76,7 @@ function updateWeather() {
             window.setLocal('weatherVeryExpires', weatherVeryExpires.getTime())
 
             window.setLocal('weatherData', weatherData)
-            window.drawWeatherData(weatherData)
+            window.drawWeatherData2(weatherData)
             displayNeedsUpdate = false
           })
         })

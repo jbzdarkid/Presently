@@ -61,9 +61,6 @@ window.loadSettings = function(callback) {
       input.onchange = settingsChanged
     }
   }
-  for (var input of document.getElementsByTagName('select')) {
-    input.onchange = settingsChanged
-  }
   document.getElementById('settingsButton').onclick = showSettings
   document.getElementById('closeSettings').onclick = hideSettings
   document.getElementById('refreshLocation').onclick = function() {
@@ -136,7 +133,6 @@ window.loadSettings = function(callback) {
   window.getRemote('settings-TodayForecast', function(value) {
     if (value == null) value = 'TodayForecast-Noon'
     document.getElementById('TodayForecast').value = value
-    document.getElementById('TodayForecast').onchange = settingsChanged
     if (--pendingSettings === 0) callback()
   })
 
@@ -147,6 +143,24 @@ window.loadSettings = function(callback) {
     document.getElementById('API-Choice').value = api
     if (--pendingSettings === 0) callback()
   })
+
+  document.getElementById('API-Choice').onchange = function() {
+    var api = this.value
+    setApi(api)
+    window.setRemote('settings-API', api)
+    // When you select a new API, we need to start a timeout to fetch new API data (whether or not the API key changed).
+    // Obviously, if the user starts typing in the API key field, we cancel that.
+    window.clearTimeout(apiKeyTimeout)
+    apiKeyTimeout = window.setTimeout(function() {
+      console.log('API changed to ' + api + ' changed, expiring weather data.')
+      window.setLocal('weatherExpires', 0)
+    }, 5000)
+  }
+
+  document.getElementById('TodayForecast').onchange = function() {
+    window.setRemote('settings-TodayForecast', this.value)
+    window.displayNeedsUpdate = true
+  }
 }
 
 window.getSunriseSunset = function(onError, onSuccess) {
@@ -203,21 +217,8 @@ function settingsChanged() {
     document.body.style.color = 'rgba(0,   0,   0,   0.6)'
   }
 
-  window.setRemote('settings-TodayForecast', document.getElementById('TodayForecast').value)
-
   var color = document.getElementById('ThemeCheck').parentElement.id
   window.setRemote('settings-Color', color)
-
-  var api = document.getElementById('API-Choice').value
-  setApi(api)
-  window.setRemote('settings-API', api)
-  // When you select a new API, we need to start a timeout to fetch new API data (whether or not the API key changed).
-  // Obviously, if the user starts typing in the API key field, we cancel that.
-  window.clearTimeout(apiKeyTimeout)
-  apiKeyTimeout = window.setTimeout(function() {
-    console.log('API changed to ' + api + ' changed, expiring weather data.')
-    window.setLocal('weatherExpires', 0)
-  }, 5000)
 
   window.displayNeedsUpdate = true
 }

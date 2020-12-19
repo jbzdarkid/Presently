@@ -103,7 +103,13 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
       var key = 'owmapi,location,' + coords.latitude + ',' + coords.longitude
       window.setRemote(key, response)
 
-      weatherData.setCurrent(iconToWeather(response.weather[0].icon), response.weather[0].main, response.main.temp)
+      weatherData.addPeriod({
+          'startTime': response.dt * 1000,
+          'weather': iconToWeather(response.weather[0].icon),
+          'shortForecast': response.weather[0].main,
+          'high': response.main.temp,
+          'low': response.main.temp,
+      })
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
@@ -111,7 +117,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
       for (var i=0; i<response.list.length; i++) {
         var period = response.list[i]
         weatherData.addPeriod({
-          'startTime': period.dt,
+          'startTime': period.dt * 1000,
           'weather': iconToWeather(period.weather[0].icon),
           'forecast': period.weather[0].main,
           'high': period.main.temp,

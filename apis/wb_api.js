@@ -92,7 +92,13 @@ WBApi.getWeather = function(coords, onError, onSuccess) {
       window.setRemote(key, response)
 
       var period = response.data[0]
-      weatherData.setCurrent(iconCodeToWeather[period.weather.code], period.weather.description, period.temp)
+      weatherData.addPeriod({
+        'startTime': period.ts * 1000,
+        'weather': iconCodeToWeather[period.weather.code],
+        'shortForecast': period.weather.description,
+        'high': period.temp,
+        'low': period.temp,
+      })
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 

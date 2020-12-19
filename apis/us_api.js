@@ -102,8 +102,17 @@ USApi.getWeather = function(coords, onError, onSuccess) {
     var headers = {'Feature-Flags': (new Date()).getTime()}
 
     httpGet(response.forecastHourly, headers, 'fetch the current weather', onError, function(response) {
-      var period = response.properties.periods[0]
-      weatherData.setCurrent(getWeatherFromIcon(period.icon), period.shortForecast, period.temperature)
+      for (var i=0; i<response.properties.periods.length; i++) {
+        var period = response.properties.periods[i]
+        weatherData.addPeriod({
+          'startTime': period.startTime,
+          'weather': getWeatherFromIcon(period.icon),
+          'forecast': period.forecast,
+          'shortForecast': period.shortForecast,
+          'high': period.temperature,
+          'low': period.temperature,
+        })
+      }
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 

@@ -4,32 +4,20 @@ var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, 
 
 window.WeatherData = class{
   constructor() {
-    this.current = {}
     this.periods = []
     this.alert = []
-  }
-
-  setCurrent(weather, forecast, temp) {
-    if (weather == null) throw 'setCurrent must have a weather'
-    if (forecast == null) throw 'setCurrent must have a forecast'
-    if (temp == null) throw 'setCurrent must have a temp'
-    this.current = {
-      'weather': weather,
-      'forecast': forecast,
-      'temp': temp,
-    }
   }
 
   addPeriod(period) {
     if (period.startTime == null) throw 'Period must have a startTime'
     if (period.weather == null) throw 'Period must have weather'
-    if (period.forecast == null) throw 'Period must have a forecast'
+    if (period.forecast == null && period.shortForecast == null) throw 'Period must have a forecast or a shortForecast'
     if (period.high == null) throw 'Period must have a high'
     if (period.low == null) throw 'Period must have a low'
+    period.startTime = new Date(period.startTime).getTime()
     period.high = Math.round(period.high)
     period.low = Math.round(period.low)
     this.periods.push(period)
-    this.periods.sort(function(a, b) {return a.startTime - b.startTime})
   }
 
   setAlert(summary, description) {
@@ -47,23 +35,24 @@ function normalizedUnits(degreesF) {
   }
 }
 
-function drawCurrentWeather(data) {
+function drawCurrentWeather(period) {
   var day = document.getElementById('forecast-0')
   day.textContent = ''
 
-  var climacon = Climacon(data.weather, 180, true /* isDaytimeAware */)
+  var climacon = Climacon(period.weather, 180, true /* isDaytimeAware */)
   climacon.style.marginBottom = '-10px'
-  climacon.title = data.forecast
+  climacon.title = period.shortForecast
   day.appendChild(climacon)
 
   var tempDiv = document.createElement('div')
   tempDiv.style.width = '90px'
   day.appendChild(tempDiv)
 
-  document.title = normalizedUnits(data.temp) + '\u00B0 | Presently'
+  var temp = Math.round((period.high + period.low) / 2)
+  document.title = normalizedUnits(temp) + '\u00B0 | Presently'
 
   var t = document.createElement('div')
-  t.innerText = normalizedUnits(data.temp)
+  t.innerText = normalizedUnits(temp)
   t.style.textAlign = 'center'
   t.style.fontFamily = 'OpenSans-Bold'
   t.style.fontSize = '72px'
@@ -124,8 +113,16 @@ window.drawWeatherData = function(weatherData) {
   // This needs to be a flexbox so that the forecast elements float side-by-side.
   document.getElementById('forecast').style.display = 'flex'
 
+  // Periods may be entered out-of-order (e.g. from the hourly & daily APIs)
+  weatherData.periods.sort(function(a, b) {
+    var sortKey = a.startTime - b.startTime
+    // Sort periods which have a shortForecast earlier
+    sortKey += (a.shortForecast == null ? 1 : 0) - (b.shortForecast == null ? 1 : 0)
+    return sortKey
+  })
+
   // Always draw the current weather
-  drawCurrentWeather(weatherData.current)
+  drawCurrentWeather(weatherData.periods[0])
 
   var now = new Date()
   var nextDay = new Date(now)
@@ -134,6 +131,7 @@ window.drawWeatherData = function(weatherData) {
 
   var weather = null
   var forecast = null
+  var shortForecast = null
   var high = -9999
   var low = 9999
 
@@ -144,10 +142,9 @@ window.drawWeatherData = function(weatherData) {
     if (i+1 < weatherData.periods.length && new Date(weatherData.periods[i+1].startTime) < now) continue
 
     // Update data from this period
-    if (weather == null) {
-      weather = period.weather
-      forecast = period.forecast
-    }
+    if (weather == null) weather = period.weather
+    if (forecast == null && period.forecast != null) forecast = period.forecast
+    if (shortForecast == null && period.shortForecast != null) shortForecast = period.shortForecast
     if (period.high > high) high = period.high
     if (period.low < low) low = period.low
 
@@ -164,15 +161,16 @@ window.drawWeatherData = function(weatherData) {
         // Compute dayOfWeek before incrementing day, since this is the forecast for today.
         var dayOfWeek = DAYS[(now.getDay() + day) % 7]
         day++
-        drawForecast(day, weather, forecast, high, low, dayOfWeek)
+        drawForecast(day, weather, forecast || shortForecast, high, low, dayOfWeek)
       }
     } else {
-      drawForecast(day, weather, forecast, high, low, DAYS[(now.getDay() + day) % 7])
+      drawForecast(day, weather, forecast || shortForecast, high, low, DAYS[(now.getDay() + day) % 7])
     }
     day++
     nextDay.setHours(24, 0, 0, 0)
     var weather = null
     var forecast = null
+    var shortForecast = null
     var high = -9999
     var low = 9999
   }

@@ -96,6 +96,7 @@ window.drawWeatherData = function(weatherData) {
   }
   // Otherwise, restore the offset for current weather
   document.getElementById('forecast-0').style.top = '-80px'
+  document.getElementById('forecast-0').style.marginBottom = '-80px'
 
   for (var i=1; i<5; i++) {
     var day = document.getElementById('forecast-' + i)

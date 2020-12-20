@@ -92,7 +92,13 @@ WBApi.getWeather = function(coords, onError, onSuccess) {
       window.setRemote(key, response)
 
       var period = response.data[0]
-      weatherData.setCurrent(iconCodeToWeather[period.weather.code], period.weather.description, period.temp)
+      weatherData.addPeriod({
+        'startTime': period.ts * 1000,
+        'weather': iconCodeToWeather[period.weather.code],
+        'shortForecast': period.weather.description,
+        'high': period.temp,
+        'low': period.temp,
+      })
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
@@ -100,27 +106,13 @@ WBApi.getWeather = function(coords, onError, onSuccess) {
       for (var i=0; i<response.data.length; i++) {
         var period = response.data[i]
         weatherData.addPeriod({
-          'startTime': period.ts,
+          'startTime': period.ts * 1000,
           'weather': iconCodeToWeather[period.weather.code],
           'forecast': period.weather.description,
           'high': period.high_temp,
           'low': period.low_temp,
         })
       }
-
-      var now = new Date()
-      var day = 1
-      for (var i=0; i<response.data.length && day<5; i++) {
-        var period = response.data[i]
-        // Skip periods until we find one which has not yet started.
-        // This avoids duplicating info for the current day.
-        // This time is in seconds, not milliseconds.
-        if (new Date(period.ts * 1000) < now) continue
-
-        weatherData.setForecast(day, iconCodeToWeather[period.weather.code], period.weather.description, period.high_temp, period.low_temp)
-        day++
-      }
-      if (day < 5) return // Didn't get enough days of data
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 

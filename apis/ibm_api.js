@@ -82,9 +82,17 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
     var prefix = 'https://api.weather.com/v1/geocode/' + coords.latitude + '/' + coords.longitude + '/forecast/'
     var suffix = '?apiKey=' + apikey + '&units=e&language=en-US'
 
-    httpGet(prefix + '/hourly/6hour.json' + suffix, 'fetch the current weather', onError, function(response) {
-      var period = response.forecasts[0]
-      weatherData.setCurrent(iconCodeToWeather[period.icon_code], period.phrase_32char, period.temp)
+    httpGet(prefix + '/hourly/12hour.json' + suffix, 'fetch the current weather', onError, function(response) {
+      for (var i=0; i<response.forecasts.length; i++) {
+        var period = response.forecasts[i]
+        weatherData.addPeriod({
+          'startTime': period.fcst_valid * 1000,
+          'weather': iconCodeToWeather[period.icon_code],
+          'shortForecast': period.phrase_32char,
+          'high': period.temp,
+          'low': period.temp,
+        })
+      }
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
@@ -93,7 +101,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
         var period = response.forecasts[i]
         if (period.day) {
           weatherData.addPeriod({
-            'startTime': period.day.fcst_valid,
+            'startTime': period.day.fcst_valid * 1000,
             'weather': iconCodeToWeather[period.day.icon_code],
             'forecast': period.day.narrative,
             'high': period.day.temp,
@@ -102,7 +110,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
         }
         if (period.night) {
           weatherData.addPeriod({
-            'startTime': period.night.fcst_valid,
+            'startTime': period.night.fcst_valid * 1000,
             'weather': iconCodeToWeather[period.night.icon_code],
             'forecast': period.night.narrative,
             'high': period.night.temp,
@@ -110,21 +118,6 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
           })
         }
       }
-
-      var now = new Date()
-      var day = 1
-      for (var i=0; i<response.forecasts.length && day<5; i++) {
-        var period = response.forecasts[i]
-        // Skip periods until we find one which has not yet started.
-        // This ensures that we will always have a high and a low for the given period,
-        // and it avoids duplicating info for the current day.
-        // This time is in seconds, not milliseconds.
-        if (new Date(period.fcst_valid * 1000) < now) continue
-
-        weatherData.setForecast(day, iconCodeToWeather[period.day.icon_code], period.narrative, period.max_temp, period.min_temp)
-        day++
-      }
-      if (day < 5) return // Didn't get enough days of data
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 

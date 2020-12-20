@@ -98,41 +98,32 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
 
     var prefix = 'https://api.openweathermap.org/data/2.5'
     var suffix = '?lat=' + coords.latitude + '&lon=' + coords.longitude + '&units=imperial&appid=' + apikey
+
     httpGet(prefix + '/weather' + suffix, 'fetch the current weather', onError, function(response) {
       var key = 'owmapi,location,' + coords.latitude + ',' + coords.longitude
       window.setRemote(key, response)
 
-      weatherData.setCurrent(iconToWeather(response.weather[0].icon), response.weather[0].main, response.main.temp)
+      weatherData.addPeriod({
+          'startTime': response.dt * 1000,
+          'weather': iconToWeather(response.weather[0].icon),
+          'shortForecast': response.weather[0].main,
+          'high': response.main.temp,
+          'low': response.main.temp,
+      })
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 
     httpGet(prefix + '/forecast' + suffix, 'fetch the weather forecast', onError, function(response) {
-      debugger
       for (var i=0; i<response.list.length; i++) {
         var period = response.list[i]
         weatherData.addPeriod({
-          'startTime': period.dt,
+          'startTime': period.dt * 1000,
           'weather': iconToWeather(period.weather[0].icon),
           'forecast': period.weather[0].main,
           'high': period.main.temp,
           'low': period.main.temp,
         })
       }
-
-      var now = new Date()
-      var day = 1
-      for (var i=0; i<response.list.length && day<5; i++) {
-        var period = response.list[i]
-        // Skip periods until we find one which has not yet started.
-        // This ensures that we will always have a high and a low for the given period,
-        // and it avoids duplicating info for the current day.
-        // This time is in seconds, not milliseconds.
-        if (new Date(period.dt * 1000) < now) continue
-
-        weatherData.setForecast(day, iconToWeather(period.weather[0].icon), period.weather[0].main, period.main.temp_max, period.main.temp_min)
-        day++
-      }
-      if (day < 5) return // Didn't get enough days of data
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
   })

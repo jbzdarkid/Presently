@@ -69,6 +69,7 @@ function drawCurrentWeather(period) {
     document.getElementById('forecast-0').style.top = '0px'
   } else {
     document.getElementById('forecast-0').style.top = '-80px'
+    document.getElementById('forecast-0').style.marginBottom = '-80px'
   }
 }
 

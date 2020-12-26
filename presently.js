@@ -1,12 +1,10 @@
 namespace(function() {
 
-// SHIP BLOCKERS:
-// - When resizing the weather, persist the error (if shown)
-
 // TODOs:
 // - OpenSans is failing to load in FF, try downloading from here: https://www.fontsquirrel.com/fonts/open-sans
 // - Make sure things fade out, where possible. E.g. errors going away / alerts going away
 // - Invest in more "English" strings for network failures (i.e. not "503" or "0", use "API unavailable" or "Network disconnected")
+// - When resizing the weather, persist the error (if shown)
 
 var DAYS = window.localize('days_of_week', 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday').split(', ')
 var MONTHS = window.localize('months_of_year', 'January, February, March, April, May, June, July, August, September, October, November, December').split(', ')

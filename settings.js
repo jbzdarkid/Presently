@@ -138,6 +138,10 @@ window.loadSettings = function(callback) {
 
   pendingSettings++
   window.getRemote('settings-API', function(api) {
+    if (api == null) {
+      api = 'USApi'
+      window.setRemote('settings-API', api)
+    }
     setApi(api)
 
     document.getElementById('API-Choice').value = api
@@ -255,10 +259,8 @@ function setApi(api) {
     keyName = 'weatherbit-apikey'
   } else if (api == 'USApi') {
     window.weatherApi = window.USApi
-  } else { // Default to the US API if no API was previously chosen
-    api = 'USApi'
-    window.setRemote('settings-API', 'USApi')
-    window.weatherApi = window.USApi
+  } else {
+    debugger
   }
 
   if (api == 'USApi') { // The US API does not require an API key

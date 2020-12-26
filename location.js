@@ -31,7 +31,7 @@ window.requestLocation = function(onError, onSuccess) {
       window.coordsChanged(onError, coords)
       if (onSuccess) onSuccess(coords)
     }, function() {
-      httpGet('https://ipapi.co/json', 'discover your location', onError, function(position) {
+      httpGet('https://ipwhois.app/json/', 'discover your location', onError, function(position) {
         var coords = {'latitude': position.latitude, 'longitude': position.longitude}
         window.coordsChanged(onError, coords)
         if (onSuccess) onSuccess(coords)

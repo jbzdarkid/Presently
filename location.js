@@ -2,7 +2,7 @@ namespace(function() {
 
 window.coords = null
 window.coordsChanged = function(onError, coords) {
-  if (window.coords == coords) return
+  if (window.coords === coords) return
 
   // If this is the first time we set the coords since page load, it's not a legitimate location change.
   // However, we still want to get location data, so that we can populate the settings page.

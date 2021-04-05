@@ -22,7 +22,7 @@ window.httpPost = function(url, headers, body, action, onError, onSuccess) {
 function _httpSend(verb, url, headers, body, action, onError, onSuccess) {
   var request = new XMLHttpRequest()
   request.onreadystatechange = function() {
-    if (this.readyState != XMLHttpRequest.DONE) return
+    if (this.readyState !== XMLHttpRequest.DONE) return
     this.onreadystatechange = null
     this.ontimeout = null
 

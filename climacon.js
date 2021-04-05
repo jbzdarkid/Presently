@@ -13,7 +13,7 @@ window.Climacon = function(weather, fontSize, isDaytimeAware = false) {
     var sunCalc = SunCalc.getTimes(now, window.coords.latitude, window.coords.longitude)
     // This check will work fine modulo timezones, since the times themselves don't need to be displayed.
     if (now < sunCalc.sunrise || now > sunCalc.sunset) { // Sun has not risen yet / has set
-      if (icon.innerText == window.WEATHER_CLEAR[0]) {
+      if (icon.innerText === window.WEATHER_CLEAR[0]) {
         icon.innerText = getMoonIcon()
       } else {
         icon.innerText = weather[1]

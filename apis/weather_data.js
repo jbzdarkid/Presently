@@ -153,7 +153,7 @@ window.drawWeatherData = function(weatherData) {
     if (i+1 < weatherData.periods.length && new Date(weatherData.periods[i+1].startTime) < nextDay) continue
 
     // Otherwise, draw the accumulated weather data.
-    if (day == 0) {
+    if (day === 0) {
       var todayForecast = document.getElementById('TodayForecast').value
       if ((todayForecast == 'TodayForecast-6AM'  && now.getHours() < 6)  ||
           (todayForecast == 'TodayForecast-Noon' && now.getHours() < 12) ||

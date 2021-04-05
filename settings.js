@@ -53,7 +53,7 @@ function hideSettings() {
 
 window.loadSettings = function(callback) {
   for (var input of document.getElementsByTagName('input')) {
-    if (input.id == 'Latitude' || input.id == 'Longitude') {
+    if (input.id === 'Latitude' || input.id === 'Longitude') {
       input.onchange = userChangedCoords
     } else if (input.id == 'API-Key-Value') {
       // Do nothing, onchange functionality depends on the active API

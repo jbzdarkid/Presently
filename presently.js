@@ -30,7 +30,7 @@ function onForecastError(error) {
     if (weatherVeryExpires && now < weatherVeryExpires) return
 
     // The weather is very expired, discard it and show an error.
-    window.setLocal('weatherData', undefined)
+    window.setLocal('weatherData', null)
     document.getElementById('forecast-loading').style.display = 'flex'
     document.getElementById('forecast-error').innerText = error
     document.getElementById('forecast').style.display = 'none'

@@ -14,6 +14,7 @@ window.WeatherData = class{
     if (period.forecast == null && period.shortForecast == null) throw 'Period must have a forecast or a shortForecast'
     if (period.high == null) throw 'Period must have a high'
     if (period.low == null) throw 'Period must have a low'
+    if (period.startTime < 1500000000000) throw 'Period must be in milliseconds, not seconds'
     period.startTime = new Date(period.startTime).getTime()
     period.high = Math.round(period.high)
     period.low = Math.round(period.low)
@@ -117,8 +118,8 @@ window.drawWeatherData = function(weatherData) {
   // Periods may be entered out-of-order (e.g. from the hourly & daily APIs)
   weatherData.periods.sort(function(a, b) {
     var sortKey = a.startTime - b.startTime
-    // Sort periods which have a shortForecast earlier
-    sortKey += (a.shortForecast == null ? 1 : 0) - (b.shortForecast == null ? 1 : 0)
+    // Sort periods which have a shortForecast earlier (-1: a<b; 1: a>b)
+    sortKey += (b.shortForecast == null ? 1 : 0) - (a.shortForecast == null ? 1 : 0)
     return sortKey
   })
 
@@ -174,6 +175,16 @@ window.drawWeatherData = function(weatherData) {
     var shortForecast = null
     var high = -9999
     var low = 9999
+  }
+
+  if (weatherData.alert[0] == null) {
+    document.getElementById('alert').style.display = 'none'
+    document.getElementById('alertText').innerText = ''
+    document.getElementById('alertText').title = ''
+  } else {
+    document.getElementById('alert').style.display = null
+    document.getElementById('alertText').innerText = weatherData.alert[0]
+    document.getElementById('alertText').title = weatherData.alert[1]
   }
 }
 

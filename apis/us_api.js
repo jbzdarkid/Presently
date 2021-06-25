@@ -111,7 +111,7 @@ USApi.getWeather = function(coords, onError, onSuccess) {
           'shortForecast': period.shortForecast,
           'high': period.temperature,
           'low': period.temperature,
-        })
+        }, true)
       }
       if (--callbacksPending === 0) onSuccess(weatherData)
     })

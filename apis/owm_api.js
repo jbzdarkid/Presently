@@ -109,7 +109,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
           'shortForecast': response.weather[0].main,
           'high': response.main.temp,
           'low': response.main.temp,
-      })
+      }, true)
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 

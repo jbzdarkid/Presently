@@ -91,7 +91,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
           'shortForecast': period.phrase_32char,
           'high': period.temp,
           'low': period.temp,
-        })
+        }, true)
       }
       if (--callbacksPending === 0) onSuccess(weatherData)
     })

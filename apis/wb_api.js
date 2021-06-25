@@ -98,7 +98,7 @@ WBApi.getWeather = function(coords, onError, onSuccess) {
         'shortForecast': period.weather.description,
         'high': period.temp,
         'low': period.temp,
-      })
+      }, true)
       if (--callbacksPending === 0) onSuccess(weatherData)
     })
 

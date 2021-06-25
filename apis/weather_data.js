@@ -6,9 +6,10 @@ window.WeatherData = class{
   constructor() {
     this.periods = []
     this.alert = []
+    this.current = null
   }
 
-  addPeriod(period) {
+  addPeriod(period, hourly) {
     if (period.startTime == null) throw 'Period must have a startTime'
     if (period.weather == null) throw 'Period must have weather'
     if (period.forecast == null && period.shortForecast == null) throw 'Period must have a forecast or a shortForecast'
@@ -19,6 +20,7 @@ window.WeatherData = class{
     period.high = Math.round(period.high)
     period.low = Math.round(period.low)
     this.periods.push(period)
+    if (hourly != null && this.current == null) this.current = period
   }
 
   setAlert(summary, description) {
@@ -124,7 +126,7 @@ window.drawWeatherData = function(weatherData) {
   })
 
   // Always draw the current weather
-  drawCurrentWeather(weatherData.periods[0])
+  drawCurrentWeather(weatherData.current || weatherData.periods[0])
 
   var now = new Date()
   var nextDay = new Date(now)

@@ -48,7 +48,6 @@ function drawCurrentWeather(period) {
   day.appendChild(climacon)
 
   var tempDiv = document.createElement('div')
-  tempDiv.style.width = '90px'
   day.appendChild(tempDiv)
 
   var temp = Math.round((period.high + period.low) / 2)

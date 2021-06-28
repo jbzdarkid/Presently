@@ -129,53 +129,48 @@ window.drawWeatherData = function(weatherData) {
 
   var now = new Date()
   var nextDay = new Date(now)
-  nextDay.setHours(24, 0, 0, 0)
-  var day = 0
+  var forecastDays = 5
+  var todayForecast = document.getElementById('TodayForecast').value
+  if ((todayForecast == 'TodayForecast-6AM'  && now.getHours() < 6)  ||
+      (todayForecast == 'TodayForecast-Noon' && now.getHours() < 12) ||
+      (todayForecast == 'TodayForecast-6PM'  && now.getHours() < 18) ||
+      (todayForecast == 'TodayForecast-Always')) {
+    forecastDays-- // Remove one day because we will be showing today's weather as the first forecast
+  }
 
-  var weather = null
-  var forecast = null
-  var shortForecast = null
-  var high = -9999
-  var low = 9999
-
-  // Note: day < 5 because we only draw 4 forecast days.
-  for (var i=0; i<weatherData.periods.length && day < 5; i++) {
-    var period = weatherData.periods[i]
-    // Search for the last period which applies (next period starts in the future)
-    if (i+1 < weatherData.periods.length && new Date(weatherData.periods[i+1].startTime) < now) continue
-
-    // Update data from this period
-    if (weather == null) weather = period.weather
-    if (forecast == null && period.forecast != null) forecast = period.forecast
-    if (shortForecast == null && period.shortForecast != null) shortForecast = period.shortForecast
-    if (period.high > high) high = period.high
-    if (period.low < low) low = period.low
-
-    // If the next period is still in the same day, continue.
-    if (i+1 < weatherData.periods.length && new Date(weatherData.periods[i+1].startTime) < nextDay) continue
-
-    // Otherwise, draw the accumulated weather data.
-    if (day === 0) {
-      var todayForecast = document.getElementById('TodayForecast').value
-      if ((todayForecast == 'TodayForecast-6AM'  && now.getHours() < 6)  ||
-          (todayForecast == 'TodayForecast-Noon' && now.getHours() < 12) ||
-          (todayForecast == 'TodayForecast-6PM'  && now.getHours() < 18) ||
-          (todayForecast == 'TodayForecast-Always')) {
-        // Compute dayOfWeek before incrementing day, since this is the forecast for today.
-        var dayOfWeek = DAYS[(now.getDay() + day) % 7]
-        day++
-        drawForecast(day, weather, forecast || shortForecast, high, low, dayOfWeek)
-      }
-    } else {
-      drawForecast(day, weather, forecast || shortForecast, high, low, DAYS[(now.getDay() + day) % 7])
-    }
-    day++
-    nextDay.setHours(24, 0, 0, 0)
+  var i = 0 // weatherData.periods index
+  for (var day=0; day<forecastDays; day++) {
+    nextDay.setHours(24, 0, 0, 0) // iter 0: sets next day to (now + 1 day). All other iters, increments by 1 day.
     var weather = null
     var forecast = null
     var shortForecast = null
     var high = -9999
     var low = 9999
+
+    for (; i<weatherData.periods.length; i++) {
+      var period = weatherData.periods[i]
+      // Search for the last period which applies (next period starts in the future)
+      if (i+1 < weatherData.periods.length && new Date(weatherData.periods[i+1].startTime) < now) continue
+
+      // Update data from this period
+      if (weather == null) weather = period.weather
+      if (forecast == null && period.forecast != null) forecast = period.forecast
+      if (shortForecast == null && period.shortForecast != null) shortForecast = period.shortForecast
+      if (period.high > high) high = period.high
+      if (period.low < low) low = period.low
+
+      // If the next period is still in the same day, continue.
+      if (i+1 < weatherData.periods.length && new Date(weatherData.periods[i+1].startTime) < nextDay) continue
+
+      // Otherwise, break out and draw the accumulated weather data.
+      break
+    }
+
+    if (forecastDays === 4) { // When today's forecast is included, shift the index by one for todays weather
+      drawForecast(day + 1, weather, forecast || shortForecast, high, low, DAYS[(now.getDay() + day) % 7])
+    } else if (day !== 0) { // Else, don't draw forecast for today's weather, but keep the index fixed.
+      drawForecast(day, weather, forecast || shortForecast, high, low, DAYS[(now.getDay() + day) % 7])
+    }
   }
 
   if (weatherData.alert[0] == null) {

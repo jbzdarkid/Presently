@@ -169,21 +169,15 @@ window.drawWeatherData = function(weatherData) {
 
     for (; i<weatherData.periods.length; i++) {
       var period = weatherData.periods[i]
-      // Search for the last period which applies (next period starts in the future)
-      if (i+1 < weatherData.periods.length && new Date(weatherData.periods[i+1].startTime) < now) continue
+      if (new Date(period.startTime) < now) continue
+      if (new Date(period.startTime) > nextDay) break
 
-      // Update data from this period
-      if (weather == null) weather = period.weather
+      // Update forecast data from this period
+      if (weather == null) weather = period.weather // Only take the first weather, since we want the day's weather, not the night's.
       if (forecast == null && period.forecast != null) forecast = period.forecast
       if (shortForecast == null && period.shortForecast != null) shortForecast = period.shortForecast
       if (period.high > high) high = period.high
       if (period.low < low) low = period.low
-
-      // If the next period is still in the same day, continue.
-      if (i+1 < weatherData.periods.length && new Date(weatherData.periods[i+1].startTime) < nextDay) continue
-
-      // Otherwise, break out and draw the accumulated weather data.
-      break
     }
 
     if (forecastDays === 4) { // When today's forecast is included, shift the index by one for todays weather

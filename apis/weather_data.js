@@ -139,8 +139,13 @@ window.drawWeatherData = function(weatherData) {
   // Always draw the current weather
   drawCurrentWeather(weatherData.current || weatherData.periods[0])
 
+  drawAlert(weatherData.alert)
+
   // If the window is too small, do not draw the forecast.
-  if (window.innerWidth < 800) return
+  if (window.innerWidth < 800) {
+    for (var i=1; i<5; i++) document.getElementById('forecast-' + i).style.display = 'none'
+    return
+  }
 
   var now = new Date()
   var nextDay = new Date(now)

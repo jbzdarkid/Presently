@@ -158,7 +158,12 @@ window.drawWeatherData = function(weatherData) {
     forecastDays-- // Remove one day because we will be showing today's weather as the first forecast
   }
 
-  var i = 0 // weatherData.periods index
+  // Start from the latest period which startes before now (i.e. the next period starts in the future).
+  // Presumably, this period includes the present.
+  for (var i=0; i<weatherData.periods.length - 1; i++) {
+    if (new Date(weatherData.periods[i+1].startTime) > now) break
+  }
+
   for (var day=0; day<forecastDays; day++) {
     nextDay.setHours(24, 0, 0, 0) // iter 0: sets next day to (now + 1 day). All other iters, increments by 1 day.
     var weather = null
@@ -169,7 +174,6 @@ window.drawWeatherData = function(weatherData) {
 
     for (; i<weatherData.periods.length; i++) {
       var period = weatherData.periods[i]
-      if (new Date(period.startTime) < now) continue
       if (new Date(period.startTime) > nextDay) break
 
       // Update forecast data from this period

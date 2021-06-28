@@ -75,6 +75,18 @@ function drawCurrentWeather(period) {
   }
 }
 
+function drawAlert(alert) {
+  if (alert == null || alert[0] == null) {
+    document.getElementById('alert').style.display = 'none'
+    document.getElementById('alertText').innerText = ''
+    document.getElementById('alertText').title = ''
+  } else {
+    document.getElementById('alert').style.display = null
+    document.getElementById('alertText').innerText = alert[0]
+    document.getElementById('alertText').title = alert[1]
+  }
+}
+
 function drawForecast(day, weather, forecast, highTemp, lowTemp, dayOfWeek) {
   var d = document.getElementById('forecast-' + day)
   d.style.display = 'flex'
@@ -174,16 +186,6 @@ window.drawWeatherData = function(weatherData) {
     } else if (day !== 0) { // Else, don't draw forecast for today's weather, but keep the index fixed.
       drawForecast(day, weather, forecast || shortForecast, high, low, DAYS[(now.getDay() + day) % 7])
     }
-  }
-
-  if (weatherData.alert[0] == null) {
-    document.getElementById('alert').style.display = 'none'
-    document.getElementById('alertText').innerText = ''
-    document.getElementById('alertText').title = ''
-  } else {
-    document.getElementById('alert').style.display = null
-    document.getElementById('alertText').innerText = weatherData.alert[0]
-    document.getElementById('alertText').title = weatherData.alert[1]
   }
 }
 

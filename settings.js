@@ -104,11 +104,6 @@ window.loadSettings = function(callback) {
     if (--pendingSettings === 0) callback()
   })
 
-  // Synchronously load the theme to avoid a flash during page load
-  if (window.localStorage['settings-Color'] != null) {
-    document.body.style.backgroundColor = '#' + window.localStorage['settings-Color']
-  }
-
   pendingSettings++
   window.getRemote('settings-Color', function(color) {
     if (color == null) color = '4242BA'
@@ -131,6 +126,8 @@ window.loadSettings = function(callback) {
         window.reparent(document.getElementById('ThemeCheck'), div)
       }
     }
+    // Save the theme to avoid a flash during page load
+    window.localStorage['settings-Color'] = color
     if (--pendingSettings === 0) callback()
   })
 

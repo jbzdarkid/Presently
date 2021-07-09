@@ -8,11 +8,11 @@
     "icons": {
         "128": "resources/icon-full.png"
     },
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "Presently",
     "options_page": "presently.html?settings",
     "permissions": [
         "storage"
     ],
-    "version": "1.1.1"
+    "version": "1.1.2"
 }

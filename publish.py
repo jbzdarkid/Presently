@@ -36,7 +36,10 @@ csp += ';'
 
 with open('manifest.json', 'r+') as f:
   manifest = json.load(f)
+  # manifest['content_security_policy'] = {'extension_pages': csp}
+  # manifest['manifest_version'] = 3
   manifest['content_security_policy'] = csp
+  manifest['manifest_version'] = 2
   f.seek(0)
   f.truncate(0)
   json.dump(manifest, f, indent=4, sort_keys=True)

@@ -65,7 +65,7 @@ function updateWeather() {
         console.log('Fetching new weather data...')
 
         window.requestLocation(onForecastError, function(coords) {
-          weatherApi.getWeather(coords, onForecastError, function(weatherData) {
+          window.weatherApi.getWeather(coords, onForecastError, function(weatherData) {
             console.log('Fetched new weather data')
             var weatherExpires = new Date()
             weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)

@@ -2,7 +2,7 @@
     "chrome_url_overrides": {
         "newtab": "presently.html"
     },
-    "content_security_policy": "object-src 'self'; script-src 'self' 'sha256-OvuinSUKFwtrw31/kgfDczzhahAoNepk11eb1kwtvhI=';",
+    "content_security_policy": "object-src 'self'; script-src 'self' 'sha256-3ON8/MVW223fPP5Ud6u534LLnWXFJXTctVgiY8Uo4X8=';",
     "default_locale": "en",
     "description": "Displays the current weather & upcoming forecast on the new tab page.",
     "icons": {

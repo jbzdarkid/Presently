@@ -57,7 +57,7 @@ for path in paths:
   else:
     all_files += list(path.glob('**/*'))
 
-with zipfile.ZipFile('Presently.zip', 'w') as z:
+with zipfile.ZipFile(f'Presently-{manifest["version"]}.zip', 'w') as z:
   for path in all_files:
     arcname = str(path.relative_to(Path(__file__).parent))
     z.write(path, arcname)

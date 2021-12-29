@@ -98,9 +98,6 @@ USApi.getWeather = function(coords, onError, onSuccess) {
     var weatherData = new WeatherData()
     var callbacksPending = 3
 
-    // Force a new weather fetch by setting a custom header
-    var headers = {'Feature-Flags': (new Date()).getTime()}
-
     httpGet(response.forecastHourly, headers, 'fetch the current weather', onError, function(response) {
       for (var i=0; i<response.properties.periods.length; i++) {
         var period = response.properties.periods[i]

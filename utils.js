@@ -4,22 +4,15 @@ function namespace(code) {
 
 namespace(function() {
 
-window.httpGet = function(url, headers, action, onError, onSuccess) {
-  if (onSuccess == null) { // "headers" optional parameter adjustment
-    onSuccess = onError
-    onError = action
-    action = headers
-    headers = null
-  }
-
-  _httpSend('GET', url, headers, null, action, onError, onSuccess)
+window.httpGet = function(url, action, onError, onSuccess) {
+  _httpSend('GET', url, null, action, onError, onSuccess)
 }
 
-window.httpPost = function(url, headers, body, action, onError, onSuccess) {
-  _httpSend('POST', url, headers, body, action, onError, onSuccess)
+window.httpPost = function(url, body, action, onError, onSuccess) {
+  _httpSend('POST', url, body, action, onError, onSuccess)
 }
 
-function _httpSend(verb, url, headers, body, action, onError, onSuccess) {
+function _httpSend(verb, url, body, action, onError, onSuccess) {
   var request = new XMLHttpRequest()
   request.onreadystatechange = function() {
     if (this.readyState !== XMLHttpRequest.DONE) return
@@ -42,13 +35,6 @@ function _httpSend(verb, url, headers, body, action, onError, onSuccess) {
   request.timeout = 120000 // 120,000 milliseconds = 2 minutes
   request.open(verb, url, true)
   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-  if (headers) {
-    for (var key in headers) {
-      if (headers.hasOwnProperty(key)) {
-        request.setRequestHeader(key, headers[key])
-      }
-    }
-  }
   request.send(body)
 }
 

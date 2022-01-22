@@ -51,6 +51,15 @@ var iconCodeToWeather = [
   WEATHER_THUNDERSTORM, // 47 - Scattered Thunderstorms
 ]
 
+function getWeatherFromIcon(icon) {
+  weather = iconCodeToWeather[icon]
+  if (weather == null) {
+    console.error('Failed to convert icon', icon, 'to weather')
+    weather = WEATHER_CLEAR
+  }
+  return weather;
+}
+
 window.IBMApi = {}
 
 IBMApi.getLocationData = function(coords, onError, onSuccess) {
@@ -87,7 +96,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
         var period = response.forecasts[i]
         weatherData.addPeriod({
           'startTime': period.fcst_valid * 1000,
-          'weather': iconCodeToWeather[period.icon_code],
+          'weather': getWeatherFromIcon(period.icon_code),
           'shortForecast': period.phrase_32char,
           'high': period.temp,
           'low': period.temp,
@@ -102,7 +111,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
         if (period.day) {
           weatherData.addPeriod({
             'startTime': period.day.fcst_valid * 1000,
-            'weather': iconCodeToWeather[period.day.icon_code],
+            'weather': getWeatherFromIcon(period.day.icon_code),
             'forecast': period.day.narrative,
             'high': period.day.temp,
             'low': period.day.temp,
@@ -111,7 +120,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
         if (period.night) {
           weatherData.addPeriod({
             'startTime': period.night.fcst_valid * 1000,
-            'weather': iconCodeToWeather[period.night.icon_code],
+            'weather': getWeatherFromIcon(period.night.icon_code),
             'forecast': period.night.narrative,
             'high': period.night.temp,
             'low': period.night.temp,

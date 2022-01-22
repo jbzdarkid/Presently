@@ -1,8 +1,9 @@
 namespace(function() {
 
 var predictionToWeather = {
-  'skc': WEATHER_CLEAR,
-  'hot': WEATHER_CLEAR,
+  'skc':  WEATHER_CLEAR,
+  'hot':  WEATHER_CLEAR,
+  'cold': WEATHER_CLEAR,
 
   'few': WEATHER_CLOUDY,
   'sct': WEATHER_CLOUDY,
@@ -56,7 +57,10 @@ function getWeatherFromIcon(icon) {
   var end = icon.indexOf(',', start)
   if (end == -1) end = icon.indexOf('?', start)
   var weather = predictionToWeather[icon.substr(start, end - start)]
-  if (weather == null) console.error('Failed to convert icon', icon, 'to weather')
+  if (weather == null) {
+    console.error('Failed to convert icon', icon, 'to weather')
+    weather = WEATHER_CLEAR
+  }
   return weather
 }
 

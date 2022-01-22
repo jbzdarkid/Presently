@@ -42,6 +42,15 @@ var iconCodeToWeather = {
   900: WEATHER_RAINY, // Unknown Precipitation
 }
 
+function getWeatherFromIcon(icon) {
+  weather = iconCodeToWeather[icon]
+  if (weather == null) {
+    console.error('Failed to convert icon', icon, 'to weather')
+    weather = WEATHER_CLEAR
+  }
+  return weather
+}
+
 window.WBApi = {}
 
 // This information just comes for free alongside the current weather.
@@ -94,7 +103,7 @@ WBApi.getWeather = function(coords, onError, onSuccess) {
       var period = response.data[0]
       weatherData.addPeriod({
         'startTime': period.ts * 1000,
-        'weather': iconCodeToWeather[period.weather.code],
+        'weather': getWeatherFromIcon(period.weather.code),
         'shortForecast': period.weather.description,
         'high': period.temp,
         'low': period.temp,
@@ -107,7 +116,7 @@ WBApi.getWeather = function(coords, onError, onSuccess) {
         var period = response.data[i]
         weatherData.addPeriod({
           'startTime': period.ts * 1000,
-          'weather': iconCodeToWeather[period.weather.code],
+          'weather': getWeatherFromIcon(period.weather.code),
           'forecast': period.weather.description,
           'high': period.high_temp,
           'low': period.low_temp,

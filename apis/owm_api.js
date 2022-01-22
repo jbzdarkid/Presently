@@ -51,8 +51,13 @@ var iconCodeToWeather = [
   WEATHER_THUNDERSTORM, // 47 - Scattered Thunderstorms
 ]
 
-function iconToWeather(icon) {
-  return iconCodeToWeather[parseInt(icon.substring(0, 2), 10)]
+function getWeatherFromIcon(icon) {
+  weather = iconCodeToWeather[parseInt(icon.substring(0, 2), 10)]
+  if (weather == null) {
+    console.error('Failed to convert icon', icon, 'to weather')
+    weather = WEATHER_CLEAR
+  }
+  return weather
 }
 
 window.OWMApi = {}
@@ -105,7 +110,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
 
       weatherData.addPeriod({
           'startTime': response.dt * 1000,
-          'weather': iconToWeather(response.weather[0].icon),
+          'weather': getWeatherFromIcon(response.weather[0].icon),
           'shortForecast': response.weather[0].main,
           'high': response.main.temp,
           'low': response.main.temp,
@@ -118,7 +123,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
         var period = response.list[i]
         weatherData.addPeriod({
           'startTime': period.dt * 1000,
-          'weather': iconToWeather(period.weather[0].icon),
+          'weather': getWeatherFromIcon(period.weather[0].icon),
           'forecast': period.weather[0].main,
           'high': period.main.temp,
           'low': period.main.temp,

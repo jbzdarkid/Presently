@@ -33,4 +33,4 @@ with zipfile.ZipFile(f'Presently-{version}.zip', 'w') as z:
 import webbrowser
 wb = webbrowser.get(r'cmd /c "C:/Program Files/Google/Chrome/Application/chrome.exe" "%s"')
 # wb.open('https://accounts.google.com/ServiceLogin?service=chromewebstore&continue=https://chrome.google.com/webstore/developer/dashboard')
-wb.open('https://chrome.google.com/webstore/devconsole/81cc570c-d6f5-41a5-9253-968836988de5/aikckckhmjomanhniabajcbhmhpifepf/edit') # This one might be better?
+wb.open('https://chrome.google.com/webstore/devconsole/81cc570c-d6f5-41a5-9253-968836988de5/aikckckhmjomanhniabajcbhmhpifepf/edit/package') # This one might be better?

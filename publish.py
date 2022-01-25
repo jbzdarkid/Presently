@@ -29,3 +29,8 @@ with zipfile.ZipFile(f'Presently-{version}.zip', 'w') as z:
   for path in all_files:
     arcname = str(path.relative_to(Path(__file__).parent))
     z.write(path, arcname)
+
+import webbrowser
+wb = webbrowser.get(r'cmd /c "C:/Program Files/Google/Chrome/Application/chrome.exe" "%s"')
+# wb.open('https://accounts.google.com/ServiceLogin?service=chromewebstore&continue=https://chrome.google.com/webstore/developer/dashboard')
+wb.open('https://chrome.google.com/webstore/devconsole/81cc570c-d6f5-41a5-9253-968836988de5/aikckckhmjomanhniabajcbhmhpifepf/edit') # This one might be better?

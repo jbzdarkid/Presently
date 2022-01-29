@@ -26,6 +26,7 @@ var predictionToWeather = {
   'snow':      WEATHER_SNOWY,
   'rain_snow': WEATHER_SNOWY,
   'snow_fzra': WEATHER_SNOWY,
+  'blizzard':  WEATHER_SNOWY,
 
   'sleet':      WEATHER_SLEET,
   'rain_sleet': WEATHER_SLEET,

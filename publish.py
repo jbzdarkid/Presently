@@ -13,22 +13,29 @@ with open('manifest.json', 'r+') as f:
   f.truncate(0)
   json.dump(manifest, f, indent=4, sort_keys=True)
 
-# Make zipfile
+print(f'Publishing version {version}')
 
+# Make zipfile
 paths = ['_locales', 'apis', 'manifest.json', 'presently.html', 'resources', *Path().glob('*.js')]
 
-all_files = []
-for path in paths:
-  path = Path(path).resolve()
-  if path.is_file():
-    all_files.append(path)
-  else:
-    all_files += list(path.glob('**/*'))
+with zipfile.ZipFile(f'Presently-{version}.zip', 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+  for path in paths:
+    path = Path(path).resolve()
+    if path.is_file():
+      files = [path]
+    else:
+      files = [path for path in path.glob('**/*') if path.is_file()]
 
-with zipfile.ZipFile(f'Presently-{version}.zip', 'w') as z:
-  for path in all_files:
-    arcname = str(path.relative_to(Path(__file__).parent))
-    z.write(path, arcname)
+    for file in files:
+      arcname = str(file.relative_to(Path(__file__).parent))
+      if file.suffix not in ['.js', '.html']:
+        z.write(file, arcname)
+        continue
+
+      with file.open('r', encoding='utf-8') as f:
+        contents = f.read()
+      contents = contents.replace('%version%', version)
+      z.writestr(arcname, contents)
 
 import webbrowser
 wb = webbrowser.get(r'cmd /c "C:/Program Files/Google/Chrome/Application/chrome.exe" "%s"')

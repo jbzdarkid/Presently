@@ -1,8 +1,5 @@
-from base64 import b64encode
-from hashlib import sha256
 from pathlib import Path
 import json
-import re
 import zipfile
 
 # Re-format manifest (and get the version for later)

@@ -67,6 +67,18 @@ window.loadSettings = function(callback) {
     window.setLocal('coords', null) // When the user asks for a refresh, we clear the coordinates.
     window.requestLocation(onSunriseError)
   }
+  document.getElementById('openIssue').onclick = function() {
+    // https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue#creating-an-issue-from-a-url-query
+    var url = 'https://github.com/jbzdarkid/Presently/issues/new' 
+    url += '?title=' + encodeURIComponent('Bug report')
+    url += '&body=' + encodeURIComponent('<Describe your problem>')
+ 
+    var log = window.get_log()
+    if (log.length > 0) {
+      url += encodeURIComponent('\n\n```\n' + log + '\n```')
+    }
+    window.open(url, '_blank')
+  }
 
   var pendingSettings = 0
 

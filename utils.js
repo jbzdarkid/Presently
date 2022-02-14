@@ -35,7 +35,6 @@ function _httpSend(verb, url, body, action, onError, onSuccess) {
   request.timeout = 120000 // 120,000 milliseconds = 2 minutes
   request.open(verb, url, true)
   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-  request.setRequestHeader('User-Agent', 'Presently/%version%')
   request.send(body)
 }
 
@@ -78,7 +77,7 @@ function internalGet(store, key, callback) {
 
 function internalSet(store, key, value) {
   inMemory[key] = value
-  // This odd syntax is how we construct dictionaries with variable keys.
+  // This odd syntax is how we construct dictionaries with variable key names.
   store.set({[key]: value})
 }
 
@@ -105,5 +104,25 @@ window.reparent = function(child, newParent) {
   oldParent.removeChild(child)
   newParent.appendChild(child)
 }
+
+var log_lines = []
+var log_lines_index = 0
+function save_log() {
+  log_lines[log_lines_index] = Array.prototype.join.call(arguments, ' ')
+  log_lines_index = (log_lines_index + 1) % 100
+}
+window.get_log = function() {
+  return log_lines.join('\n')
+}
+var _console = Object.assign({}, console)
+console.debug = function() { save_log('DEBUG', arguments); _console.debug.apply(null, arguments) }
+console.log = function()   { save_log('LOG  ', arguments); _console.log.apply(null, arguments) }
+console.info = function()  { save_log('INFO ', arguments); _console.info.apply(null, arguments) }
+console.warn = function()  { save_log('WARN ', arguments); _console.warn.apply(null, arguments) }
+console.error = function() { save_log('ERROR', arguments); _console.error.apply(null, arguments) }
+window.addEventListener('error', function(e) {
+  save_log('THROW', e.error.stack)
+  return false // Call the default handler
+})
 
 })

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="height: 100%">
+<html lang="en" style="height: 100%">
   <head>
     <link rel="stylesheet" type="text/css" href="./resources/style.css" id="stylesheet">
     <script type="text/javascript" src="./utils.js"></script>
@@ -59,7 +59,7 @@
             <input name="Seconds" type="radio" id="Seconds-Off">
             <label for="Seconds-Off" style="font-family: OpenSans-Regular; font-size: 20px">Off</label>
           </div><div>
-            <label style="font-family: OpenSans-Bold; font-size: 32px">Weather API</label>
+            <label for="API-Choice" style="font-family: OpenSans-Bold; font-size: 32px">Weather API</label>
           </div><div>
             <select id="API-Choice" style="font-family: OpenSans-Regular; font-size: 20px">
               <option value="USApi" selected>US Government</option>
@@ -68,14 +68,14 @@
               <option value="WBApi">WeatherBit</option>
             </select>
           </div><div id="API-Key">
-            <label style="font-family: OpenSans-Regular; font-size: 20px; padding: 5px">API Key</label>
+            <label for="API-Key-Value" style="font-family: OpenSans-Regular; font-size: 20px; padding: 5px">API Key</label>
             <input type="password" id="API-Key-Value" style="font-family: OpenSans-Regular; font-size: 14px; width: 250px; user-select: text">
           </div><div>
             <label style="font-family: OpenSans-Bold; font-size: 32px; align: center">Location</label>
           </div><div>
-            <label style="font-family: OpenSans-Regular; font-size: 20px; padding: 5px">Latitude</label>
+            <label for="Latitude" style="font-family: OpenSans-Regular; font-size: 20px; padding: 5px">Latitude</label>
             <input type="text" id="Latitude" style="font-family: OpenSans-Regular; font-size: 14px; width: 60px; user-select: text">
-            <label style="font-family: OpenSans-Regular;font-size: 20px; padding: 5px;">Longitude</label>
+            <label for="Longitude" style="font-family: OpenSans-Regular;font-size: 20px; padding: 5px;">Longitude</label>
             <input type="text" id="Longitude" style="font-family: OpenSans-Regular; font-size: 14px; width: 60px; user-select: text">
           </div><div id="sunriseSunset" style="display: none; position: relative; top: -15px; margin-bottom: -15px; pointer-events: none">
             <label style="font-family: Climacons; font-size: 42px; position: relative; top: 10px">K</label>
@@ -87,7 +87,7 @@
           </div><div>
             <button id="refreshLocation" style="font-family: OpenSans-Regular; font-size: 14px; margin-top: 5px">Refresh location</button>
           </div><div>
-            <label style="font-family: OpenSans-Bold; font-size: 32px">Show Today's Forecast</label>
+            <label for="TodayForcast" style="font-family: OpenSans-Bold; font-size: 32px">Show Today's Forecast</label>
           </div><div>
             <select id="TodayForecast" style="font-family: OpenSans-Regular; font-size: 20px">
               <option value="TodayForecast-Never">Never</option>

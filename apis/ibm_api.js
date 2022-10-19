@@ -88,7 +88,7 @@ IBMApi.getWeather = function(coords, onError, onSuccess) {
     var weatherData = new WeatherData()
     var callbacksPending = 3
 
-    var prefix = 'https://api.weather.com/v1/geocode/' + coords.latitude + '/' + coords.longitude + '/forecast/'
+    var prefix = 'https://api.weather.com/v1/geocode/' + coords.latitude + '/' + coords.longitude + '/forecast'
     var suffix = '?apiKey=' + apikey + '&units=e&language=en-US'
 
     httpGet(prefix + '/hourly/12hour.json' + suffix, 'fetch the current weather', onError, function(response) {

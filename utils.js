@@ -58,6 +58,8 @@ window.getLocal  = function(key, callback) {internalGet(storage.local,  key, cal
 window.getRemote = function(key, callback) {internalGet(storage.sync,   key, callback)}
 window.setLocal  = function(key, value)    {internalSet(storage.local,  key, value)}
 window.setRemote = function(key, value)    {internalSet(storage.sync,   key, value)}
+window.delLocal  = function()              {storage.local.clear()}
+window.delRemote = function()              {storage.remote.clear()}
 
 // For perf reasons -- I call this quite often.
 var inMemory = {}

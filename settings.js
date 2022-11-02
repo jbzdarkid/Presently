@@ -67,6 +67,14 @@ window.loadSettings = function(callback) {
     window.setLocal('coords', null) // When the user asks for a refresh, we clear the coordinates.
     window.requestLocation(onSunriseError)
   }
+  document.getElementById('clearData').onclick = function() {
+    localMessage = 'Delete local data?\n' +
+      'Includes your location and the cached weather forecast.'
+    remoteMessage = 'Delete remote data?\n' +
+      'Includes your settings (e.g. theme color, preferred units), as well as any API keys you have stored.'
+    if (window.confirm(localMessage)) window.delLocal()
+    if (window.confirm(remoteMessage)) window.delRemote()
+  }
   document.getElementById('openIssue').onclick = function() {
     body = '<Describe your problem>'
     var log = window.getLog()
@@ -259,7 +267,7 @@ function userChangedCoords() {
       'latitude': parseFloat(document.getElementById('Latitude').value),
       'longitude': parseFloat(document.getElementById('Longitude').value),
     })
-  }, 3000)
+  }, 5000)
 }
 
 var apiKeyTimeout = null

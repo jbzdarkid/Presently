@@ -105,23 +105,23 @@ window.reparent = function(child, newParent) {
   newParent.appendChild(child)
 }
 
-var log_lines = []
-var log_lines_index = 0
-function save_log() {
-  log_lines[log_lines_index] = Array.prototype.join.call(arguments, ' ')
-  log_lines_index = (log_lines_index + 1) % 100
+var logLines = []
+var logLinesIndex = 0
+function saveLog(level, args) {
+  logLines[logLinesIndex] = level + Array.prototype.join.call(args, ' ')
+  logLinesIndex = (logLinesIndex + 1) % 100
 }
-window.get_log = function() {
-  return log_lines.join('\n')
+window.getLog = function() {
+  return logLines.join('\n')
 }
 var _console = Object.assign({}, console)
-console.debug = function() { save_log('DEBUG', arguments); _console.debug.apply(null, arguments) }
-console.log = function()   { save_log('LOG  ', arguments); _console.log.apply(null, arguments) }
-console.info = function()  { save_log('INFO ', arguments); _console.info.apply(null, arguments) }
-console.warn = function()  { save_log('WARN ', arguments); _console.warn.apply(null, arguments) }
-console.error = function() { save_log('ERROR', arguments); _console.error.apply(null, arguments) }
+console.debug = function() { saveLog('DEBUG', arguments); _console.debug.apply(null, arguments) }
+console.log   = function() { saveLog('LOG  ', arguments); _console.log.apply(null, arguments) }
+console.info  = function() { saveLog('INFO ', arguments); _console.info.apply(null, arguments) }
+console.warn  = function() { saveLog('WARN ', arguments); _console.warn.apply(null, arguments) }
+console.error = function() { saveLog('ERROR', arguments); _console.error.apply(null, arguments) }
 window.addEventListener('error', function(e) {
-  save_log('THROW', e.error.stack)
+  saveLog('THROW', e.error.stack)
   return false // Call the default handler
 })
 

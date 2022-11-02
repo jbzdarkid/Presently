@@ -66,9 +66,9 @@ function getWeatherFromIcon(icon) {
 }
 
 function getPointInfo(coords, onError, onSuccess) {
-  // This data never changes, but it isn't computable. Cache it in remote storage so it can be shared.
+  // This data never changes, but it isn't computable. Cache it, but don't cache it remotely since it includes the user's location.
   var key = 'usapi,points,' + coords.latitude + ',' + coords.longitude
-  window.getRemote(key, function(response) {
+  window.getLocal(key, function(response) {
     if (response) {
       onSuccess(response)
       return
@@ -81,7 +81,7 @@ function getPointInfo(coords, onError, onSuccess) {
         onError(error)
       }
     }, function(response) {
-      window.setRemote(key, response.properties)
+      window.setLocal(key, response.properties)
       onSuccess(response.properties)
     })
   })

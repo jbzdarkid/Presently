@@ -57,7 +57,7 @@ window.WBApi = {}
 // So, we should always check to see if it's cached.
 WBApi.getLocationData = function(coords, onError, onSuccess) {
   var key = 'wbapi,location,' + coords.latitude + ',' + coords.longitude
-  window.getRemote(key, function(response) {
+  window.getLocal(key, function(response) {
     if (response) {
       var timezone = response.data[0].timezone
       var city = response.data[0].city_name
@@ -75,7 +75,7 @@ WBApi.getLocationData = function(coords, onError, onSuccess) {
       var prefix = 'https://api.weatherbit.io/v2.0'
       var suffix = '?units=I&key=' + apikey + '&lat=' + coords.latitude + '&lon=' + coords.longitude
       httpGet(prefix + '/current' + suffix, 'discover information about your location', onError, function(response) {
-        window.setRemote(key, response)
+        window.setLocal(key, response)
         var timezone = response.data[0].timezone
         var city = response.data[0].city_name
         var state = response.data[0].state_code
@@ -98,7 +98,7 @@ WBApi.getWeather = function(coords, onError, onSuccess) {
     var suffix = '?units=I&key=' + apikey + '&lat=' + coords.latitude + '&lon=' + coords.longitude
     httpGet(prefix + '/current' + suffix, 'fetch the current weather', onError, function(response) {
       var key = 'wbapi,location,' + coords.latitude + ',' + coords.longitude
-      window.setRemote(key, response)
+      window.setLocal(key, response)
 
       var period = response.data[0]
       weatherData.addPeriod({

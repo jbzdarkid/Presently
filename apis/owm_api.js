@@ -66,7 +66,7 @@ window.OWMApi = {}
 // So, we should always check to see if it's cached.
 OWMApi.getLocationData = function(coords, onError, onSuccess) {
   var key = 'owmapi,location,' + coords.latitude + ',' + coords.longitude
-  window.getRemote(key, function(response) {
+  window.getLocal(key, function(response) {
     if (response) {
       var tzOffset = response.timezone
       var city = response.name
@@ -83,7 +83,7 @@ OWMApi.getLocationData = function(coords, onError, onSuccess) {
       var prefix = 'https://api.openweathermap.org/data/2.5'
       var suffix = '?lat=' + coords.latitude + '&lon=' + coords.longitude + '&units=imperial&appid=' + apikey
       httpGet(prefix + '/weather' + suffix, 'discover information about your location', onError, function(response) {
-        window.setRemote(key, response)
+        window.setLocal(key, response)
         var tzOffset = response.timezone
         var city = response.name
         onSuccess(null, tzOffset, city)
@@ -106,7 +106,7 @@ OWMApi.getWeather = function(coords, onError, onSuccess) {
 
     httpGet(prefix + '/weather' + suffix, 'fetch the current weather', onError, function(response) {
       var key = 'owmapi,location,' + coords.latitude + ',' + coords.longitude
-      window.setRemote(key, response)
+      window.setLocal(key, response)
 
       weatherData.addPeriod({
           'startTime': response.dt * 1000,

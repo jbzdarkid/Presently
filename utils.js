@@ -46,8 +46,20 @@ if (typeof(chrome) !== 'undefined' && chrome.storage) {
 } else {
   storage = {
     'local': {
-      'get': function(key, callback) {callback({[key]: window.localStorage.getItem(key)})},
-      'set': function(key, value) {window.localStorage.setItem(key, value)},
+      'get': function(key, callback) {
+        window.setTimeout(function() {
+          var value = window.localStorage.getItem(key)
+          try {
+            value = JSON.parse(value)
+          } catch (e) { /* JSON parse failed, return original value */ }
+          callback({[key]: value})
+        }, 0)
+      },
+      'set': function(data) {
+        for (var key of Object.keys(data)) {
+          window.localStorage.setItem(key, JSON.stringify(data[key]))
+        }
+      },
       'clear': function() {window.localStorage.clear()},
     }
   }
@@ -123,7 +135,7 @@ console.info  = function() { saveLog('INFO ', arguments); _console.info.apply(nu
 console.warn  = function() { saveLog('WARN ', arguments); _console.warn.apply(null, arguments) }
 console.error = function() { saveLog('ERROR', arguments); _console.error.apply(null, arguments) }
 window.addEventListener('error', function(e) {
-  saveLog('THROW', e.error.stack)
+  saveLog('THROW', e.error ? e.error.stack : e.message)
   return false // Call the default handler
 })
 

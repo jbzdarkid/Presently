@@ -12,8 +12,16 @@ https://github.com/christiannaths/Climacons-Font
 }
 /*
 The OpenSans font family is available from Google Fonts.
-It is licensed under the SIL Open Fonts License (OFL). For a full license, please see:
-https://github.com/google/fonts/blob/main/ofl/opensans/OFL.txt
+It is licensed under Apache 2.0. For a full license, please see:
+https://github.com/google/fonts/blob/master/apache/opensans/LICENSE.txt
+*/
+/*
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap');
+* {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.8);
+}
 */
 @font-face {
   font-family: 'OpenSans-Light';

@@ -285,7 +285,9 @@ function setApi(api) {
   } else if (api == 'USApi') {
     window.weatherApi = window.USApi
   } else {
-    debugger
+    console.error('Unknown weather API: "' + api + '" , falling back to US API')
+    api = 'USApi'
+    window.weatherApi = window.USApi
   }
 
   if (api == 'USApi') { // The US API does not require an API key
@@ -293,7 +295,7 @@ function setApi(api) {
   } else {
     document.getElementById('API-Key').style.display = null
     window.getRemote(keyName, function(result) {
-      document.getElementById('API-Key-Value').value = result ? result : ''
+      document.getElementById('API-Key-Value').value = result || ''
 
       document.getElementById('API-Key-Value').oninput = function() {
         window.clearTimeout(apiKeyTimeout)

@@ -58,20 +58,23 @@ function updateWeather() {
         if (weatherExpires && now < weatherExpires) return
 
         // Else, the weather is expired and should be updated.
-        // We prevent any updates for 5 minutes to avoid making excessive network calls.
+        // We prevent any updates for 1 minute to avoid making excessive network calls.
         // If the weather update succeeds, we'll set a later expiration time.
         weatherExpires = new Date()
-        weatherExpires.setMinutes(weatherExpires.getMinutes() + 5)
+        weatherExpires.setMinutes(weatherExpires.getMinutes() + 1)
         window.setLocal('weatherExpires', weatherExpires.getTime())
         console.log('Fetching new weather data...')
 
         window.requestLocation(onForecastError, function(coords) {
           window.weatherApi.getWeather(coords, onForecastError, function(weatherData) {
             console.log('Fetched new weather data')
+
+            // I'm choosing a time which is *slightly* into the next hour, since the US weather API updates on the hour.
             var weatherExpires = new Date()
             weatherExpires.setHours(weatherExpires.getHours() + 1, 1, 0, 0)
             window.setLocal('weatherExpires', weatherExpires.getTime())
 
+            // However, the time at which we stop showing any weather at all should just be 2 hours later.
             var weatherVeryExpires = new Date()
             weatherVeryExpires.setHours(weatherVeryExpires.getHours() + 2, 0, 0, 0)
             window.setLocal('weatherVeryExpires', weatherVeryExpires.getTime())

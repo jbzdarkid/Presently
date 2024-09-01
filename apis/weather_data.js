@@ -42,7 +42,7 @@ function drawCurrentWeather(period) {
   var day = document.getElementById('forecast-0')
   day.textContent = ''
 
-  var climacon = Climacon(period.weather, 180, true /* isDaytimeAware */)
+  var climacon = new Climacon(period.weather, 180, true /* isDaytimeAware */)
   climacon.style.marginBottom = '-10px'
   climacon.title = period.shortForecast
   day.appendChild(climacon)
@@ -92,7 +92,7 @@ function drawForecast(day, weather, forecast, highTemp, lowTemp, dayOfWeek) {
   d.style.display = 'flex'
   d.textContent = ''
 
-  var climacon = Climacon(weather, 96)
+  var climacon = new Climacon(weather, 96)
   climacon.title = forecast
   d.appendChild(climacon)
 

@@ -1,4 +1,9 @@
 {
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "presently@jbzdarkid.github.io"
+        }
+    },
     "chrome_url_overrides": {
         "newtab": "presently.html"
     },
@@ -13,5 +18,5 @@
     "permissions": [
         "storage"
     ],
-    "version": "1.2.5"
+    "version": "1.2.6"
 }

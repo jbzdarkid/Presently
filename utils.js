@@ -83,9 +83,9 @@ function internalGet(store, key, callback) {
     return
   }
   store.get([key], function(result) {
-    // result will be {} if nothing is found, or result[key] will be null (for localstorage)
-    inMemory[key] = result[key]
-    callback(result[key])
+    value = result == null ? null : result[key] // Chrome returns {}, firefox returns null, localstorage returns {value:null}
+    inMemory[key] = value
+    callback(value)
   })
 }
 

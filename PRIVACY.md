@@ -6,7 +6,7 @@ Presently uses this location information to get the local weather. Weather varie
 Along with weather, Presently also gets local weather alerts, such as wildfire, tornado, or landslide warnings.
 Presently caches this weather and alert data locally on your machine for 1-2 hours. This helps keep Presently fast; when you open a new tab it will initially display the cached data while it searches for fresh data.
 - What information do you share?
-Presently implicitly shares your location data when fetching the weather. For example, if you use the US Government API (default), Presently will send your latitude and logitude directly to the US Government weather APIs.
+Presently implicitly shares your location data when fetching the weather. For example, if you use the US Government API (default), Presently will send your latitude and longitude directly to the US Government weather APIs.
 Unfortunately, Presently cannot guarantee what the APIs do with your location data, but as these are popular APIs there is some safety in numbers.
 If you wear a tinfoil hat, you may consider using an alternate (non-government) API, although you will need to provide an API key (free, duckduckgo the API for instructions on how to acquire one).
 

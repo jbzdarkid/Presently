@@ -1,7 +1,5 @@
 # Presently
 A new tab page with the time and weather (in homage to the old Currently page, which died long ago).
-https://chrome.google.com/webstore/detail/presently/aikckckhmjomanhniabajcbhmhpifepf
-https://addons.mozilla.org/en-US/firefox/addon/presently_/
-
-If you can't install the extension, you can also set your new tab page to the github pages URL:
-https://jbzdarkid.github.io/Presently/presently.html
+- Chrome/Edge: https://chrome.google.com/webstore/detail/presently/aikckckhmjomanhniabajcbhmhpifepf
+- Firefox: https://addons.mozilla.org/en-US/firefox/addon/presently_/
+- Direct link: https://jbzdarkid.github.io/Presently/presently.html
